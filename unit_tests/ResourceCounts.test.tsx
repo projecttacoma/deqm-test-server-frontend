@@ -7,7 +7,7 @@ import {
 } from "../helpers/testHelpers";
 import { ResourceCounts, sortResourceArray } from "../components/ResourceCounts";
 
-const resourceCountsBody = {
+const RESOURCE_COUNTS_BODY = {
   Account: 0,
   Appointment: 0,
   Measure: 5,
@@ -16,7 +16,7 @@ const resourceCountsBody = {
 
 describe("resource Counts render", () => {
   beforeAll(() => {
-    global.fetch = getMockFetchImplementation(resourceCountsBody);
+    global.fetch = getMockFetchImplementation(RESOURCE_COUNTS_BODY);
   });
 
   it("should display all resources and counts fetched by mock fetch", async () => {
@@ -37,7 +37,7 @@ describe("resource Counts render", () => {
   it("the retrieved resources should be sorted by count, then alphabetically", async () => {
     let sortedArray;
     await act(async () => {
-      sortedArray = sortResourceArray(resourceCountsBody);
+      sortedArray = sortResourceArray(RESOURCE_COUNTS_BODY);
     });
     expect(sortedArray).toEqual(["Measure", "Patient", "Account", "Appointment"]);
   });

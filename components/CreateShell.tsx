@@ -4,6 +4,10 @@ import { ResourceCounts } from "./ResourceCounts";
 import ResourcePage from "./ResourcePage";
 import { useEffect, useState } from "react";
 
+/**
+ * Creates the Appshell which is for rendering the layout of the application.
+ * @returns React node which is an Appshell
+ */
 function CreateShell() {
   const [isClicked, setIsClicked] = useState(false);
   const [resourceClicked, setResourceClicked] = useState("");

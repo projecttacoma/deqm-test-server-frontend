@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
-import { useEffect } from "react";
-import { RecoilRoot, RecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { RecoilRoot } from "recoil";
 
 export function mantineRecoilWrap(children: JSX.Element) {
   return (
