@@ -5,9 +5,13 @@ import {
   getMockFetchImplementation,
   getMockFetchImplementationError,
 } from "../helpers/testHelpers";
-import { ResourceCounts, sortResourceArray } from "../components/ResourceCounts";
+import {
+  ResourceCountResponse,
+  ResourceCounts,
+  sortResourceArray,
+} from "../../components/ResourceCounts";
 
-const RESOURCE_COUNTS_BODY = {
+const RESOURCE_COUNTS_BODY: ResourceCountResponse = {
   Account: 0,
   Appointment: 0,
   Measure: 5,
@@ -24,14 +28,18 @@ describe("resource Counts render", () => {
       render(mantineRecoilWrap(<ResourceCounts />));
     });
 
-    const text = screen.getByText("Patient (2)");
-    expect(text).toBeInTheDocument();
-    const text1 = screen.getByText("Measure (5)");
-    expect(text1).toBeInTheDocument();
-    const text2 = screen.getByText("Account (0)");
-    expect(text2).toBeInTheDocument();
-    const text3 = screen.getByText("Appointment (0)");
-    expect(text3).toBeInTheDocument();
+    //Expect badge component with data-testid=resourceType to contain correct resource count
+    expect(within(screen.getByTestId("Patient")).getByText("2")).toBeInTheDocument();
+    expect(screen.getByText("Patient")).toBeInTheDocument();
+
+    expect(within(screen.getByTestId("Measure")).getByText("5")).toBeInTheDocument();
+    expect(screen.getByText("Measure")).toBeInTheDocument();
+
+    expect(within(screen.getByTestId("Account")).getByText("0")).toBeInTheDocument();
+    expect(screen.getByText("Account")).toBeInTheDocument();
+
+    expect(within(screen.getByTestId("Appointment")).getByText("0")).toBeInTheDocument();
+    expect(screen.getByText("Appointment")).toBeInTheDocument();
   });
 
   it("the retrieved resources should be sorted by count, then alphabetically", async () => {

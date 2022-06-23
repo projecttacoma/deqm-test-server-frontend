@@ -1,19 +1,22 @@
 import { useEffect, useState } from "react";
-import { Button } from "@mantine/core";
+import { Badge, Button } from "@mantine/core";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
+
+export interface ResourceCountResponse {
+  [x: string]: number;
+}
 
 /**
  * Component which retrieves all resources and their counts, calls on helper functions to sort them by count and translate
  * them into buttons
- * @param props the properties of a ResourceCounts component which includes state variables/functions
  * @returns array of JSX Buttons
  */
-const ResourceCounts = (props) => {
-  const [resources, setResources] = useState<{ [x: string]: number }>({});
+const ResourceCounts = () => {
+  const [resources, setResources] = useState<ResourceCountResponse>({});
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/resourceCount`)
       .then((data) => {
-        return data.json();
+        return data.json() as Promise<ResourceCountResponse>;
       })
       .then((resourceCountBody) => {
         setResources(resourceCountBody);
@@ -40,14 +43,21 @@ const ResourceCounts = (props) => {
         radius="md"
         size="md"
         variant="subtle"
-        style={{
-          padding: "2px",
+        styles={{
+          inner: {
+            padding: "3px",
+            justifyContent: "flex-start",
+          },
         }}
-        onClick={() => clickHandler(el, props)}
+        rightIcon={
+          <Badge color="cyan" data-testid={el}>
+            {resources[el]}
+          </Badge>
+        }
         key={el}
       >
         {" "}
-        {el} ({resources[el]}){" "}
+        {el}{" "}
       </Button>
     ));
   };
@@ -56,21 +66,11 @@ const ResourceCounts = (props) => {
 };
 
 /**
- * Sets state variables
- * @param resourceKey is a string that specifies which resource button in the NavBar has been clicked on
- * @param props the props from ResourceCount component are passed. Contains the functions for changing state variables
- */
-function clickHandler(resourceKey: string, props) {
-  props.clicked(true);
-  props.setWhichResource(resourceKey);
-}
-
-/**
  * Sorts an object of string:number key:value pairs by the value of number
  * @param toSort is the object that is to be sorted
  * @returns string[] a sorted array of the string keys
  */
-function sortResourceArray(toSort: { [x: string]: number }) {
+function sortResourceArray(toSort: { [x: string]: number }): string[] {
   return Object.keys(toSort).sort((a, b) => {
     return toSort[b] - toSort[a];
   });
