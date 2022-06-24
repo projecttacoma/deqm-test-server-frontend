@@ -1,15 +1,16 @@
 import { Button } from "@mantine/core";
 import Link from "next/link";
-import { ReactElement, JSXElementConstructor, ReactFragment, ReactPortal } from "react";
 import { ResourceTypeResponse, EntryKeyObject } from "./../pages/[resourceType]";
 
-/*
-    props: jsonbody of get resourceType request
-*/
+/**
+ * Component for displaying resource IDs as Links
+ * @param props include jsonBody which is the response from a GET request to
+ * a resourceType endpoint.
+ * @returns an array of Links of resource IDs, or if none exist, a "No resource found" message
+ */
 function ResourceIDs(props: { jsonBody: ResourceTypeResponse }) {
-  //props: { jsonBody: { entry: any; }; jso: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | null | undefined; }) {
   const entryArray = props.jsonBody.entry;
-  console.log("jsonBody.entry: ", props.jsonBody.entry);
+
   if (entryArray) {
     return (
       <div>
@@ -17,10 +18,11 @@ function ResourceIDs(props: { jsonBody: ResourceTypeResponse }) {
       </div>
     );
   } else {
-    return <div>No resources of type </div>;
+    return <div>No resources found</div>;
   }
 }
 
+//maps each element in entry, an array of all the resources of a resourceType, to a Link
 const getAllIDs = (entry: EntryKeyObject[]) => {
   return entry.map((el) => {
     return (

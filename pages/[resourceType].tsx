@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { Button } from "@mantine/core";
-import ResourcePage from "./../components/ResourcePage";
 import { useRouter } from "next/router";
 import ResourceIDs from "../components/ResourceIDs";
 
@@ -20,7 +18,14 @@ export interface EntryKeyObject {
   resource: { id: string };
 }
 
+/**
+ * Component page that renders Buttons for all IDs of a resourceType. A request is made to
+ * the test server to retrieve all resources of a specified type. Then a ResourceID component is
+ * returned with the Buttons for each resourceID or a "No resources found" message is displayed
+ * @returns
+ */
 function ResourceTypeIDs() {
+  //get resourceType from the current url with useRouter
   const router = useRouter();
   const { resourceType } = router.query;
 
@@ -31,12 +36,10 @@ function ResourceTypeIDs() {
         return data.json() as Promise<ResourceTypeResponse>;
       })
       .then((resourcePageBody) => {
-        setPageBody(resourcePageBody); //resourcePageBody["entry"][0].resource.id
+        setPageBody(resourcePageBody);
       });
   }, [resourceType]);
 
-  //return <div>{JSON.stringify(pageBody)}</div>;
-  console.log("pageBody: ", pageBody);
   return pageBody ? <ResourceIDs jsonBody={pageBody}></ResourceIDs> : null;
 }
 export default ResourceTypeIDs;

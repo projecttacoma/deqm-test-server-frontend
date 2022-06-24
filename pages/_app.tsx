@@ -3,7 +3,6 @@ import Head from "next/head";
 import { AppShell, Header, MantineProvider, Navbar, ScrollArea } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import { ResourceCounts } from "../components/ResourceCounts";
-import ResourceIDs from "../components/ResourceIDs";
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -40,7 +39,6 @@ export default function App(props: AppProps) {
             styles={(theme) => ({
               main: {
                 backgroundColor: theme.colors.cyan[0],
-                //theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
               },
             })}
           >
