@@ -55,9 +55,8 @@ describe("resource ID render", () => {
       });
       
 
-      expect(screen.getByRole('button')).toBeInTheDocument();
-      expect(screen.getByText("denom-EXM125-3")).toBeInTheDocument() 
-      expect(screen.getByText("numer-EXM125-3")).toBeInTheDocument() 
+      expect(screen.getByRole("button", { name: "denom-EXM125-3" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "numer-EXM125-3" })).toBeInTheDocument();
 
   }); })
   
