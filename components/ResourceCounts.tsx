@@ -43,13 +43,16 @@ const ResourceCounts = () => {
   const getResourceCountsNodes = () => {
     return sortResourceArray(resources).map((resourceType) => (
       <Button
+        fullWidth
+        compact
         color="cyan"
         radius="md"
         size="md"
         variant="subtle"
         styles={{
           inner: {
-            padding: "3px",
+            paddingLeft: "15px",
+            justifyContent: "flex-start",
           },
         }}
         rightIcon={
@@ -65,7 +68,7 @@ const ResourceCounts = () => {
   };
 
   return (
-    <Stack align="flex-start" spacing="xs" style={{ marginBottom: 50, padding: "3px" }}>
+    <Stack align="flex-start" spacing="xs" style={{ marginBottom: 30 }}>
       {getResourceCountsNodes()}
     </Stack>
   );
