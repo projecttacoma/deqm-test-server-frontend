@@ -16,7 +16,7 @@ npm install
 
 Create a .env.local file and add the following to it:
 `NEXT_PUBLIC_DEQM_SERVER=https://abacus-dev.mitre.org/4_0_1`
-However, to run a local version of the test server, change this NEXT_PUBLIC_DEQM_SERVER to the desired port (must not be 3001).
+However, to run a local version of the test server, change this `NEXT_PUBLIC_DEQM_SERVER` to the desired port (this project runs on the default 3000).
 
 ## Getting Started
 
@@ -26,6 +26,21 @@ First, run the development server:
 npm run dev
 ```
 
-Note that npm start won't work yet.
+OR
 
-Open [http://localhost:3001](http://localhost:3001) with your browser to see the result.
+To run on a different port than the default 3000:
+
+```bash
+npm run dev -- -p portNumber
+```
+
+OR
+
+Build, then start. Specify non-default port with `-- -p portNumber`, like above.
+
+```bash
+npm run build
+npm run start
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

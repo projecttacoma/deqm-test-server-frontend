@@ -55,11 +55,7 @@ const ResourceCounts = () => {
             justifyContent: "flex-start",
           },
         }}
-        rightIcon={
-          <Badge color="cyan" data-testid={resourceType}>
-            {resources[resourceType]}
-          </Badge>
-        }
+        rightIcon={<Badge color="cyan">{resources[resourceType]}</Badge>}
         key={resourceType}
       >
         {resourceType}
