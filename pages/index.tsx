@@ -1,3 +1,7 @@
 export default function Home() {
-  return <div> coming soon</div>;
+  return (
+    <div>
+      <title> DEQM Test Server Frontend </title>
+    </div>
+  );
 }
