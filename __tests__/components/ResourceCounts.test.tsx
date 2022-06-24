@@ -28,18 +28,10 @@ describe("resource Counts render", () => {
       render(mantineRecoilWrap(<ResourceCounts />));
     });
 
-    //Expect badge component with data-testid=resourceType to contain correct resource count
-    expect(within(screen.getByTestId("Patient")).getByText("2")).toBeInTheDocument();
-    expect(screen.getByText("Patient")).toBeInTheDocument();
-
-    expect(within(screen.getByTestId("Measure")).getByText("5")).toBeInTheDocument();
-    expect(screen.getByText("Measure")).toBeInTheDocument();
-
-    expect(within(screen.getByTestId("Account")).getByText("0")).toBeInTheDocument();
-    expect(screen.getByText("Account")).toBeInTheDocument();
-
-    expect(within(screen.getByTestId("Appointment")).getByText("0")).toBeInTheDocument();
-    expect(screen.getByText("Appointment")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Patient 2" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Measure 5" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Account 0" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Appointment 0" })).toBeInTheDocument();
   });
 
   it("the retrieved resources should be sorted by count, then alphabetically", async () => {

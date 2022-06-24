@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
-import { Badge, Button } from "@mantine/core";
+import { Badge, Button, Stack } from "@mantine/core";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
 
+/**
+ * interface for object that is returned from a request to the resourceCunt endpoint.
+ * key:value pairs of resourceType:resourceCount
+ */
 export interface ResourceCountResponse {
-  [x: string]: number;
+  [resourceType: string]: number;
 }
 
 /**
- * Component which retrieves all resources and their counts, calls on helper functions to sort them by count and translate
- * them into buttons
+ * Component which retrieves all resources and their counts, calls on helper functions to sort them by count, then
+ * translates them into buttons
  * @returns array of JSX Buttons
  */
 const ResourceCounts = () => {
@@ -37,7 +41,7 @@ const ResourceCounts = () => {
    * @returns array of JSX Buttons that are the sorted resources and their counts
    */
   const getResourceCountsNodes = () => {
-    return sortResourceArray(resources).map((el) => (
+    return sortResourceArray(resources).map((resourceType) => (
       <Button
         color="cyan"
         radius="md"
@@ -46,23 +50,25 @@ const ResourceCounts = () => {
         styles={{
           inner: {
             padding: "3px",
-            justifyContent: "flex-start",
           },
         }}
         rightIcon={
-          <Badge color="cyan" data-testid={el}>
-            {resources[el]}
+          <Badge color="cyan" data-testid={resourceType}>
+            {resources[resourceType]}
           </Badge>
         }
-        key={el}
+        key={resourceType}
       >
-        {" "}
-        {el}{" "}
+        {resourceType}
       </Button>
     ));
   };
 
-  return getResourceCountsNodes();
+  return (
+    <Stack align="flex-start" spacing="xs" style={{ marginBottom: 50, padding: "3px" }}>
+      {getResourceCountsNodes()}
+    </Stack>
+  );
 };
 
 /**

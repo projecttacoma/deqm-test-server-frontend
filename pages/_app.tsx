@@ -1,6 +1,6 @@
 import { AppProps } from "next/app";
 import Head from "next/head";
-import { AppShell, Header, MantineProvider, Navbar } from "@mantine/core";
+import { AppShell, Header, MantineProvider, Navbar, ScrollArea } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import { ResourceCounts } from "../components/ResourceCounts";
 
@@ -25,12 +25,14 @@ export default function App(props: AppProps) {
           <AppShell
             padding="md"
             navbar={
-              <Navbar width={{ base: 300 }} height={800} p="xs">
-                <ResourceCounts> </ResourceCounts>
+              <Navbar width={{ base: 280 }} p="xs">
+                <Navbar.Section grow component={ScrollArea} mt="-xs" mb="-xs" ml="-xl" mr="-xs">
+                  <ResourceCounts />
+                </Navbar.Section>
               </Navbar>
             }
             header={
-              <Header height={80} p="xs">
+              <Header height={80} pt="xs" pl="sm" pb="xs">
                 <h2>DEQM Test Server Frontend</h2>
               </Header>
             }
