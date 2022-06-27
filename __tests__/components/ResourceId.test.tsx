@@ -1,11 +1,12 @@
-import { render, screen, act, within } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import {
-  mantineRecoilWrap,
   getMockFetchImplementation,
+  createMockRouter,
   getMockFetchImplementationError,
 } from "../helpers/testHelpers";
-import ResourceIDs from "../../components/ResourceIDs";
+import ResourceTypeIDs from "../../pages/[resourceType]";
+import { RouterContext } from "next/dist/shared/lib/router-context";
 
 const RESOURCE_ID_BODY = {
   resourceType: "Bundle",
@@ -42,33 +43,76 @@ const RESOURCE_ID_BODY = {
   ],
 };
 
-const RESOURCE_ID_EMPTY = {};
+const RESOURCE_ID_ZERO_COUNT = {
+  resourceType: "Bundle",
+  meta: {
+    lastUpdated: "2022-06-27T15:18:52.234Z",
+  },
+  type: "searchset",
+  total: 0,
+};
 
-describe("resource ID render", () => {
+describe("resource ID button render", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
   });
 
-  it("should display all the id's as buttons", async () => {
+  it("should display both id's as buttons", async () => {
     await act(async () => {
-      render(mantineRecoilWrap(<ResourceIDs jsonBody={RESOURCE_ID_BODY}></ResourceIDs>));
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "DiagnosticReport" },
+          })}
+        >
+          <ResourceTypeIDs />
+        </RouterContext.Provider>,
+      );
     });
-
     expect(screen.getByRole("button", { name: "denom-EXM125-3" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "numer-EXM125-3" })).toBeInTheDocument();
   });
 });
 
-describe("resource ID empty dataset", () => {
+describe("Tests for when the 'No resource found message' should display", () => {
   beforeAll(() => {
-    global.fetch = getMockFetchImplementation(RESOURCE_ID_EMPTY);
+    global.fetch = getMockFetchImplementation(RESOURCE_ID_ZERO_COUNT);
   });
 
-  it("should display 'no resources found' on the screen", async () => {
+  it("should display 'No resources found' on the screen because the resource's count is zero", async () => {
     await act(async () => {
-      render(mantineRecoilWrap(<ResourceIDs jsonBody={RESOURCE_ID_EMPTY}></ResourceIDs>));
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Account" },
+          })}
+        >
+          <ResourceTypeIDs />
+        </RouterContext.Provider>,
+      );
+    });
+    expect(screen.getByText("No resources found")).toBeInTheDocument();
+  });
+});
+
+describe("error response test", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementationError("Problem connecting to server");
+  });
+
+  it("should show error notification when there is an issue sending a request to the server", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: {},
+          })}
+        >
+          <ResourceTypeIDs />
+        </RouterContext.Provider>,
+      );
     });
 
-    expect(screen.getByText("No resources found")).toBeInTheDocument();
+    expect(screen.getByText("Problem connecting to server")).toBeInTheDocument();
   });
 });

@@ -7,7 +7,9 @@ import ResourceIDs from "../components/ResourceIDs";
  * Includes a key with a value that is an array of EntryKeyObjects
  */
 export interface ResourceTypeResponse {
-  [responseAttribute: string]: EntryKeyObject[];
+  [responseAttribute: string]: number | EntryKeyObject[];
+  total: number;
+  entry: EntryKeyObject[];
 }
 
 /**
@@ -15,13 +17,14 @@ export interface ResourceTypeResponse {
  * Includes a resource key with a value that is the id of a resource
  */
 export interface EntryKeyObject {
-  resource: { id: string };
+  [resource: string]: { id: string };
 }
 
 /**
  * Component page that renders Buttons for all IDs of a resourceType. A request is made to
  * the test server to retrieve all resources of a specified type. Then a ResourceID component is
- * returned with the Buttons for each resourceID or a "No resources found" message is displayed
+ * returned with the Buttons for each resourceID or a "No resources found" message is displayed, or if
+ * the request to the server throws an error then a "Problem connecting to server" message is displayed
  * @returns
  */
 function ResourceTypeIDs() {
@@ -29,7 +32,7 @@ function ResourceTypeIDs() {
   const router = useRouter();
   const { resourceType } = router.query;
 
-  const [pageBody, setPageBody] = useState<ResourceTypeResponse>({});
+  const [pageBody, setPageBody] = useState<ResourceTypeResponse>();
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`)
       .then((data) => {
@@ -37,9 +40,12 @@ function ResourceTypeIDs() {
       })
       .then((resourcePageBody) => {
         setPageBody(resourcePageBody);
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setPageBody({ entry: [], total: -1 });
       });
   }, [resourceType]);
-
   return pageBody ? <ResourceIDs jsonBody={pageBody}></ResourceIDs> : null;
 }
 export default ResourceTypeIDs;

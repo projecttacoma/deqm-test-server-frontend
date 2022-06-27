@@ -6,23 +6,32 @@ import { ResourceTypeResponse, EntryKeyObject } from "./../pages/[resourceType]"
  * Component for displaying resource IDs as Links
  * @param props include jsonBody which is the response from a GET request to
  * a resourceType endpoint.
- * @returns an array of Links of resource IDs, or if none exist, a "No resource found" message
+ * @returns an array of Links of resource IDs, or if none exist, a "No resource found" message, or if an
+ * invalid response body is passed through, an error message
  */
 function ResourceIDs(props: { jsonBody: ResourceTypeResponse }) {
   const entryArray = props.jsonBody.entry;
 
-  if (entryArray) {
-    return (
-      <div>
-        <h2>Resource IDs:</h2> {getAllIDs(entryArray)}
-      </div>
-    );
+  if (props.jsonBody.total >= 0) {
+    if (props.jsonBody.total > 0) {
+      return (
+        <div>
+          <h2>Resource IDs:</h2> {getAllIDs(entryArray)}
+        </div>
+      );
+    } else {
+      return <div>No resources found</div>;
+    }
   } else {
-    return <div>No resources found</div>;
+    return <div>Problem connecting to server</div>;
   }
 }
 
-//maps each element in entry, an array of all the resources of a resourceType, to a Link
+/**
+ * Maps an array of resource bodies to an array of Link-wrapped-Buttons, where each Button represents a resource ID
+ * @param entry which is the entry key from a resource bundle. It is an array where each index is a resource's body
+ * @returns an array of Resource ID Link-wrapped-Buttons
+ */
 const getAllIDs = (entry: EntryKeyObject[]) => {
   return entry.map((el) => {
     return (
