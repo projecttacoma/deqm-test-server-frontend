@@ -20,6 +20,7 @@
     "@mantine/hooks": "^4.2.4",
     "@mantine/next": "^4.2.4",
     "@mantine/notifications": "^4.2.10",
+    "@mantine/prism": "^4.2.11",
     "next": "12.1.6",
     "react": "18.1.0",
     "react-dom": "18.1.0",
