@@ -69,8 +69,8 @@ describe("resource ID button render", () => {
         </RouterContext.Provider>,
       );
     });
-    expect(screen.getByRole("button", { name: "denom-EXM125-3" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "numer-EXM125-3" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "denom-EXM125-3" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "numer-EXM125-3" })).toBeInTheDocument();
   });
 });
 
@@ -91,7 +91,7 @@ describe("Tests for when the 'No resource found message' should display", () => 
         </RouterContext.Provider>,
       );
     });
-    expect(screen.getByText("No resources found")).toBeInTheDocument();
+    expect(await screen.findByText("No resources found")).toBeInTheDocument();
   });
 });
 
@@ -113,6 +113,6 @@ describe("error response test", () => {
       );
     });
 
-    expect(screen.getByText("Problem connecting to server")).toBeInTheDocument();
+    expect(await screen.findByText("Problem connecting to server")).toBeInTheDocument();
   });
 });

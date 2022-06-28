@@ -12,18 +12,16 @@ import { ResourceTypeResponse, EntryKeyObject } from "./../pages/[resourceType]"
 function ResourceIDs(props: { jsonBody: ResourceTypeResponse }) {
   const entryArray = props.jsonBody.entry;
 
-  if (props.jsonBody.total >= 0) {
-    if (props.jsonBody.total > 0) {
-      return (
-        <div>
-          <h2>Resource IDs:</h2> {getAllIDs(entryArray)}
-        </div>
-      );
-    } else {
-      return <div>No resources found</div>;
-    }
+  if (props.jsonBody.total === 0) {
+    return <div>No resources found</div>;
+  } else if (props.jsonBody.total > 0) {
+    return (
+      <div>
+        <h2>Resource IDs:</h2> {getAllIDs(entryArray)}
+      </div>
+    );
   } else {
-    return <div>Problem connecting to server</div>;
+    return <div>Error</div>;
   }
 }
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import ResourceIDs from "../components/ResourceIDs";
+import { Center, Loader } from "@mantine/core";
 
 /**
  * interface for the response body of a request to a resourceType endpoint
@@ -24,8 +25,9 @@ export interface EntryKeyObject {
  * Component page that renders Buttons for all IDs of a resourceType. A request is made to
  * the test server to retrieve all resources of a specified type. Then a ResourceID component is
  * returned with the Buttons for each resourceID or a "No resources found" message is displayed, or if
- * the request to the server throws an error then a "Problem connecting to server" message is displayed
- * @returns
+ * the request to the server throws an error then a "Problem connecting to server" message is displayed.
+ * Loader is displayed while http request is in progress
+ * @returns Loader, ResourceIDs component, or error message depending on the status of the http request made.
  */
 function ResourceTypeIDs() {
   //get resourceType from the current url with useRouter
@@ -33,19 +35,38 @@ function ResourceTypeIDs() {
   const { resourceType } = router.query;
 
   const [pageBody, setPageBody] = useState<ResourceTypeResponse>();
+  const [fetchingError, setFetchingError] = useState(false);
+  const [loadingRequest, setLoadingRequest] = useState(false);
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`)
-      .then((data) => {
-        return data.json() as Promise<ResourceTypeResponse>;
-      })
-      .then((resourcePageBody) => {
-        setPageBody(resourcePageBody);
-      })
-      .catch((error) => {
-        console.log(error.message);
-        setPageBody({ entry: [], total: -1 });
-      });
+    if (resourceType) {
+      fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`)
+        .then((data) => {
+          setLoadingRequest(true);
+          return data.json() as Promise<ResourceTypeResponse>;
+        })
+        .then((resourcePageBody) => {
+          setPageBody(resourcePageBody);
+          setFetchingError(false);
+          setLoadingRequest(false);
+        })
+        .catch((error) => {
+          console.log(error.message);
+          setFetchingError(true);
+          setLoadingRequest(false);
+        });
+    }
   }, [resourceType]);
-  return pageBody ? <ResourceIDs jsonBody={pageBody}></ResourceIDs> : null;
+
+  return loadingRequest ? ( //if loading, Loader object is returned
+    <Center>
+      <div>Loading content...</div>
+      <Loader color="cyan"></Loader>
+    </Center>
+  ) : !fetchingError && pageBody ? ( //if http request was successful, ResourceID component is returned
+    <ResourceIDs jsonBody={pageBody}></ResourceIDs>
+  ) : (
+    //if error occurs in http request, error message is returned
+    <div>Problem connecting to server</div>
+  );
 }
 export default ResourceTypeIDs;
