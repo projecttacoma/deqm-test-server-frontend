@@ -3,6 +3,26 @@ import { useRouter } from "next/router";
 import ResourceIDs from "../../components/ResourceIDs";
 import { Center, Loader } from "@mantine/core";
 import { fhirJson } from "@fhir-typescript/r4-core";
+import { Button } from "@mantine/core";
+import Link from "next/link";
+
+/**
+ * interface for the response body of a request to a resourceType endpoint
+ * Includes a key with a value that is an array of EntryKeyObjects
+ */
+export interface ResourceTypeResponse {
+  [responseAttribute: string]: number | EntryKeyObject[];
+  total: number;
+  entry: EntryKeyObject[];
+}
+
+/**
+ * interface for the contents of the "entry" key in a resourceType bundle JSON object.
+ * Includes a resource key with a value that is the id of a resource
+ */
+export interface EntryKeyObject {
+  [resource: string]: { id: string };
+}
 
 /**
  * Component page that renders Buttons for all IDs of a resourceType. A request is made to
@@ -46,7 +66,27 @@ function ResourceTypeIDs() {
       <Loader color="cyan"></Loader>
     </Center>
   ) : !fetchingError && pageBody ? ( //if http request was successful, ResourceID component is returned
-    <ResourceIDs jsonBody={pageBody}></ResourceIDs>
+    <div>
+      <div       
+      style={{
+        paddingRight: "20px",
+      }}>
+      <Link href={`/newResource`} key={"newResource"} passHref>
+        <Button
+          color="cyan"
+          radius="md"
+          size="md"
+          variant="filled"
+          style={{
+            float: "right",
+          }}
+        >
+          <div> New Resource </div>
+        </Button>
+    </Link>
+    </div>
+        <ResourceIDs jsonBody={pageBody}></ResourceIDs>
+    </div>
   ) : (
     //if error occurs in http request, error message is returned
     <div>Problem connecting to server</div>
