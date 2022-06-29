@@ -2,6 +2,34 @@
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import { RecoilRoot } from "recoil";
+import { NextRouter } from "next/router";
+
+export function createMockRouter(router: Partial<NextRouter>): NextRouter {
+  return {
+    basePath: "",
+    pathname: "/",
+    route: "/",
+    query: {},
+    asPath: "/",
+    back: jest.fn(),
+    beforePopState: jest.fn(),
+    prefetch: jest.fn().mockImplementation(() => Promise.resolve()),
+    push: jest.fn().mockImplementation(() => Promise.resolve(true)),
+    reload: jest.fn(),
+    replace: jest.fn(),
+    events: {
+      on: jest.fn(),
+      off: jest.fn(),
+      emit: jest.fn(),
+    },
+    isLocaleDomain: false,
+    isFallback: false,
+    isReady: true,
+    defaultLocale: "en",
+    isPreview: false,
+    ...router,
+  };
+}
 
 export function mantineRecoilWrap(children: JSX.Element) {
   return (

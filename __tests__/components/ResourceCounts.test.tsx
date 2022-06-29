@@ -28,10 +28,10 @@ describe("resource Counts render", () => {
       render(mantineRecoilWrap(<ResourceCounts />));
     });
 
-    expect(screen.getByRole("button", { name: "Patient 2" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Measure 5" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Account 0" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Appointment 0" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Patient 2" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Measure 5" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Account 0" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Appointment 0" })).toBeInTheDocument();
   });
 
   it("the retrieved resources should be sorted by count, then alphabetically", async () => {

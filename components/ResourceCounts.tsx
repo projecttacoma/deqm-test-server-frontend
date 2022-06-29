@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Badge, Button, Stack } from "@mantine/core";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
+import Link from "next/link";
 
 /**
  * interface for object that is returned from a request to the resourceCunt endpoint.
@@ -42,24 +43,27 @@ const ResourceCounts = () => {
    */
   const getResourceCountsNodes = () => {
     return sortResourceArray(resources).map((resourceType) => (
-      <Button
-        fullWidth
-        compact
-        color="cyan"
-        radius="md"
-        size="md"
-        variant="subtle"
-        styles={{
-          inner: {
-            paddingLeft: "15px",
-            justifyContent: "flex-start",
-          },
-        }}
-        rightIcon={<Badge color="cyan">{resources[resourceType]}</Badge>}
-        key={resourceType}
-      >
-        {resourceType}
-      </Button>
+      <Link href={`/${resourceType}`} key={resourceType} passHref>
+        <Button
+          fullWidth
+          compact
+          component="a"
+          color="cyan"
+          radius="md"
+          size="md"
+          variant="subtle"
+          styles={{
+            inner: {
+              paddingLeft: "15px",
+              justifyContent: "flex-start",
+            },
+          }}
+          rightIcon={<Badge color="cyan">{resources[resourceType]}</Badge>}
+          key={resourceType}
+        >
+          {resourceType}
+        </Button>
+      </Link>
     ));
   };
 
