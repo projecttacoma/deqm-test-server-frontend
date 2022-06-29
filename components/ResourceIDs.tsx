@@ -1,6 +1,6 @@
+import { fhirJson } from "@fhir-typescript/r4-core";
 import { Button } from "@mantine/core";
 import Link from "next/link";
-import { ResourceTypeResponse, EntryKeyObject } from "./../pages/[resourceType]";
 
 /**
  * Component for displaying resource IDs as Links
@@ -9,30 +9,30 @@ import { ResourceTypeResponse, EntryKeyObject } from "./../pages/[resourceType]"
  * @returns an array of Links of resource IDs, or if none exist, a "No resource found" message, or if an
  * invalid response body is passed through, an error message
  */
-function ResourceIDs(props: { jsonBody: ResourceTypeResponse }) {
+function ResourceIDs(props: { jsonBody: fhirJson.Bundle }) {
   const entryArray = props.jsonBody.entry;
 
   if (props.jsonBody.total === 0) {
     return <div>No resources found</div>;
-  } else if (props.jsonBody.total > 0) {
+  } else if (props.jsonBody.total && props.jsonBody.total > 0) {
     return (
       <div>
-        <h2>Resource IDs:</h2> {getAllIDs(entryArray)}
+        <h2>Resource IDs:</h2>{" "}
+        {entryArray != null ? getAllIDs(entryArray) : <div>No resources</div>}
       </div>
     );
   } else {
-    return <div>Error</div>;
+    return <div>Invalid JSON Body</div>;
   }
 }
-
 /**
  * Maps an array of resource bodies to an array of Link-wrapped-Buttons, where each Button represents a resource ID
  * @param entry which is the entry key from a resource bundle. It is an array where each index is a resource's body
  * @returns an array of Resource ID Link-wrapped-Buttons
  */
-const getAllIDs = (entry: EntryKeyObject[]) => {
+const getAllIDs = (entry: (fhirJson.BundleEntry | null)[]) => {
   return entry.map((el) => {
-    return (
+    return el?.resource ? (
       <Link href={`/`} key={el.resource.id} passHref>
         <div>
           <Button
@@ -44,11 +44,15 @@ const getAllIDs = (entry: EntryKeyObject[]) => {
               padding: "2px",
             }}
           >
-            <div> {el.resource.id} </div>
+            <div>
+              {" "}
+              {el.resource.resourceType}/{el.resource.id}{" "}
+            </div>
           </Button>
-          {"\n"}
         </div>
       </Link>
+    ) : (
+      <div>Something went wrong</div>
     );
   });
 };

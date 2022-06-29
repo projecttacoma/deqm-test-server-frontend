@@ -38,7 +38,7 @@ export default function App(props: AppProps) {
             }
             styles={(theme) => ({
               main: {
-                backgroundColor: theme.colors.cyan[0],
+                backgroundColor: theme.colors.gray[0],
               },
             })}
           >

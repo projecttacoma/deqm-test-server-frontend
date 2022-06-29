@@ -2,24 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import ResourceIDs from "../components/ResourceIDs";
 import { Center, Loader } from "@mantine/core";
-
-/**
- * interface for the response body of a request to a resourceType endpoint
- * Includes a key with a value that is an array of EntryKeyObjects
- */
-export interface ResourceTypeResponse {
-  [responseAttribute: string]: number | EntryKeyObject[];
-  total: number;
-  entry: EntryKeyObject[];
-}
-
-/**
- * interface for the contents of the "entry" key in a resourceType bundle JSON object.
- * Includes a resource key with a value that is the id of a resource
- */
-export interface EntryKeyObject {
-  [resource: string]: { id: string };
-}
+import { fhirJson } from "@fhir-typescript/r4-core";
 
 /**
  * Component page that renders Buttons for all IDs of a resourceType. A request is made to
@@ -34,15 +17,15 @@ function ResourceTypeIDs() {
   const router = useRouter();
   const { resourceType } = router.query;
 
-  const [pageBody, setPageBody] = useState<ResourceTypeResponse>();
+  const [pageBody, setPageBody] = useState<fhirJson.Bundle>();
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
   useEffect(() => {
     if (resourceType) {
+      setLoadingRequest(true);
       fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`)
         .then((data) => {
-          setLoadingRequest(true);
-          return data.json() as Promise<ResourceTypeResponse>;
+          return data.json() as Promise<fhirJson.Bundle>;
         })
         .then((resourcePageBody) => {
           setPageBody(resourcePageBody);

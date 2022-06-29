@@ -7,8 +7,9 @@ import {
 } from "../helpers/testHelpers";
 import ResourceTypeIDs from "../../pages/[resourceType]";
 import { RouterContext } from "next/dist/shared/lib/router-context";
+import { fhirJson } from "@fhir-typescript/r4-core";
 
-const RESOURCE_ID_BODY = {
+const RESOURCE_ID_BODY: fhirJson.Bundle = {
   resourceType: "Bundle",
   meta: {
     lastUpdated: "2022-06-23T19:52:58.721Z",
@@ -69,8 +70,12 @@ describe("resource ID button render", () => {
         </RouterContext.Provider>,
       );
     });
-    expect(await screen.findByRole("button", { name: "denom-EXM125-3" })).toBeInTheDocument();
-    expect(await screen.findByRole("button", { name: "numer-EXM125-3" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("button", { name: "DiagnosticReport/denom-EXM125-3" }),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole("button", { name: "DiagnosticReport/numer-EXM125-3" }),
+    ).toBeInTheDocument();
   });
 });
 
