@@ -14,6 +14,7 @@ const NewResource = () => {
     <div style={{ padding: "10px" }}>
       <h2 style={{ textAlign: "center", color: "#4a4f4f" }}> Create New Resource </h2>
       <CodeMirror
+        data-testID="codeBlock"
         value="console.log('hello world!');"
         height="500px"
         extensions={[javascript({ jsx: true })]}

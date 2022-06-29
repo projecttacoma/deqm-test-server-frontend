@@ -76,6 +76,7 @@ describe("resource ID button render", () => {
     expect(
       await screen.findByRole("button", { name: "DiagnosticReport/numer-EXM125-3" }),
     ).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "New Resource" })).toBeInTheDocument();
   });
 });
 
