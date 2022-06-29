@@ -1,6 +1,10 @@
 import { fhirJson } from "@fhir-typescript/r4-core";
 import { Button } from "@mantine/core";
 import Link from "next/link";
+<<<<<<< HEAD
+=======
+import { ResourceTypeResponse, EntryKeyObject } from "../pages/[resourceType]";
+>>>>>>> f0a53f8a (Restructure pages under [resourceType] directory)
 
 /**
  * Component for displaying resource IDs as Links

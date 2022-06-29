@@ -67,25 +67,26 @@ function ResourceTypeIDs() {
     </Center>
   ) : !fetchingError && pageBody ? ( //if http request was successful, ResourceID component is returned
     <div>
-      <div       
-      style={{
-        paddingRight: "20px",
-      }}>
-      <Link href={`/newResource`} key={"newResource"} passHref>
-        <Button
-          color="cyan"
-          radius="md"
-          size="md"
-          variant="filled"
-          style={{
-            float: "right",
-          }}
-        >
-          <div> New Resource </div>
-        </Button>
-    </Link>
-    </div>
-        <ResourceIDs jsonBody={pageBody}></ResourceIDs>
+      <div
+        style={{
+          paddingRight: "20px",
+        }}
+      >
+        <Link href={`${resourceType}/create`} key={"create" + resourceType} passHref>
+          <Button
+            color="cyan"
+            radius="md"
+            size="md"
+            variant="filled"
+            style={{
+              float: "right",
+            }}
+          >
+            <div> New Resource </div>
+          </Button>
+        </Link>
+      </div>
+      <ResourceIDs jsonBody={pageBody}></ResourceIDs>
     </div>
   ) : (
     //if error occurs in http request, error message is returned
