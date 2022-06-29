@@ -17,7 +17,7 @@ function ResourceIDs(props: { jsonBody: fhirJson.Bundle }) {
   } else if (props.jsonBody.total && props.jsonBody.total > 0) {
     return (
       <div>
-        <h2>Resource IDs:</h2>{" "}
+        <h2>Resource IDs:</h2>
         {entryArray != null ? getAllIDs(entryArray) : <div>No resources</div>}
       </div>
     );
@@ -45,8 +45,7 @@ const getAllIDs = (entry: (fhirJson.BundleEntry | null)[]) => {
             }}
           >
             <div>
-              {" "}
-              {el.resource.resourceType}/{el.resource.id}{" "}
+              {el.resource.resourceType}/{el.resource.id}
             </div>
           </Button>
         </div>
