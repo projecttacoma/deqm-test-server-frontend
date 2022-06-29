@@ -1,6 +1,4 @@
 import { TextInput, Button, Group, Box } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import Editor from "@monaco-editor/react";
 import React, { useRef } from "react";
 import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
