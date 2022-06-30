@@ -1,8 +1,11 @@
 import React from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { useState } from "react";
-import { json } from "@codemirror/lang-json";
+import { json, jsonParseLinter } from "@codemirror/lang-json";
+import { linter } from "@codemirror/lint";
 import { Button } from "@mantine/core";
+
+const jsonLinter = jsonParseLinter();
 
 /**
  * interface for the props that a ResourceCodeEditor component takes in.
@@ -12,6 +15,7 @@ import { Button } from "@mantine/core";
 export interface ResourceCodeEditorProps {
   initialValue: string;
   onClickFunction: (submittedVal: string) => void;
+  buttonName: string;
 }
 
 /**
@@ -22,26 +26,36 @@ export interface ResourceCodeEditorProps {
  */
 const ResourceCodeEditor = (props: ResourceCodeEditorProps) => {
   const [currentValue, setCurrentValue] = useState(props.initialValue);
+  const [hasLintError, setHasLinterError] = useState(true);
 
   return (
     <div>
       <CodeMirror
+        data-testid="resourceCodeEditor"
         value={currentValue}
         height="500px"
-        extensions={[json()]}
-        onChange={(v) => {
-          setCurrentValue(v);
+        extensions={[json(), linter(jsonLinter)]}
+        onUpdate={(v) => {
+          const diagnosticMessages = jsonLinter(v.view).map((d) => d.message);
+
+          if (diagnosticMessages.length === 0) {
+            setHasLinterError(false);
+          } else {
+            setHasLinterError(true);
+          }
+          setCurrentValue(v.state.toJSON().doc);
         }}
       />
       <br /> <br />
       <div style={{ textAlign: "center" }}>
         <Button
+          disabled={hasLintError}
           onClick={() => props.onClickFunction(currentValue)}
           color="cyan"
           variant="filled"
           size="lg"
         >
-          Submit Resource
+          {`${props.buttonName}`}
         </Button>
       </div>
     </div>

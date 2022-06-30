@@ -58,7 +58,7 @@ describe("resource ID button render", () => {
     global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
   });
 
-  it("should display both id's as buttons", async () => {
+  it("should display both id's as buttons and a create new resource button", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -76,7 +76,9 @@ describe("resource ID button render", () => {
     expect(
       await screen.findByRole("button", { name: "DiagnosticReport/numer-EXM125-3" }),
     ).toBeInTheDocument();
-    expect(await screen.findByRole("button", { name: "New Resource" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("button", { name: "Create New DiagnosticReport" }),
+    ).toBeInTheDocument();
   });
 });
 

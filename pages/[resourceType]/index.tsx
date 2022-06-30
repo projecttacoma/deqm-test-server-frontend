@@ -82,7 +82,7 @@ function ResourceTypeIDs() {
               float: "right",
             }}
           >
-            <div> New Resource </div>
+            <div> Create New {`${resourceType}`} </div>
           </Button>
         </Link>
       </div>
