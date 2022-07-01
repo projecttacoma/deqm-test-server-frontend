@@ -8,25 +8,28 @@ import { Prism } from "@mantine/prism";
  */
 function ResourceIDPage() {
   const router = useRouter();
-  const { resource, id } = router.query;
+  const { resourceType, id } = router.query;
 
   const [pageBody, setPageBody] = useState("");
   useEffect(() => {
-    if (resource && id) {
-      fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resource}/${id}`)
+    if (resourceType && id) {
+      //fetch the resource JSON content from the test server based on given resource and id
+      fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}/${id}`)
         .then((data) => {
           return data.json();
         })
         .then((resourcePageBody) => {
+          console.log(JSON.stringify(resourcePageBody, null, 2));
           setPageBody(JSON.stringify(resourcePageBody, null, 2));
         });
     }
-  }, [resource, id]);
+  }, [resourceType, id]);
 
   return (
-    <Prism language="tsx" data-testid="prism-page-content">
-      {pageBody}
-    </Prism>
+    //render the JSON content on the page
+      <Prism language="json"  data-testid="prism-page-content">
+        {pageBody}
+      </Prism>
   );
 }
 

@@ -5,7 +5,7 @@ import {
   createMockRouter,
   mockResizeObserver,
 } from "../../helpers/testHelpers";
-import ResourceIDPage from "../../../pages/resource/[resource]/[id]";
+import ResourceIDPage from "../../../pages/[resourceType]/[id]";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 const SINGLE_RESOURCE_BODY = {
   resourceType: "DiagnosticReport",
@@ -26,7 +26,7 @@ describe("resource ID render", () => {
       render(
         <RouterContext.Provider
           value={createMockRouter({
-            query: { resource: "DiagnosticReport", id: "denom-EXM125-3" },
+            query: { resourceType: "DiagnosticReport", id: "denom-EXM125-3" },
           })}
         >
           <ResourceIDPage/>

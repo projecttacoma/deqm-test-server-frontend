@@ -34,7 +34,7 @@ const getAllIDs = (entry: (fhirJson.BundleEntry | null)[]) => {
   return entry.map((el) => {
     return el?.resource ? (
       <Link
-        href={`/resource/${el.resource.resourceType}/${el.resource.id}`}
+        href={`/${el.resource.resourceType}/${el.resource.id}`}
         key={el.resource.id}
         passHref
       >
