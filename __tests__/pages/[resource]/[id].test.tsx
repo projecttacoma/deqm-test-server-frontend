@@ -29,7 +29,7 @@ describe("resource ID render", () => {
             query: { resourceType: "DiagnosticReport", id: "denom-EXM125-3" },
           })}
         >
-          <ResourceIDPage/>
+          <ResourceIDPage />
         </RouterContext.Provider>,
       );
     });

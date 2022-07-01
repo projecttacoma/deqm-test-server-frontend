@@ -33,11 +33,7 @@ function ResourceIDs(props: { jsonBody: fhirJson.Bundle }) {
 const getAllIDs = (entry: (fhirJson.BundleEntry | null)[]) => {
   return entry.map((el) => {
     return el?.resource ? (
-      <Link
-        href={`/${el.resource.resourceType}/${el.resource.id}`}
-        key={el.resource.id}
-        passHref
-      >
+      <Link href={`/${el.resource.resourceType}/${el.resource.id}`} key={el.resource.id} passHref>
         <div>
           <Button
             color="cyan"

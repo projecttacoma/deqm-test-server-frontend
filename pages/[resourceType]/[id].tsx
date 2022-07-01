@@ -27,9 +27,9 @@ function ResourceIDPage() {
 
   return (
     //render the JSON content on the page
-      <Prism language="json"  data-testid="prism-page-content">
-        {pageBody}
-      </Prism>
+    <Prism language="json" data-testid="prism-page-content">
+      {pageBody}
+    </Prism>
   );
 }
 
