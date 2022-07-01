@@ -68,9 +68,8 @@ export function getMockFetchImplementationError(errorMessage: string) {
   return jest.fn(() => Promise.reject(new Error(errorMessage)));
 }
 
-
 export const mockResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
-  disconnect: jest.fn()
+  disconnect: jest.fn(),
 }));
