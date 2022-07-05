@@ -7,24 +7,6 @@ import { Button } from "@mantine/core";
 import Link from "next/link";
 
 /**
- * interface for the response body of a request to a resourceType endpoint
- * Includes a key with a value that is an array of EntryKeyObjects
- */
-export interface ResourceTypeResponse {
-  [responseAttribute: string]: number | EntryKeyObject[];
-  total: number;
-  entry: EntryKeyObject[];
-}
-
-/**
- * interface for the contents of the "entry" key in a resourceType bundle JSON object.
- * Includes a resource key with a value that is the id of a resource
- */
-export interface EntryKeyObject {
-  [resource: string]: { id: string };
-}
-
-/**
  * Component page that renders Buttons for all IDs of a resourceType. A request is made to
  * the test server to retrieve all resources of a specified type. Then a ResourceID component is
  * returned with the Buttons for each resourceID or a "No resources found" message is displayed, or if
@@ -72,8 +54,9 @@ function ResourceTypeIDs() {
           paddingRight: "20px",
         }}
       >
-        <Link href={`${resourceType}/create`} key={"create" + resourceType} passHref>
+        <Link href={`${resourceType}/create`} key={`create-${resourceType}`} passHref>
           <Button
+            component="a"
             color="cyan"
             radius="md"
             size="md"

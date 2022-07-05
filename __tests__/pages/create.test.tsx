@@ -13,11 +13,11 @@ describe("create new resource page render", () => {
             query: { resourceType: "Patient" },
           })}
         >
-          <NewResource></NewResource>
+          <NewResource />
         </RouterContext.Provider>,
       );
     });
     expect(await screen.findByRole("button", { name: "Submit Resource" })).toBeInTheDocument();
-    expect(await screen.findByTestId("resourceCodeEditor")).toBeInTheDocument();
+    expect(await screen.findByTestId("resource-code-editor")).toBeInTheDocument();
   });
 });

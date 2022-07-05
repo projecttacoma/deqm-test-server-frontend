@@ -15,18 +15,20 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@fhir-typescript/r4-core": "0.0.12-beta.11",
     "@codemirror/lang-javascript": "^6.0.1",
     "@codemirror/lang-json": "^6.0.0",
+    "@fhir-typescript/r4-core": "0.0.12-beta.11",
     "@mantine/core": "^4.2.4",
-    "@mantine/form": "^4.2.11",
     "@mantine/hooks": "^4.2.4",
     "@mantine/next": "^4.2.4",
     "@mantine/notifications": "^4.2.10",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "@mantine/prism": "^4.2.11",
 =======
     "@monaco-editor/react": "^4.4.5",
+=======
+>>>>>>> 4ec4f621 (Initial PR review comments, NOT ready for another review)
     "@uiw/react-codemirror": "^4.9.4",
 >>>>>>> 817738e4 (added create new resource button and page)
     "next": "12.1.6",

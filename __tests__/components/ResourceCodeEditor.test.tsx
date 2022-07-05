@@ -8,14 +8,12 @@ describe("Test ResourceCodeEditor component render", () => {
       render(
         <ResourceCodeEditor
           initialValue=""
-          onClickFunction={() => {
-            console.log("");
-          }}
+          onClickFunction={jest.fn()}
           buttonName="Submit"
         ></ResourceCodeEditor>,
       );
     });
     expect(await screen.findByRole("button", { name: "Submit" })).toBeInTheDocument();
-    expect(await screen.findByTestId("resourceCodeEditor")).toBeInTheDocument();
+    expect(await screen.findByTestId("resource-code-editor")).toBeInTheDocument();
   });
 });

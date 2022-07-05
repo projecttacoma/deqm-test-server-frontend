@@ -9,9 +9,11 @@ import {
   Text,
   Box,
   Divider,
+  Center,
 } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import { ResourceCounts } from "../components/ResourceCounts";
+export const cyanMainShade = "#4a4f4f";
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -45,7 +47,7 @@ export default function App(props: AppProps) {
                       cursor: "pointer",
                     })}
                   >
-                    <Text size="xl" weight={700} color="#4a4f4f">
+                    <Text size="xl" weight={700} color={cyanMainShade}>
                       Resources
                     </Text>
                   </Box>
@@ -62,9 +64,11 @@ export default function App(props: AppProps) {
                 pt="xs"
                 pl="sm"
                 pb="xs"
-                style={{ backgroundColor: "#bdebf0", color: "#4a4f4f" }}
+                style={{ backgroundColor: "#bdebf0", color: cyanMainShade }}
               >
-                <h2 style={{ textAlign: "center" }}>DEQM Test Server Frontend</h2>
+                <Center>
+                  <h2>DEQM Test Server Frontend</h2>
+                </Center>
               </Header>
             }
             styles={(theme) => ({

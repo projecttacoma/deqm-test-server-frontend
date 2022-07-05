@@ -3,7 +3,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { useState } from "react";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { linter } from "@codemirror/lint";
-import { Button } from "@mantine/core";
+import { Button, Center } from "@mantine/core";
 
 const jsonLinter = jsonParseLinter();
 
@@ -26,12 +26,12 @@ export interface ResourceCodeEditorProps {
  */
 const ResourceCodeEditor = (props: ResourceCodeEditorProps) => {
   const [currentValue, setCurrentValue] = useState(props.initialValue);
-  const [hasLintError, setHasLinterError] = useState(true);
+  const [hasLintError, setHasLintError] = useState(true);
 
   return (
     <div>
       <CodeMirror
-        data-testid="resourceCodeEditor"
+        data-testid="resource-code-editor"
         value={currentValue}
         height="500px"
         extensions={[json(), linter(jsonLinter)]}
@@ -39,25 +39,26 @@ const ResourceCodeEditor = (props: ResourceCodeEditorProps) => {
           const diagnosticMessages = jsonLinter(v.view).map((d) => d.message);
 
           if (diagnosticMessages.length === 0) {
-            setHasLinterError(false);
+            setHasLintError(false);
           } else {
-            setHasLinterError(true);
+            setHasLintError(true);
           }
           setCurrentValue(v.state.toJSON().doc);
         }}
       />
-      <br /> <br />
-      <div style={{ textAlign: "center" }}>
-        <Button
-          disabled={hasLintError}
-          onClick={() => props.onClickFunction(currentValue)}
-          color="cyan"
-          variant="filled"
-          size="lg"
-        >
-          {`${props.buttonName}`}
-        </Button>
-      </div>
+      <Center>
+        <div style={{ paddingTop: "24px" }}>
+          <Button
+            disabled={hasLintError}
+            onClick={() => props.onClickFunction(currentValue)}
+            color="cyan"
+            variant="filled"
+            size="lg"
+          >
+            {props.buttonName}
+          </Button>
+        </div>
+      </Center>
     </div>
   );
 };

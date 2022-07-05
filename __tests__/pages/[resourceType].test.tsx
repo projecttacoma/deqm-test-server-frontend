@@ -77,7 +77,7 @@ describe("resource ID button render", () => {
       await screen.findByRole("button", { name: "DiagnosticReport/numer-EXM125-3" }),
     ).toBeInTheDocument();
     expect(
-      await screen.findByRole("button", { name: "Create New DiagnosticReport" }),
+      await screen.findByRole("link", { name: "Create New DiagnosticReport" }),
     ).toBeInTheDocument();
   });
 });
