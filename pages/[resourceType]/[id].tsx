@@ -20,7 +20,6 @@ function ResourceIDPage() {
           return data.json();
         })
         .then((resourcePageBody) => {
-          console.log(JSON.stringify(resourcePageBody, null, 2));
           setPageBody(JSON.stringify(resourcePageBody, null, 2));
         });
     }
