@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Prism } from "@mantine/prism";
+import { ScrollArea } from "@mantine/core";
 
 /**
  * Component which displays the JSON body of an individual resource
@@ -27,9 +28,11 @@ function ResourceIDPage() {
 
   return (
     //render the JSON content on the page
-    <Prism language="json" data-testid="prism-page-content">
-      {pageBody}
-    </Prism>
+    <ScrollArea>
+      <Prism language="json" data-testid="prism-page-content" style={{ maxHeight: "100vh" }}>
+        {pageBody}
+      </Prism>
+    </ScrollArea>
   );
 }
 

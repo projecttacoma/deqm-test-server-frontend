@@ -25,7 +25,7 @@ export default function App(props: AppProps) {
           <AppShell
             padding="md"
             navbar={
-              <Navbar width={{ base: 280 }} p="xs">
+              <Navbar width={{ base: 280 }} height="100vh" p="xs">
                 <Navbar.Section grow component={ScrollArea} mt="-xs" mb="-xs" ml="-xl" mr="-xs">
                   <ResourceCounts />
                 </Navbar.Section>
