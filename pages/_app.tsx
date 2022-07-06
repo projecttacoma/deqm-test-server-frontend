@@ -36,7 +36,7 @@ export default function App(props: AppProps) {
           <AppShell
             padding="md"
             navbar={
-              <Navbar width={{ base: 320 }}  height="100vh" p="xs">
+              <Navbar width={{ base: 320 }} height="100vh" p="xs">
                 <Navbar.Section>
                   <Box
                     sx={(theme) => ({
