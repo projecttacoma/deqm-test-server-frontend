@@ -1,65 +1,49 @@
 import React from "react";
 import CodeMirror from "@uiw/react-codemirror";
-import { useState } from "react";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { linter } from "@codemirror/lint";
-import { Button, Center } from "@mantine/core";
 
 const jsonLinter = jsonParseLinter();
 
 /**
  * interface for the props that a ResourceCodeEditor component takes in.
- * initialValue is what the code editor will contain initially
- * onClickFunction is the function that should be executed when the ResourceCodeEditor's submit button is clicked.
+ * @initialValue is what the code editor will contain initially
+ * @onUpdate is a state variable function that is used to pass the code editor's current contents to a parent component
+ * @onValidate is a state variable function that is used to pass the lint error status of the code editor to a parent component
  */
 export interface ResourceCodeEditorProps {
   initialValue: string;
-  onClickFunction: (submittedVal: string) => void;
-  buttonName: string;
+  onUpdate?: (submittedVal: string) => void;
+  onValidate?: (hasLintError: boolean, diagnosticMessages: string[]) => void;
 }
 
 /**
- * ResourceCodeEditor is a component for rendering a Code Editor with a submit Button component that executes the function specified in the props.
- * The function called when the submit button is clicked is passed the Code Editor's current contents
+ * ResourceCodeEditor is a component for rendering a JSON Code Editor with lint error diagnostics.
  * @param props see interface ResourceCodeEditorProps
- * @returns React node composed of a CodeMirror component and a submit button that executes the function passed via props
+ * @returns React node composed of a CodeMirror component
  */
 const ResourceCodeEditor = (props: ResourceCodeEditorProps) => {
-  const [currentValue, setCurrentValue] = useState(props.initialValue);
-  const [hasLintError, setHasLintError] = useState(true);
-
   return (
-    <div>
-      <CodeMirror
-        data-testid="resource-code-editor"
-        value={currentValue}
-        height="500px"
-        extensions={[json(), linter(jsonLinter)]}
-        onUpdate={(v) => {
+    <CodeMirror
+      data-testid="resource-code-editor"
+      value={props.initialValue}
+      height="500px"
+      extensions={[json(), linter(jsonLinter)]}
+      onUpdate={(v) => {
+        if (props.onValidate) {
           const diagnosticMessages = jsonLinter(v.view).map((d) => d.message);
 
           if (diagnosticMessages.length === 0) {
-            setHasLintError(false);
+            props.onValidate(false, diagnosticMessages);
           } else {
-            setHasLintError(true);
+            props.onValidate(true, diagnosticMessages);
           }
-          setCurrentValue(v.state.toJSON().doc);
-        }}
-      />
-      <Center>
-        <div style={{ paddingTop: "24px" }}>
-          <Button
-            disabled={hasLintError}
-            onClick={() => props.onClickFunction(currentValue)}
-            color="cyan"
-            variant="filled"
-            size="lg"
-          >
-            {props.buttonName}
-          </Button>
-        </div>
-      </Center>
-    </div>
+        }
+        if (props.onUpdate) {
+          props.onUpdate(v.state.toJSON().doc);
+        }
+      }}
+    />
   );
 };
 export default ResourceCodeEditor;

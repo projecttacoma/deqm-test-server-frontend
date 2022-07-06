@@ -3,17 +3,10 @@ import "@testing-library/jest-dom";
 import ResourceCodeEditor from "../../components/ResourceCodeEditor";
 
 describe("Test ResourceCodeEditor component render", () => {
-  it("should display a CodeMirror component and Submit button", async () => {
+  it("should display a CodeMirror component", async () => {
     await act(async () => {
-      render(
-        <ResourceCodeEditor
-          initialValue=""
-          onClickFunction={jest.fn()}
-          buttonName="Submit"
-        ></ResourceCodeEditor>,
-      );
+      render(<ResourceCodeEditor initialValue=""></ResourceCodeEditor>);
     });
-    expect(await screen.findByRole("button", { name: "Submit" })).toBeInTheDocument();
     expect(await screen.findByTestId("resource-code-editor")).toBeInTheDocument();
   });
 });
