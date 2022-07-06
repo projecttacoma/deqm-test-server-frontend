@@ -1,8 +1,19 @@
 import { AppProps } from "next/app";
 import Head from "next/head";
-import { AppShell, Header, MantineProvider, Navbar, ScrollArea } from "@mantine/core";
+import {
+  AppShell,
+  Header,
+  MantineProvider,
+  Navbar,
+  ScrollArea,
+  Text,
+  Box,
+  Divider,
+  Center,
+} from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import { ResourceCounts } from "../components/ResourceCounts";
+export const cyanMainShade = "#4a4f4f";
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -25,15 +36,39 @@ export default function App(props: AppProps) {
           <AppShell
             padding="md"
             navbar={
-              <Navbar width={{ base: 280 }} height="100vh" p="xs">
+              <Navbar width={{ base: 320 }} height="100vh" p="xs">
+                <Navbar.Section>
+                  <Box
+                    sx={(theme) => ({
+                      backgroundColor: "white",
+                      textAlign: "center",
+                      padding: theme.spacing.md,
+                      borderRadius: theme.radius.xs,
+                      cursor: "pointer",
+                    })}
+                  >
+                    <Text size="xl" weight={700} color={cyanMainShade}>
+                      Resources
+                    </Text>
+                  </Box>
+                </Navbar.Section>
+                <Divider my="sm" style={{ paddingBottom: "15px" }} />
                 <Navbar.Section grow component={ScrollArea} mt="-xs" mb="-xs" ml="-xl" mr="-xs">
                   <ResourceCounts />
                 </Navbar.Section>
               </Navbar>
             }
             header={
-              <Header height={80} pt="xs" pl="sm" pb="xs">
-                <h2>DEQM Test Server Frontend</h2>
+              <Header
+                height={80}
+                pt="xs"
+                pl="sm"
+                pb="xs"
+                style={{ backgroundColor: "#bdebf0", color: cyanMainShade }}
+              >
+                <Center>
+                  <h2>DEQM Test Server Frontend</h2>
+                </Center>
               </Header>
             }
             styles={(theme) => ({

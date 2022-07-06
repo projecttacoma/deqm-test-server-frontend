@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import ResourceIDs from "../../components/ResourceIDs";
 import { Center, Loader } from "@mantine/core";
 import { fhirJson } from "@fhir-typescript/r4-core";
+import { Button } from "@mantine/core";
+import Link from "next/link";
 
 /**
  * Component page that renders Buttons for all IDs of a resourceType. A request is made to
@@ -46,7 +48,29 @@ function ResourceTypeIDs() {
       <Loader color="cyan"></Loader>
     </Center>
   ) : !fetchingError && pageBody ? ( //if http request was successful, ResourceID component is returned
-    <ResourceIDs jsonBody={pageBody}></ResourceIDs>
+    <div>
+      <div
+        style={{
+          paddingRight: "20px",
+        }}
+      >
+        <Link href={`${resourceType}/create`} key={`create-${resourceType}`} passHref>
+          <Button
+            component="a"
+            color="cyan"
+            radius="md"
+            size="md"
+            variant="filled"
+            style={{
+              float: "right",
+            }}
+          >
+            <div> Create New {`${resourceType}`} </div>
+          </Button>
+        </Link>
+      </div>
+      <ResourceIDs jsonBody={pageBody}></ResourceIDs>
+    </div>
   ) : (
     //if error occurs in http request, error message is returned
     <div>Problem connecting to server</div>

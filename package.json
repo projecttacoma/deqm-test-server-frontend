@@ -15,12 +15,15 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@codemirror/lang-javascript": "^6.0.1",
+    "@codemirror/lang-json": "^6.0.0",
     "@fhir-typescript/r4-core": "0.0.12-beta.11",
     "@mantine/core": "^4.2.4",
     "@mantine/hooks": "^4.2.4",
     "@mantine/next": "^4.2.4",
     "@mantine/notifications": "^4.2.10",
     "@mantine/prism": "^4.2.11",
+    "@uiw/react-codemirror": "^4.9.4",
     "next": "12.1.6",
     "react": "18.1.0",
     "react-dom": "18.1.0",
