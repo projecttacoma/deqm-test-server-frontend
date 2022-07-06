@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import ResourceIDs from "../components/ResourceIDs";
+import ResourceIDs from "../../components/ResourceIDs";
 import { Center, Loader } from "@mantine/core";
 import { fhirJson } from "@fhir-typescript/r4-core";
 
