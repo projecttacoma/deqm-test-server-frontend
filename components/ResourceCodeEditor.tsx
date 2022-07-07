@@ -30,6 +30,7 @@ const ResourceCodeEditor = (props: ResourceCodeEditorProps) => {
       height="500px"
       extensions={[json(), linter(jsonLinter)]}
       onUpdate={(v) => {
+        console.log("Editor updating", v.state.toJSON().doc);
         if (props.onValidate) {
           const diagnosticMessages = jsonLinter(v.view).map((d) => d.message);
 

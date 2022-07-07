@@ -18,6 +18,7 @@ function ResourceTypeIDs() {
   //get resourceType from the current url with useRouter
   const router = useRouter();
   const { resourceType } = router.query;
+  const newID = router.query.newResourceID;
 
   const [pageBody, setPageBody] = useState<fhirJson.Bundle>();
   const [fetchingError, setFetchingError] = useState(false);
@@ -41,6 +42,29 @@ function ResourceTypeIDs() {
         });
     }
   }, [resourceType]);
+
+  //if the router.query contains a newly created resource ID, the new ID will be rendered separately from the other resourceIDs
+  const createdNewResource = newID ? (
+    <div>
+      New Resource ID:
+      <Link href={`/${resourceType}/${newID}`} key={`${resourceType}/${newID}`} passHref>
+        <Button
+          component="a"
+          color="cyan"
+          radius="md"
+          size="md"
+          variant="subtle"
+          style={{
+            padding: "10px",
+          }}
+        >
+          {resourceType}/{newID}
+        </Button>
+      </Link>
+    </div>
+  ) : (
+    <div></div>
+  );
 
   return loadingRequest ? ( //if loading, Loader object is returned
     <Center>
@@ -69,6 +93,7 @@ function ResourceTypeIDs() {
           </Button>
         </Link>
       </div>
+      {createdNewResource}
       <ResourceIDs jsonBody={pageBody}></ResourceIDs>
     </div>
   ) : (

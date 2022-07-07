@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import ResourceCodeEditor from "../../components/ResourceCodeEditor";
 import { Button, Center, Text } from "@mantine/core";
 import { cyanMainShade } from "../_app";
+import { cleanNotifications, showNotification } from "@mantine/notifications";
+import Link from "next/link";
+import { Check, X } from "tabler-icons-react";
 /**
  * CreateResourcePage is a page that renders a code editor and submit button for creating resources.
  * @returns React node with a ResourceCodeEditor component and a submit Button
@@ -12,12 +15,6 @@ const CreateResourcePage = () => {
   const { resourceType } = router.query;
   const [codeEditorContents, setCodeEditorContents] = useState("");
   const [hasLintError, setHasLintError] = useState(true);
-
-  //handles what will happen once the submit button is clicked.
-  //For now, it console.logs the contents of the ResourceCodeEditor
-  function editorSubmitHandler() {
-    console.log(codeEditorContents);
-  }
 
   return (
     <div>
@@ -49,6 +46,55 @@ const CreateResourcePage = () => {
       </Center>
     </div>
   );
+
+  //handles what will happen once the submit button is clicked.
+  //For now, it console.logs the contents of the ResourceCodeEditor
+  function editorSubmitHandler() {
+    console.log(`createNew${resourceType} function called`);
+    console.log("submittedVal", codeEditorContents);
+    fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`, {
+      method: "POST",
+      body: codeEditorContents,
+      headers: {
+        "Content-Type": "application/json+fhir",
+      },
+    })
+      .then((response) => {
+        let notifProps;
+        console.log(response.headers.get("Location"));
+        if (response.status === 201 || response.status === 200) {
+          const newID = resourceType
+            ? response.headers.get("Location")?.substring(7 + resourceType.length)
+            : "";
+
+          notifProps = {
+            message: response.status + ": New resource successfully created.",
+            color: "green",
+            icon: <Check size={18} />,
+          };
+
+          router.push({ pathname: `/${resourceType}`, query: { newResourceID: newID } });
+        } else {
+        }
+        cleanNotifications();
+        showNotification({
+          message: response.status + ": " + response.statusText,
+          color: "red",
+          autoClose: false,
+          ...notifProps,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        cleanNotifications();
+        showNotification({
+          message: "Problem connecting to server",
+          icon: <X size={18} />,
+          color: "red",
+          autoClose: false,
+        });
+      });
+  }
 };
 
 export default CreateResourcePage;
