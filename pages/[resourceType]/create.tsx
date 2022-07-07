@@ -8,6 +8,8 @@ import Link from "next/link";
 import { Check, X } from "tabler-icons-react";
 /**
  * CreateResourcePage is a page that renders a code editor and submit button for creating resources.
+ * When the submit button is clicked, a POST request is sent to the test server. If the request is
+ * successful, a success notification with the new ID as a Link appears. Otherwise, an error notification appears.
  * @returns React node with a ResourceCodeEditor component and a submit Button
  */
 const CreateResourcePage = () => {
@@ -47,11 +49,15 @@ const CreateResourcePage = () => {
     </div>
   );
 
-  //handles what will happen once the submit button is clicked.
-  //For now, it console.logs the contents of the ResourceCodeEditor
+  //handles what will happen when the submit button is clicked.
   function editorSubmitHandler() {
-    console.log(`createNew${resourceType} function called`);
-    console.log("submittedVal", codeEditorContents);
+    let notifProps = {
+      message: <div>Problem connecting to server</div>,
+      color: "red",
+      icon: <X size={18} />,
+      autoClose: false,
+    };
+
     fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`, {
       method: "POST",
       body: codeEditorContents,
@@ -60,38 +66,51 @@ const CreateResourcePage = () => {
       },
     })
       .then((response) => {
-        let notifProps;
-        console.log(response.headers.get("Location"));
+        let newID;
+
         if (response.status === 201 || response.status === 200) {
-          const newID = resourceType
+          newID = resourceType
             ? response.headers.get("Location")?.substring(7 + resourceType.length)
             : "";
 
           notifProps = {
-            message: response.status + ": New resource successfully created.",
+            ...notifProps,
+            //new ID rendered as a Link that navigates to page displaying the resource's body
+            message: (
+              <>
+                <Text>Resource successfully created:&nbsp;</Text>
+                <Link href={`/${resourceType}/${newID}`} key={`${resourceType}/${newID}`} passHref>
+                  <Text component="a" color="cyan">
+                    {resourceType}/{newID}
+                  </Text>
+                </Link>
+              </>
+            ),
             color: "green",
             icon: <Check size={18} />,
           };
-
-          router.push({ pathname: `/${resourceType}`, query: { newResourceID: newID } });
+          //redirects user to the resourceType home page
+          router.push({ pathname: `/${resourceType}` });
         } else {
+          notifProps = {
+            ...notifProps,
+            message: <>{`${response.status}: ${response.statusText}`}</>,
+          };
         }
         cleanNotifications();
-        showNotification({
-          message: response.status + ": " + response.statusText,
-          color: "red",
-          autoClose: false,
-          ...notifProps,
-        });
+        showNotification(notifProps);
       })
       .catch((error) => {
         console.log(error);
         cleanNotifications();
         showNotification({
-          message: "Problem connecting to server",
-          icon: <X size={18} />,
-          color: "red",
-          autoClose: false,
+          ...notifProps,
+          message: (
+            <>
+              <Text weight={500}>Problem connecting to server:&nbsp;</Text>
+              <Text color="red">{error.message}</Text>
+            </>
+          ),
         });
       });
   }
