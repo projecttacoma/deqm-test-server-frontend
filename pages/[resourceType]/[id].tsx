@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Prism } from "@mantine/prism";
 import { Button, Divider, ScrollArea, Stack } from "@mantine/core";
+import BackButton from "../../components/BackButton";
 
 /**
  * Component which displays the JSON body of an individual resource and a back button
@@ -33,9 +34,7 @@ function ResourceIDPage() {
             float: "left",
           }}
         >
-          <Button onClick={() => router.back()} color="cyan" radius="md" size="sm" variant="filled">
-            Back
-          </Button>
+          <BackButton />
         </div>
         <Divider my="sm" />
         <ScrollArea>

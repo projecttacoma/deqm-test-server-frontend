@@ -6,6 +6,7 @@ import { cleanNotifications, showNotification, NotificationProps } from "@mantin
 import Link from "next/link";
 import { Check, X } from "tabler-icons-react";
 import { textGray } from "../_app";
+import BackButton from "../../components/BackButton";
 /**
  * CreateResourcePage is a page that renders a code editor, a submit button for creating resources, and a back button.
  * When the submit button is clicked, a POST request is sent to the test server. If the request is
@@ -21,18 +22,7 @@ const CreateResourcePage = () => {
 
   return (
     <div style={{ paddingLeft: "15px", paddingRight: "15px" }}>
-      <Button
-        onClick={() => router.back()}
-        color="cyan"
-        radius="md"
-        size="md"
-        variant="filled"
-        style={{
-          float: "left",
-        }}
-      >
-        Back
-      </Button>
+      <BackButton />
       <Stack spacing="xs">
         <Center>
           <h2 style={{ color: textGray, marginTop: "2px" }}> Create New Resource</h2>
@@ -152,14 +142,3 @@ const CreateResourcePage = () => {
 };
 
 export default CreateResourcePage;
-
-/*
-<Center>
-        <h2 style={{ color: cyanMainShade }}> Create New Resource</h2>
-      </Center>
-      <Center>
-        <Text size="md" color={cyanMainShade}>
-          Enter valid FHIR resource body for a new {resourceType} resource
-        </Text>
-      </Center>
-*/
