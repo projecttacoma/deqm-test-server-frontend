@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import ResourceCodeEditor from "../../components/ResourceCodeEditor";
 import { Button, Center, Text } from "@mantine/core";
 import { cyanMainShade } from "../_app";
-import { cleanNotifications, showNotification } from "@mantine/notifications";
+import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import Link from "next/link";
 import { Check, X } from "tabler-icons-react";
 /**
@@ -17,6 +17,7 @@ const CreateResourcePage = () => {
   const { resourceType } = router.query;
   const [codeEditorContents, setCodeEditorContents] = useState("");
   const [hasLintError, setHasLintError] = useState(true);
+  const NEW_ID_IN_HEADER_REGEX = new RegExp(`${resourceType}/.{1,50}`);
 
   return (
     <div>
@@ -50,15 +51,16 @@ const CreateResourcePage = () => {
   );
 
   //handles what will happen when the submit button is clicked.
-  function editorSubmitHandler() {
-    let notifProps = {
-      message: <div>Problem connecting to server</div>,
+  async function editorSubmitHandler() {
+    let customMessage: NotificationProps["message"] = <div>Problem connecting to server</div>;
+    let notifProps: NotificationProps = {
+      message: customMessage,
       color: "red",
       icon: <X size={18} />,
       autoClose: false,
     };
 
-    fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`, {
       method: "POST",
       body: codeEditorContents,
       headers: {
@@ -69,50 +71,54 @@ const CreateResourcePage = () => {
         let newID;
 
         if (response.status === 201 || response.status === 200) {
-          newID = resourceType
-            ? response.headers.get("Location")?.substring(7 + resourceType.length)
-            : "";
+          const regexResponse = NEW_ID_IN_HEADER_REGEX.exec(
+            response.headers.get("Location") as string,
+          ) as RegExpExecArray;
 
+          newID = regexResponse[0];
+          customMessage = (
+            <>
+              <Text>Resource successfully created:&nbsp;</Text>
+              <Link href={`/${newID}`} key={`${newID}`} passHref>
+                <Text component="a" color="cyan">
+                  {newID}
+                </Text>
+              </Link>
+            </>
+          );
           notifProps = {
             ...notifProps,
-            //new ID rendered as a Link that navigates to page displaying the resource's body
-            message: (
-              <>
-                <Text>Resource successfully created:&nbsp;</Text>
-                <Link href={`/${resourceType}/${newID}`} key={`${resourceType}/${newID}`} passHref>
-                  <Text component="a" color="cyan">
-                    {resourceType}/{newID}
-                  </Text>
-                </Link>
-              </>
-            ),
             color: "green",
             icon: <Check size={18} />,
           };
+
           //redirects user to the resourceType home page
           router.push({ pathname: `/${resourceType}` });
         } else {
-          notifProps = {
-            ...notifProps,
-            message: <>{`${response.status}: ${response.statusText}`}</>,
-          };
+          customMessage = `${response.status} ${response.statusText}`;
+          return response.json();
         }
-        cleanNotifications();
-        showNotification(notifProps);
+      })
+      .then((responseBody) => {
+        if (responseBody) {
+          customMessage = (
+            <>
+              <Text weight={500}>{customMessage}&nbsp;</Text>
+              <Text color="red">{responseBody.issue[0].details.text}</Text>
+            </>
+          );
+        }
       })
       .catch((error) => {
-        console.log(error);
-        cleanNotifications();
-        showNotification({
-          ...notifProps,
-          message: (
-            <>
-              <Text weight={500}>Problem connecting to server:&nbsp;</Text>
-              <Text color="red">{error.message}</Text>
-            </>
-          ),
-        });
+        customMessage = (
+          <>
+            <Text weight={500}>Problem connecting to server:&nbsp;</Text>
+            <Text color="red">{error.message}</Text>
+          </>
+        );
       });
+    cleanNotifications();
+    showNotification({ ...notifProps, message: customMessage });
   }
 };
 

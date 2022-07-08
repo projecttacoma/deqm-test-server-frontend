@@ -29,7 +29,7 @@ describe("create new resource page render", () => {
 
 /*
   An issue arose when trying to mock user input of valid JSON into the code editor in order to enable the
-  submit button for unit testing. So,testing of the create resource fetch implementation needs further investigatio because 
+  submit button for unit testing. So, testing of the create resource fetch implementation needs further investigation because 
   the behavior of the ResourceCodeEditor and submit button in a unit test diverges from that of the app in a browser.
 */
 describe.skip("error response test", () => {
