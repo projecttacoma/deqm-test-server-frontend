@@ -13,7 +13,8 @@ import {
 } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import { ResourceCounts } from "../components/ResourceCounts";
-export const cyanMainShade = "#4a4f4f";
+import Link from "next/link";
+export const textGray = "#4a4f4f";
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -42,12 +43,13 @@ export default function App(props: AppProps) {
                     sx={(theme) => ({
                       backgroundColor: "white",
                       textAlign: "center",
-                      padding: theme.spacing.md,
+                      paddingTop: "8px",
+                      paddingBottom: "12px",
                       borderRadius: theme.radius.xs,
                       cursor: "pointer",
                     })}
                   >
-                    <Text size="xl" weight={700} color={cyanMainShade}>
+                    <Text size="xl" weight={700} color={textGray}>
                       Resources
                     </Text>
                   </Box>
@@ -59,15 +61,11 @@ export default function App(props: AppProps) {
               </Navbar>
             }
             header={
-              <Header
-                height={80}
-                pt="xs"
-                pl="sm"
-                pb="xs"
-                style={{ backgroundColor: "#bdebf0", color: cyanMainShade }}
-              >
+              <Header height={80} style={{ backgroundColor: "#bdebf0", color: textGray }}>
                 <Center>
-                  <h2>DEQM Test Server Frontend</h2>
+                  <Link href={"/"}>
+                    <h1 style={{ marginTop: "12px" }}>DEQM Test Server Frontend</h1>
+                  </Link>
                 </Center>
               </Header>
             }

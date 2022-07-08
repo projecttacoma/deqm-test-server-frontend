@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Prism } from "@mantine/prism";
-import { ScrollArea } from "@mantine/core";
+import { Button, Divider, ScrollArea, Stack } from "@mantine/core";
 
 /**
- * Component which displays the JSON body of an individual resource
- * @returns JSON content of the individual resource
+ * Component which displays the JSON body of an individual resource and a back button
+ * @returns JSON content of the individual resource in a Prism component, and a back button
  */
 function ResourceIDPage() {
   const router = useRouter();
@@ -26,12 +26,29 @@ function ResourceIDPage() {
   }, [resourceType, id]);
 
   return (
-    //render the JSON content on the page
-    <ScrollArea>
-      <Prism language="json" data-testid="prism-page-content" style={{ maxHeight: "100vh" }}>
-        {pageBody}
-      </Prism>
-    </ScrollArea>
+    <div>
+      <Stack spacing="xs">
+        <div
+          style={{
+            float: "left",
+          }}
+        >
+          <Button onClick={() => router.back()} color="cyan" radius="md" size="sm" variant="filled">
+            Back
+          </Button>
+        </div>
+        <Divider my="sm" />
+        <ScrollArea>
+          <Prism
+            language="json"
+            data-testid="prism-page-content"
+            style={{ maxHeight: "100vh", backgroundColor: "#FFFFFF" }}
+          >
+            {pageBody}
+          </Prism>
+        </ScrollArea>
+      </Stack>
+    </div>
   );
 }
 
