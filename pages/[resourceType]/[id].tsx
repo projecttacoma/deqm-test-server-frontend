@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Prism } from "@mantine/prism";
-import { Button, Divider, ScrollArea, Stack } from "@mantine/core";
+import { Divider, ScrollArea, Stack } from "@mantine/core";
 import BackButton from "../../components/BackButton";
 
 /**
