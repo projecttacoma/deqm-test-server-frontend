@@ -14,7 +14,7 @@ import {
 import { NotificationsProvider } from "@mantine/notifications";
 import { ResourceCounts } from "../components/ResourceCounts";
 import Link from "next/link";
-export const textGray = "#4a4f4f";
+import { textGray } from "../styles/appColors";
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -64,7 +64,9 @@ export default function App(props: AppProps) {
               <Header height={80} style={{ backgroundColor: "#bdebf0", color: textGray }}>
                 <Center>
                   <Link href={"/"}>
-                    <h1 style={{ marginTop: "12px" }}>DEQM Test Server Frontend</h1>
+                    <h1 style={{ marginTop: "12px", cursor: "pointer" }}>
+                      DEQM Test Server Frontend
+                    </h1>
                   </Link>
                 </Center>
               </Header>

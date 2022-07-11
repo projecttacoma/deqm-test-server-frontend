@@ -5,7 +5,7 @@ import { Button, Center, Stack, Text } from "@mantine/core";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import Link from "next/link";
 import { Check, X } from "tabler-icons-react";
-import { textGray } from "../_app";
+import { textGray } from "../../styles/appColors";
 import BackButton from "../../components/BackButton";
 /**
  * CreateResourcePage is a page that renders a code editor, a submit button for creating resources, and a back button.

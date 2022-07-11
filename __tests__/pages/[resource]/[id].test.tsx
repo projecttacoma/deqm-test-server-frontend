@@ -34,7 +34,7 @@ describe("resource ID render", () => {
       );
     });
 
-    expect(screen.getByRole("button", { name: "Back" })).toBeInTheDocument();
+    expect(await screen.findByTestId("back-button")).toBeInTheDocument();
 
     //parses out relevant information from the Prism HTML block and stores it in an array
     const spanText = [""];

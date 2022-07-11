@@ -22,7 +22,7 @@ describe("create new resource page render", () => {
         </RouterContext.Provider>,
       );
     });
-    expect(screen.getByRole("button", { name: "Back" })).toBeInTheDocument();
+    expect(await screen.findByTestId("back-button")).toBeInTheDocument();
     expect(await screen.findByRole("button", { name: "Submit Resource" })).toBeInTheDocument();
     expect(await screen.findByTestId("resource-code-editor")).toBeInTheDocument();
   });

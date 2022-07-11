@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { Button } from "@mantine/core";
+import { ArrowNarrowLeft } from "tabler-icons-react";
 
 /**
  * BackButton is a component for rendering a back button
@@ -9,6 +10,7 @@ const BackButton = () => {
   const router = useRouter();
   return (
     <Button
+      data-testid="back-button"
       onClick={() => router.back()}
       color="cyan"
       radius="md"
@@ -18,7 +20,7 @@ const BackButton = () => {
         float: "left",
       }}
     >
-      Back
+      <ArrowNarrowLeft size="sm" />
     </Button>
   );
 };

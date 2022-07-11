@@ -1,7 +1,7 @@
 import { fhirJson } from "@fhir-typescript/r4-core";
 import { Button } from "@mantine/core";
 import Link from "next/link";
-export const textGray = "#4a4f4f";
+import { textGray } from "../styles/appColors";
 
 /**
  * Component for displaying resource IDs as Links
