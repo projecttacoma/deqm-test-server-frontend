@@ -17,7 +17,7 @@ const CreateResourcePage = () => {
   const { resourceType } = router.query;
   const [codeEditorContents, setCodeEditorContents] = useState("");
   const [hasLintError, setHasLintError] = useState(true);
-  const NEW_ID_IN_HEADER_REGEX = new RegExp(`${resourceType}/.{1,50}`);
+  const NEW_ID_IN_HEADER_REGEX = new RegExp(`${resourceType}/[A-Za-z0-9\-\.]{1,64}`);
 
   return (
     <div>
@@ -50,7 +50,7 @@ const CreateResourcePage = () => {
     </div>
   );
 
-  //handles what will happen when the submit button is clicked.
+  //called when the submit button is clicked. Handles POST request and response
   async function editorSubmitHandler() {
     let customMessage: NotificationProps["message"] = <div>Problem connecting to server</div>;
     let notifProps: NotificationProps = {
@@ -60,7 +60,7 @@ const CreateResourcePage = () => {
       autoClose: false,
     };
 
-    await fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`, {
+    fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`, {
       method: "POST",
       body: codeEditorContents,
       headers: {
@@ -73,7 +73,16 @@ const CreateResourcePage = () => {
         if (response.status === 201 || response.status === 200) {
           const regexResponse = NEW_ID_IN_HEADER_REGEX.exec(
             response.headers.get("Location") as string,
-          ) as RegExpExecArray;
+          );
+
+          if (regexResponse == null) {
+            throw {
+              name: "RegexError",
+              message:
+                "Invalid regexResponse: couldn't find resource ID in response header.\nLocation Header: " +
+                response.headers.get("Location"),
+            };
+          }
 
           newID = regexResponse[0];
           customMessage = (
@@ -110,15 +119,21 @@ const CreateResourcePage = () => {
         }
       })
       .catch((error) => {
-        customMessage = (
-          <>
-            <Text weight={500}>Problem connecting to server:&nbsp;</Text>
-            <Text color="red">{error.message}</Text>
-          </>
-        );
+        if (error.name === "RegexError") {
+          customMessage = <Text color="red">{error.message}</Text>;
+        } else {
+          customMessage = (
+            <>
+              <Text weight={500}>Problem connecting to server:&nbsp;</Text>
+              <Text color="red">{error.message}</Text>
+            </>
+          );
+        }
+      })
+      .finally(() => {
+        cleanNotifications();
+        showNotification({ ...notifProps, message: customMessage });
       });
-    cleanNotifications();
-    showNotification({ ...notifProps, message: customMessage });
   }
 };
 
