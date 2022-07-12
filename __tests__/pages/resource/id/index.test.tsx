@@ -22,7 +22,7 @@ describe("resource ID render", () => {
     global.fetch = getMockFetchImplementation(SINGLE_RESOURCE_BODY);
   });
 
-  it("should display the JSON content of a single resource and a back button", async () => {
+  it("should display the JSON content of a single resource, a back button, and an update button", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -35,7 +35,9 @@ describe("resource ID render", () => {
       );
     });
 
+    //check for the expected buttons on the page
     expect(await screen.findByTestId("back-button")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Update" })).toBeInTheDocument();
 
     //parses out relevant information from the Prism HTML block and stores it in an array
     const spanText = [""];

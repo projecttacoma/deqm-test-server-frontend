@@ -48,15 +48,17 @@ export function mantineRecoilWrap(children: JSX.Element) {
   );
 }
 
-/*
- * Generate a mock implementation for `fetch` with any desired 200 OK response
+/**
+ * Generate a mock implementation for `fetch` with any desired response of a Promise that resolves.
  * Use any type to avoid writing out every property of `fetch` responses
+ * @param desiredResponse is the response that the returned Promise is resolved to
+ * @param desiredStatus optional, for specifying the status code. Default is 200
  */
-export function getMockFetchImplementation(desiredResponse: any) {
+export function getMockFetchImplementation(desiredResponse: any, desiredStatus?: number) {
   return jest.fn(() => {
-    console.log(desiredResponse);
     return Promise.resolve({
       json: jest.fn().mockResolvedValue(desiredResponse),
+      status: desiredStatus,
     }) as any;
   });
 }

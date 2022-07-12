@@ -6,7 +6,6 @@ import {
   mantineRecoilWrap,
   createMockRouter,
   getMockFetchImplementation,
-  getMockFetchImplementationError,
   createRectRange,
 } from "../../../helpers/testHelpers";
 import { RouterContext } from "next/dist/shared/lib/router-context";
@@ -22,12 +21,14 @@ const SINGLE_RESOURCE_BODY = {
   status: 200,
 };
 
-describe.skip("update resource page render", () => {
+const ERROR_400_RESPONSE_BODY = { issue: [{ details: { text: "Invalid resource body" } }] };
+
+describe("update resource page render", () => {
   beforeEach(() => {
     global.fetch = getMockFetchImplementation(SINGLE_RESOURCE_BODY);
     document.createRange = createRectRange;
   });
-  it("should display a code editor component, update resource button, and a back button", async () => {
+  it("test for display of ResourceCode Editor component, update resource button, and back button", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -47,26 +48,11 @@ describe.skip("update resource page render", () => {
 
 describe("successful update test", () => {
   beforeEach(() => {
-    const init = { status: 200, statusText: "SuperSmashingGreat!" };
-    //const myResponse = new Response(null, init);
-    //console.log("response obj: ", new Response(null, init));
-    global.fetch = getMockFetchImplementation(SINGLE_RESOURCE_BODY);
-
+    global.fetch = getMockFetchImplementation(SINGLE_RESOURCE_BODY, 200);
     document.createRange = createRectRange;
   });
 
-  /*
-  {
-      type: "cors",
-      url: "http://localhost:3000/4_0_1/Patient/numer-EXM104",
-      redirected: false,
-      status: 200,
-      ok: true,
-    }
-  */
-
   it("test for success notification", async () => {
-    //const user = userEvent.setup();
     document.createRange = createRectRange;
 
     await act(async () => {
@@ -87,17 +73,95 @@ describe("successful update test", () => {
       name: "Update Resource",
     }) as HTMLButtonElement;
 
-    //const codeEditor = screen.getByRole("textbox");
-
     await act(async () => {
-      //user.type(codeEditor, "{}");
       fireEvent.click(updateButton);
     });
 
     const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
     expect(errorNotif).toBeInTheDocument();
 
-    const errorMessage = within(errorNotif).getByText(/Resource successfully updated! /);
+    const errorMessage = within(errorNotif).getByText(/Resource successfully updated!/);
+    expect(errorMessage).toBeInTheDocument();
+  });
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
+});
+
+describe("invalid update test", () => {
+  beforeEach(() => {
+    global.fetch = getMockFetchImplementation(ERROR_400_RESPONSE_BODY, 400);
+    document.createRange = createRectRange;
+  });
+
+  it("test for error notification for 400 response", async () => {
+    document.createRange = createRectRange;
+
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: { resourceType: "DiagnosticReport", id: "denom-EXM125-3" },
+            })}
+          >
+            <UpdateResourcePage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const updateButton = screen.getByRole("button", {
+      name: "Update Resource",
+    }) as HTMLButtonElement;
+
+    await act(async () => {
+      fireEvent.click(updateButton);
+    });
+
+    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
+    expect(errorNotif).toBeInTheDocument();
+
+    const errorMessage = within(errorNotif).getByText(/Invalid resource body/);
+    expect(errorMessage).toBeInTheDocument();
+  });
+});
+
+describe("error thrown during update test", () => {
+  beforeEach(() => {
+    global.fetch = getMockFetchImplementation(SINGLE_RESOURCE_BODY);
+    document.createRange = createRectRange;
+  });
+
+  it("test for error notification when error is thrown", async () => {
+    document.createRange = createRectRange;
+
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: { resourceType: "DiagnosticReport", id: "denom-EXM125-3" },
+            })}
+          >
+            <UpdateResourcePage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const updateButton = screen.getByRole("button", {
+      name: "Update Resource",
+    }) as HTMLButtonElement;
+
+    await act(async () => {
+      fireEvent.click(updateButton);
+    });
+
+    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
+    expect(errorNotif).toBeInTheDocument();
+
+    const errorMessage = within(errorNotif).getByText(/Problem connecting to server:/);
     expect(errorMessage).toBeInTheDocument();
   });
 });

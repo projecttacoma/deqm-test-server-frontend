@@ -7,6 +7,13 @@ import BackButton from "../../../components/BackButton";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import { Check, X } from "tabler-icons-react";
 
+/**
+ * UpdateResourcePage is a page that renders a code editor pre-filled with the resource's body,
+ * a "submit" button for updating resources, and a back button. When the "submit" button is clicked,
+ * a PUT request is sent to the test server. If the request is successful, a success notification
+ * appears and the user is redirected to the resource's home. Otherwise, an error notification appears.
+ * @returns React node with a ResourceCodeEditor component, a "submit" Button, and a back button
+ */
 const UpdateResourcePage = () => {
   const router = useRouter();
   const { resourceType, id } = router.query;
@@ -22,7 +29,6 @@ const UpdateResourcePage = () => {
           return data.json();
         })
         .then((resourcePageBody) => {
-          console.log("resourcePageBody: ", resourcePageBody);
           setPageBody(JSON.stringify(resourcePageBody, null, 2));
         });
     }
@@ -72,8 +78,6 @@ const UpdateResourcePage = () => {
       autoClose: false,
     };
 
-    console.log("codeEditorContents: ", codeEditorContents);
-
     fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}/${id}`, {
       method: "PUT",
       body: codeEditorContents,
@@ -82,9 +86,7 @@ const UpdateResourcePage = () => {
       },
     })
       .then((response) => {
-        console.log("response: ", response.status, response);
         if (response.status === 201 || response.status === 200) {
-          console.log("201");
           customMessage = (
             <>
               <Text>Resource successfully updated!&nbsp;</Text>
@@ -99,16 +101,11 @@ const UpdateResourcePage = () => {
           //redirects user to page with the resource's body
           router.push({ pathname: `/${resourceType}/${id}` });
         } else {
-          console.log("non 201: ", response);
           customMessage = `${response.status} ${response.statusText}`;
           return response.json();
         }
       })
       .then((responseBody) => {
-        console.log("non 201 CONT: ", responseBody);
-        const init = { status: 200, statusText: "SuperSmashingGreat!" };
-        //const myResponse = new Response(null, init);
-        //console.log("response obj: ", new Response(null, init));
         if (responseBody) {
           customMessage = (
             <>
@@ -119,7 +116,6 @@ const UpdateResourcePage = () => {
         }
       })
       .catch((error) => {
-        console.log("catch block");
         customMessage = (
           <>
             <Text weight={500}>Problem connecting to server:&nbsp;</Text>
