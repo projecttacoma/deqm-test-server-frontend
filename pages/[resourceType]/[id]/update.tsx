@@ -106,6 +106,9 @@ const UpdateResourcePage = () => {
       })
       .then((responseBody) => {
         console.log("non 201 CONT: ", responseBody);
+        const init = { status: 200, statusText: "SuperSmashingGreat!" };
+        //const myResponse = new Response(null, init);
+        //console.log("response obj: ", new Response(null, init));
         if (responseBody) {
           customMessage = (
             <>

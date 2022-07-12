@@ -80,6 +80,9 @@ describe("resource ID button render", () => {
       await screen.findByRole("link", { name: "Create New DiagnosticReport" }),
     ).toBeInTheDocument();
   });
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
 });
 
 describe("Tests for when the 'No resource found message' should display", () => {
@@ -100,6 +103,9 @@ describe("Tests for when the 'No resource found message' should display", () => 
       );
     });
     expect(await screen.findByText("No resources found")).toBeInTheDocument();
+  });
+  afterAll(() => {
+    jest.clearAllMocks();
   });
 });
 
@@ -122,5 +128,8 @@ describe("error response test", () => {
     });
 
     expect(await screen.findByText("Problem connecting to server")).toBeInTheDocument();
+  });
+  afterAll(() => {
+    jest.clearAllMocks();
   });
 });

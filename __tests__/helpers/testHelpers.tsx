@@ -53,12 +53,12 @@ export function mantineRecoilWrap(children: JSX.Element) {
  * Use any type to avoid writing out every property of `fetch` responses
  */
 export function getMockFetchImplementation(desiredResponse: any) {
-  return jest.fn(
-    () =>
-      Promise.resolve({
-        json: jest.fn().mockResolvedValue(desiredResponse),
-      }) as any,
-  );
+  return jest.fn(() => {
+    console.log(desiredResponse);
+    return Promise.resolve({
+      json: jest.fn().mockResolvedValue(desiredResponse),
+    }) as any;
+  });
 }
 
 /*
