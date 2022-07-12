@@ -20,7 +20,7 @@ const BackButton = () => {
         float: "left",
       }}
     >
-      <ArrowNarrowLeft size="sm" />
+      <ArrowNarrowLeft size="36" />
     </Button>
   );
 };
