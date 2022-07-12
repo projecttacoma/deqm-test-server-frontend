@@ -4,9 +4,10 @@ import {
   getMockFetchImplementation,
   createMockRouter,
   mockResizeObserver,
-} from "../../helpers/testHelpers";
-import ResourceIDPage from "../../../pages/[resourceType]/[id]";
+} from "../../../helpers/testHelpers";
+import ResourceIDPage from "../../../../pages/[resourceType]/[id]";
 import { RouterContext } from "next/dist/shared/lib/router-context";
+
 const SINGLE_RESOURCE_BODY = {
   resourceType: "DiagnosticReport",
   id: "denom-EXM125-3",

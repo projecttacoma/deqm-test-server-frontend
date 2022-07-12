@@ -73,3 +73,23 @@ export const mockResizeObserver = jest.fn().mockImplementation(() => ({
   unobserve: jest.fn(),
   disconnect: jest.fn(),
 }));
+
+/**
+ * Returns a Range object set up for a document that contains a CodeMirror component.
+ * Necessary when unit testing with CodeMirror component.
+ */
+export const createRectRange = () => {
+  const range = new Range();
+
+  range.getBoundingClientRect = jest.fn();
+
+  range.getClientRects = () => {
+    return {
+      item: () => null,
+      length: 0,
+      [Symbol.iterator]: jest.fn(),
+    };
+  };
+
+  return range;
+};

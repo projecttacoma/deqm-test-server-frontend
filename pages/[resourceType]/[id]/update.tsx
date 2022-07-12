@@ -6,7 +6,6 @@ import { textGray } from "../../_app";
 import BackButton from "../../../components/BackButton";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import { Check, X } from "tabler-icons-react";
-//import Link from "next/link";
 
 const UpdateResourcePage = () => {
   const router = useRouter();
@@ -17,12 +16,13 @@ const UpdateResourcePage = () => {
   const [pageBody, setPageBody] = useState("");
   useEffect(() => {
     if (resourceType && id) {
-      //fetch the resource JSON content from the test server based on given resource and id
+      //fetch the resource JSON content from the test server based on resource and id from url
       fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}/${id}`)
         .then((data) => {
           return data.json();
         })
         .then((resourcePageBody) => {
+          console.log("resourcePageBody: ", resourcePageBody);
           setPageBody(JSON.stringify(resourcePageBody, null, 2));
         });
     }
@@ -62,8 +62,8 @@ const UpdateResourcePage = () => {
     </div>
   );
 
-  //handles what will happen when the submit button is clicked.
-  async function editorSubmitHandler() {
+  //called when submit button is clicked. Handles PUT request and response
+  function editorSubmitHandler() {
     let customMessage: NotificationProps["message"] = <div>Problem connecting to server</div>;
     let notifProps: NotificationProps = {
       message: customMessage,
@@ -72,7 +72,9 @@ const UpdateResourcePage = () => {
       autoClose: false,
     };
 
-    await fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}/${id}`, {
+    console.log("codeEditorContents: ", codeEditorContents);
+
+    fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}/${id}`, {
       method: "PUT",
       body: codeEditorContents,
       headers: {
@@ -80,12 +82,9 @@ const UpdateResourcePage = () => {
       },
     })
       .then((response) => {
+        console.log("response: ", response.status, response);
         if (response.status === 201 || response.status === 200) {
-          /*const regexResponse = NEW_ID_IN_HEADER_REGEX.exec(
-            response.headers.get("Location") as string,
-          ) as RegExpExecArray;
-
-          newID = regexResponse[0];*/
+          console.log("201");
           customMessage = (
             <>
               <Text>Resource successfully updated!&nbsp;</Text>
@@ -97,14 +96,16 @@ const UpdateResourcePage = () => {
             icon: <Check size={18} />,
           };
 
-          //redirects user to the resourceType home page
+          //redirects user to page with the resource's body
           router.push({ pathname: `/${resourceType}/${id}` });
         } else {
+          console.log("non 201: ", response);
           customMessage = `${response.status} ${response.statusText}`;
           return response.json();
         }
       })
       .then((responseBody) => {
+        console.log("non 201 CONT: ", responseBody);
         if (responseBody) {
           customMessage = (
             <>
@@ -115,15 +116,18 @@ const UpdateResourcePage = () => {
         }
       })
       .catch((error) => {
+        console.log("catch block");
         customMessage = (
           <>
             <Text weight={500}>Problem connecting to server:&nbsp;</Text>
             <Text color="red">{error.message}</Text>
           </>
         );
+      })
+      .finally(() => {
+        cleanNotifications();
+        showNotification({ ...notifProps, message: customMessage });
       });
-    cleanNotifications();
-    showNotification({ ...notifProps, message: customMessage });
   }
 };
 

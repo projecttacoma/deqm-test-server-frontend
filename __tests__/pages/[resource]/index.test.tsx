@@ -4,8 +4,8 @@ import {
   getMockFetchImplementation,
   createMockRouter,
   getMockFetchImplementationError,
-} from "../helpers/testHelpers";
-import ResourceTypeIDs from "../../pages/[resourceType]";
+} from "../../helpers/testHelpers";
+import ResourceTypeIDs from "../../../pages/[resourceType]";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import { fhirJson } from "@fhir-typescript/r4-core";
 

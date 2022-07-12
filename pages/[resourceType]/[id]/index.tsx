@@ -36,7 +36,6 @@ function ResourceIDPage() {
           query: { resourceType: resourceType, id: id },
         }}
         key={`update-${id}`}
-        prefetch={true}
         passHref
       >
         <Button
