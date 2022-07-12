@@ -1,6 +1,7 @@
 import { fhirJson } from "@fhir-typescript/r4-core";
 import { Button } from "@mantine/core";
 import Link from "next/link";
+import { textGray } from "../styles/appColors";
 
 /**
  * Component for displaying resource IDs as Links
@@ -17,7 +18,7 @@ function ResourceIDs(props: { jsonBody: fhirJson.Bundle }) {
   } else if (props.jsonBody.total && props.jsonBody.total > 0) {
     return (
       <div>
-        <h2>Resource IDs:</h2>
+        <h2 style={{ color: textGray, marginTop: "2px" }}>Resource IDs:</h2>
         {entryArray != null ? getAllIDs(entryArray) : <div>No resources</div>}
       </div>
     );

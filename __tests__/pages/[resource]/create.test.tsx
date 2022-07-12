@@ -1,16 +1,16 @@
 import { render, screen, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import CreateResourcePage from "../../pages/[resourceType]/create";
+import CreateResourcePage from "../../../pages/[resourceType]/create";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import {
   mantineRecoilWrap,
   createMockRouter,
   getMockFetchImplementationError,
-} from "../helpers/testHelpers";
+} from "../../helpers/testHelpers";
 import userEvent from "@testing-library/user-event";
 
 describe("create new resource page render", () => {
-  it("should display a code editor component and a submit resource button", async () => {
+  it("should display a code editor component, submit resource button, and a back button", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -22,6 +22,7 @@ describe("create new resource page render", () => {
         </RouterContext.Provider>,
       );
     });
+    expect(await screen.findByTestId("back-button")).toBeInTheDocument();
     expect(await screen.findByRole("button", { name: "Submit Resource" })).toBeInTheDocument();
     expect(await screen.findByTestId("resource-code-editor")).toBeInTheDocument();
   });

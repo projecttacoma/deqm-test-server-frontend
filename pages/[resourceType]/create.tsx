@@ -1,16 +1,17 @@
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import ResourceCodeEditor from "../../components/ResourceCodeEditor";
-import { Button, Center, Text } from "@mantine/core";
-import { cyanMainShade } from "../_app";
+import { Button, Center, Stack, Text } from "@mantine/core";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import Link from "next/link";
 import { Check, X } from "tabler-icons-react";
+import { textGray } from "../../styles/appColors";
+import BackButton from "../../components/BackButton";
 /**
- * CreateResourcePage is a page that renders a code editor and submit button for creating resources.
+ * CreateResourcePage is a page that renders a code editor, a submit button for creating resources, and a back button.
  * When the submit button is clicked, a POST request is sent to the test server. If the request is
  * successful, a success notification with the new ID as a Link appears. Otherwise, an error notification appears.
- * @returns React node with a ResourceCodeEditor component and a submit Button
+ * @returns React node with a ResourceCodeEditor component, a submit Button, and a back button
  */
 const CreateResourcePage = () => {
   const router = useRouter();
@@ -20,16 +21,19 @@ const CreateResourcePage = () => {
   const NEW_ID_IN_HEADER_REGEX = new RegExp(`${resourceType}/[A-Za-z0-9\-\.]{1,64}`);
 
   return (
-    <div>
-      <Center>
-        <h2 style={{ color: cyanMainShade }}> Create New Resource</h2>
-      </Center>
-      <Center>
-        <Text size="md" color={cyanMainShade}>
-          Enter valid FHIR resource body for a new {resourceType} resource
-        </Text>
-      </Center>
-      <div style={{ padding: "20px" }}>
+    <div style={{ paddingLeft: "15px", paddingRight: "15px" }}>
+      <BackButton />
+      <Stack spacing="xs">
+        <Center>
+          <h2 style={{ color: textGray, marginTop: "2px" }}> Create New Resource</h2>
+        </Center>
+        <Center>
+          <Text size="md" color={textGray}>
+            Enter valid FHIR resource body for a new {resourceType} resource
+          </Text>
+        </Center>
+      </Stack>
+      <div style={{ paddingTop: "20px", paddingBottom: "20px" }}>
         <ResourceCodeEditor
           initialValue=""
           onUpdate={(submittedVal) => setCodeEditorContents(submittedVal)}

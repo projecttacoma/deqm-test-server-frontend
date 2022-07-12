@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import ResourceIDs from "../../components/ResourceIDs";
-import { Center, Loader } from "@mantine/core";
+import { Center, Loader, Stack } from "@mantine/core";
 import { fhirJson } from "@fhir-typescript/r4-core";
 import { Button } from "@mantine/core";
 import Link from "next/link";
@@ -54,20 +54,26 @@ function ResourceTypeIDs() {
           paddingRight: "20px",
         }}
       >
-        <Link href={`${resourceType}/create`} key={`create-${resourceType}`} passHref>
-          <Button
-            component="a"
-            color="cyan"
-            radius="md"
-            size="md"
-            variant="filled"
-            style={{
-              float: "right",
-            }}
-          >
-            <div> Create New {`${resourceType}`} </div>
-          </Button>
-        </Link>
+        <Stack
+          style={{
+            float: "right",
+          }}
+        >
+          <Link href={`${resourceType}/create`} key={`create-${resourceType}`} passHref>
+            <Button
+              component="a"
+              color="cyan"
+              radius="md"
+              size="md"
+              variant="filled"
+              style={{
+                float: "right",
+              }}
+            >
+              <div> Create New {`${resourceType}`} </div>
+            </Button>
+          </Link>
+        </Stack>
       </div>
       <ResourceIDs jsonBody={pageBody}></ResourceIDs>
     </div>
