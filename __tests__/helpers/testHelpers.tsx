@@ -53,12 +53,18 @@ export function mantineRecoilWrap(children: JSX.Element) {
  * Use any type to avoid writing out every property of `fetch` responses
  * @param desiredResponse is the response that the returned Promise is resolved to
  * @param desiredStatus optional, for specifying the status code. Default is 200
+ * @param desiredStatusText optional, for specifying the status text
  */
-export function getMockFetchImplementation(desiredResponse: any, desiredStatus?: number) {
+export function getMockFetchImplementation(
+  desiredResponse: any,
+  desiredStatus?: number,
+  desiredStatusText?: string,
+) {
   return jest.fn(() => {
     return Promise.resolve({
       json: jest.fn().mockResolvedValue(desiredResponse),
-      status: desiredStatus,
+      status: desiredStatus ? desiredStatus : 200,
+      statusText: desiredStatusText,
     }) as any;
   });
 }

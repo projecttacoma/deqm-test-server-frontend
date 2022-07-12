@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import ResourceCodeEditor from "../../../components/ResourceCodeEditor";
 import { Button, Center, Stack, Text } from "@mantine/core";
-import { textGray } from "../../_app";
+import { textGray } from "../../../styles/appColors";
 import BackButton from "../../../components/BackButton";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import { Check, X } from "tabler-icons-react";

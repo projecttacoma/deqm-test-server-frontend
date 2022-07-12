@@ -40,7 +40,7 @@ describe("update resource page render", () => {
         </RouterContext.Provider>,
       );
     });
-    expect(screen.getByRole("button", { name: "Back" })).toBeInTheDocument();
+    expect(await screen.findByTestId("back-button")).toBeInTheDocument();
     expect(await screen.findByRole("button", { name: "Update Resource" })).toBeInTheDocument();
     expect(await screen.findByTestId("resource-code-editor")).toBeInTheDocument();
   });
@@ -80,8 +80,7 @@ describe("successful update test", () => {
     const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
     expect(errorNotif).toBeInTheDocument();
 
-    const errorMessage = within(errorNotif).getByText(/Resource successfully updated!/);
-    expect(errorMessage).toBeInTheDocument();
+    expect(within(errorNotif).getByText(/Resource successfully updated!/)).toBeInTheDocument();
   });
   afterAll(() => {
     jest.clearAllMocks();
@@ -90,7 +89,7 @@ describe("successful update test", () => {
 
 describe("invalid update test", () => {
   beforeEach(() => {
-    global.fetch = getMockFetchImplementation(ERROR_400_RESPONSE_BODY, 400);
+    global.fetch = getMockFetchImplementation(ERROR_400_RESPONSE_BODY, 400, "Bad Request");
     document.createRange = createRectRange;
   });
 
@@ -122,14 +121,14 @@ describe("invalid update test", () => {
     const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
     expect(errorNotif).toBeInTheDocument();
 
-    const errorMessage = within(errorNotif).getByText(/Invalid resource body/);
-    expect(errorMessage).toBeInTheDocument();
+    expect(within(errorNotif).getByText(/400 Bad Request/)).toBeInTheDocument();
+    expect(within(errorNotif).getByText(/Invalid resource body/)).toBeInTheDocument();
   });
 });
 
 describe("error thrown during update test", () => {
   beforeEach(() => {
-    global.fetch = getMockFetchImplementation(SINGLE_RESOURCE_BODY);
+    global.fetch = getMockFetchImplementation(SINGLE_RESOURCE_BODY, 500);
     document.createRange = createRectRange;
   });
 
@@ -161,7 +160,6 @@ describe("error thrown during update test", () => {
     const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
     expect(errorNotif).toBeInTheDocument();
 
-    const errorMessage = within(errorNotif).getByText(/Problem connecting to server:/);
-    expect(errorMessage).toBeInTheDocument();
+    expect(within(errorNotif).getByText(/Problem connecting to server:/)).toBeInTheDocument();
   });
 });
