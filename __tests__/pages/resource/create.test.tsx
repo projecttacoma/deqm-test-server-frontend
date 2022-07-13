@@ -1,4 +1,4 @@
-import { render, screen, act } from "@testing-library/react";
+import { render, screen, act, within } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import CreateResourcePage from "../../../pages/[resourceType]/create";
 import { RouterContext } from "next/dist/shared/lib/router-context";
@@ -6,10 +6,11 @@ import {
   mantineRecoilWrap,
   createMockRouter,
   getMockFetchImplementationError,
+  createRectRange,
 } from "../../helpers/testHelpers";
 import userEvent from "@testing-library/user-event";
 
-describe("create new resource page render", () => {
+describe.skip("create new resource page render", () => {
   it("should display a code editor component, submit resource button, and a back button", async () => {
     await act(async () => {
       render(
@@ -28,14 +29,10 @@ describe("create new resource page render", () => {
   });
 });
 
-/*
-  An issue arose when trying to mock user input of valid JSON into the code editor in order to enable the
-  submit button for unit testing. So, testing of the create resource fetch implementation needs further investigation because 
-  the behavior of the ResourceCodeEditor and submit button in a unit test diverges from that of the app in a browser.
-*/
-describe.skip("error response test", () => {
+describe("error response test", () => {
   beforeAll(() => {
-    global.fetch = getMockFetchImplementationError("Problem connecting to server");
+    global.fetch = getMockFetchImplementationError("400 Bad Request");
+    document.createRange = createRectRange;
   });
 
   it("should show error notification when not connected to server", async () => {
@@ -61,10 +58,21 @@ describe.skip("error response test", () => {
     const codeEditor = screen.getByRole("textbox");
 
     await act(async () => {
-      user.type(codeEditor, "{}");
+      user.type(codeEditor, "{{");
+    });
+
+    const doneTyping = new Promise((resolve, reject) => {
+      setTimeout(() => resolve("value"), 500);
+    });
+    doneTyping.finally(() => {
+      console.log("clicking button");
       user.click(submitButton);
     });
 
-    expect((await screen.findByRole("alert")) as HTMLDivElement).toBeInTheDocument();
+    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
+    expect(errorNotif).toBeInTheDocument();
+
+    expect(within(errorNotif).getByText(/Problem connecting to server:/)).toBeInTheDocument();
+    expect(within(errorNotif).getByText(/400 Bad Request/)).toBeInTheDocument();
   });
 });
