@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import ResourceCodeEditor from "../../components/ResourceCodeEditor";
 import { Button, Center, Stack, Text } from "@mantine/core";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Check, X } from "tabler-icons-react";
 import { textGray } from "../../styles/appColors";
 import BackButton from "../../components/BackButton";
+import { CountContext } from "../../components/CountContext";
 /**
  * CreateResourcePage is a page that renders a code editor, a submit button for creating resources, and a back button.
  * When the submit button is clicked, a POST request is sent to the test server. If the request is
@@ -19,6 +20,7 @@ const CreateResourcePage = () => {
   const [codeEditorContents, setCodeEditorContents] = useState("");
   const [hasLintError, setHasLintError] = useState(true);
   const NEW_ID_IN_HEADER_REGEX = new RegExp(`${resourceType}/[A-Za-z0-9\-\.]{1,64}`);
+  const context = useContext(CountContext);
 
   return (
     <div style={{ paddingLeft: "15px", paddingRight: "15px" }}>
@@ -104,6 +106,9 @@ const CreateResourcePage = () => {
             color: "green",
             icon: <Check size={18} />,
           };
+
+          //updates state to reflect that a resource count has been changed
+          context.setCountChange(!context.countChange);
 
           //redirects user to the resourceType home page
           router.push({ pathname: `/${resourceType}` });

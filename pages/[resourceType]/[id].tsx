@@ -1,8 +1,15 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Prism } from "@mantine/prism";
-import { Divider, ScrollArea, Stack } from "@mantine/core";
+import { Divider, MantineProvider, ScrollArea, Stack } from "@mantine/core";
 import BackButton from "../../components/BackButton";
+import {
+  replaceDark,
+  replaceGray,
+  replaceTeal,
+  replaceRed,
+  replaceBlue,
+} from "../../styles/codeColorScheme";
 
 /**
  * Component which displays the JSON body of an individual resource and a back button
@@ -38,13 +45,27 @@ function ResourceIDPage() {
         </div>
         <Divider my="sm" />
         <ScrollArea>
-          <Prism
-            language="json"
-            data-testid="prism-page-content"
-            style={{ maxHeight: "100vh", backgroundColor: "#FFFFFF" }}
+          <MantineProvider
+            //changes hex values associated with each Mantine color name to improve UI
+            theme={{
+              colors: {
+                gray: replaceGray,
+                dark: replaceDark,
+                teal: replaceTeal,
+                red: replaceRed,
+                blue: replaceBlue,
+              },
+            }}
           >
-            {pageBody}
-          </Prism>
+            <Prism
+              language="json"
+              data-testid="prism-page-content"
+              colorScheme="dark"
+              style={{ maxHeight: "80vh", backgroundColor: "#FFFFFF" }}
+            >
+              {pageBody}
+            </Prism>
+          </MantineProvider>
         </ScrollArea>
       </Stack>
     </div>
