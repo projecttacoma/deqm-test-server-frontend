@@ -1,3 +1,9 @@
+DEQM Test Server Frontend is a frontend for the DEQM Test Server. 
+Functionality includes:
+- View resources
+- Create new resources
+- Update existing resources
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Local Installation
@@ -14,9 +20,9 @@ Install dependencies:
 npm install
 ```
 
-Create a .env.local file and add the following to it:
-`NEXT_PUBLIC_DEQM_SERVER=https://abacus-dev.mitre.org/4_0_1`
-However, to run a local version of the test server, change this `NEXT_PUBLIC_DEQM_SERVER` to the desired port (this project runs on the default 3000).
+To run the server on localhost, make sure you've pulled the latest version of the [DEQM Test Server](https://github.com/projecttacoma/deqm-test-server), then create a .env.local file and add the following: 
+`NEXT_PUBLIC_DEQM_SERVER=http://localhost:3000/4_0_1`
+
 
 ## Getting Started
 
@@ -43,4 +49,4 @@ npm run build
 npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3001](http://localhost:3001) with your browser to see the result.
