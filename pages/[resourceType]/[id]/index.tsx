@@ -1,9 +1,10 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Prism } from "@mantine/prism";
-import { Button, Divider, ScrollArea, Stack } from "@mantine/core";
+import { Button, Divider, ScrollArea, Stack, Center, Loader } from "@mantine/core";
 import BackButton from "../../../components/BackButton";
 import Link from "next/link";
+import { cleanNotifications, showNotification } from "@mantine/notifications";
 
 /**
  * Component which displays the JSON body of an individual resource and a back button
@@ -12,10 +13,13 @@ import Link from "next/link";
 function ResourceIDPage() {
   const router = useRouter();
   const { resourceType, id } = router.query;
-
+  const [fetchingError, setFetchingError] = useState(false);
+  const [loadingRequest, setLoadingRequest] = useState(false);
   const [pageBody, setPageBody] = useState("");
+
   useEffect(() => {
     if (resourceType && id) {
+      setLoadingRequest(true);
       //fetch the resource JSON content from the test server based on given resource and id
       fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}/${id}`)
         .then((data) => {
@@ -23,6 +27,19 @@ function ResourceIDPage() {
         })
         .then((resourcePageBody) => {
           setPageBody(JSON.stringify(resourcePageBody, null, 2));
+          setFetchingError(false);
+          setLoadingRequest(false);
+        })
+        .catch((error) => {
+          console.log(error.message, "...start the server");
+          setFetchingError(true);
+          setLoadingRequest(false);
+          cleanNotifications();
+          showNotification({
+            message: "Not connected to server!",
+            color: "red",
+            autoClose: false,
+          });
         });
     }
   }, [resourceType, id]);
@@ -54,7 +71,12 @@ function ResourceIDPage() {
     </div>
   );
 
-  return (
+  return loadingRequest ? ( //if loading, Loader object is returned
+    <Center>
+      <div>Loading content...</div>
+      <Loader color="cyan"></Loader>
+    </Center>
+  ) : !fetchingError && pageBody ? ( //if http get request was successful, a full ResourceIDPage is returned
     <div>
       <Stack spacing="xs">
         <div
@@ -66,16 +88,15 @@ function ResourceIDPage() {
         </div>
         <Divider my="sm" />
         <ScrollArea>
-          <Prism
-            language="json"
-            data-testid="prism-page-content"
-            style={{ maxHeight: "100vh", backgroundColor: "#FFFFFF" }}
-          >
+          <Prism language="json" data-testid="prism-page-content" style={{ height: "80vh" }}>
             {pageBody}
           </Prism>
         </ScrollArea>
       </Stack>
     </div>
+  ) : (
+    //if error occurs in http request, empty tag returned
+    <div />
   );
 }
 

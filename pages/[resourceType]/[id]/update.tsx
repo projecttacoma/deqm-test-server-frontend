@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import ResourceCodeEditor from "../../../components/ResourceCodeEditor";
-import { Button, Center, Stack, Text } from "@mantine/core";
+import { Button, Center, Stack, Text, Loader } from "@mantine/core";
 import { textGray } from "../../../styles/appColors";
 import BackButton from "../../../components/BackButton";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
@@ -17,12 +17,15 @@ import { Check, X } from "tabler-icons-react";
 const UpdateResourcePage = () => {
   const router = useRouter();
   const { resourceType, id } = router.query;
+  const [fetchingError, setFetchingError] = useState(false);
+  const [loadingRequest, setLoadingRequest] = useState(false);
   const [codeEditorContents, setCodeEditorContents] = useState("");
   const [hasLintError, setHasLintError] = useState(true);
 
   const [pageBody, setPageBody] = useState("");
   useEffect(() => {
     if (resourceType && id) {
+      setLoadingRequest(true);
       //fetch the resource JSON content from the test server based on resource and id from url
       fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}/${id}`)
         .then((data) => {
@@ -30,11 +33,29 @@ const UpdateResourcePage = () => {
         })
         .then((resourcePageBody) => {
           setPageBody(JSON.stringify(resourcePageBody, null, 2));
+          setLoadingRequest(false);
+          setFetchingError(false);
+        })
+        .catch((error) => {
+          console.log(error.message, "...start the server");
+          setFetchingError(true);
+          setLoadingRequest(false);
+          cleanNotifications();
+          showNotification({
+            message: "Not connected to server!",
+            color: "red",
+            autoClose: false,
+          });
         });
     }
   }, [resourceType, id]);
 
-  return (
+  return loadingRequest ? ( //if loading, Loader object is returned
+    <Center>
+      <div>Loading content...</div>
+      <Loader color="cyan"></Loader>
+    </Center>
+  ) : !fetchingError && pageBody ? ( //if http get request was successful, UpdateResourcePage component is returned
     <div style={{ paddingLeft: "15px", paddingRight: "15px" }}>
       <BackButton />
       <Stack spacing="xs">
@@ -66,6 +87,9 @@ const UpdateResourcePage = () => {
         </Button>
       </Center>
     </div>
+  ) : (
+    //if error occurs in http request, empty tag returned
+    <div />
   );
 
   //called when submit button is clicked. Handles PUT request and response

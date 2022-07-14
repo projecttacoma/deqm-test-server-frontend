@@ -1,4 +1,4 @@
-import { render, screen, act, fireEvent, within } from "@testing-library/react";
+import { render, screen, act, fireEvent, within, waitFor } from "@testing-library/react";
 //import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import UpdateResourcePage from "../../../../pages/[resourceType]/[id]/update";
@@ -73,9 +73,8 @@ describe("successful update test", () => {
       name: "Update Resource",
     }) as HTMLButtonElement;
 
-    await act(async () => {
-      fireEvent.click(updateButton);
-    });
+    await waitFor(() => expect(updateButton).not.toBeDisabled());
+    fireEvent.click(updateButton);
 
     const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
     expect(errorNotif).toBeInTheDocument();
@@ -114,9 +113,8 @@ describe("invalid update test", () => {
       name: "Update Resource",
     }) as HTMLButtonElement;
 
-    await act(async () => {
-      fireEvent.click(updateButton);
-    });
+    await waitFor(() => expect(updateButton).not.toBeDisabled());
+    fireEvent.click(updateButton);
 
     const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
     expect(errorNotif).toBeInTheDocument();
@@ -153,9 +151,8 @@ describe("error thrown during update test", () => {
       name: "Update Resource",
     }) as HTMLButtonElement;
 
-    await act(async () => {
-      fireEvent.click(updateButton);
-    });
+    await waitFor(() => expect(updateButton).not.toBeDisabled());
+    fireEvent.click(updateButton);
 
     const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
     expect(errorNotif).toBeInTheDocument();
