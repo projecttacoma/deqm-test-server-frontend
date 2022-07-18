@@ -8,7 +8,7 @@ import BackButton from "../components/BackButton";
 import { fhirJson } from "@fhir-typescript/r4-core";
 import Link from "next/link";
 
-const CreateResourcePage = () => {
+const TransactionUploadPage = () => {
   const [codeEditorContents, setCodeEditorContents] = useState("");
   const [hasLintError, setHasLintError] = useState(true);
   const [openResponseModal, setOpenResponseModal] = useState(false);
@@ -19,6 +19,7 @@ const CreateResourcePage = () => {
   return (
     <div style={{ paddingLeft: "15px", paddingRight: "15px" }}>
       <Modal
+        data-testid="transaction-response-modal"
         opened={openResponseModal}
         onClose={() => setOpenResponseModal(false)}
         size="60%"
@@ -36,6 +37,9 @@ const CreateResourcePage = () => {
         <Center>
           <Text size="md" color={textGray}>
             Enter valid transaction bundle body. Then click the Upload button.
+          </Text>
+          <Text size="sm" color={textGray}>
+            Note: Only PUT and POST requests are supported in a TransactionBundle at this time.
           </Text>
         </Center>
       </Stack>
@@ -98,7 +102,7 @@ const CreateResourcePage = () => {
               {processBundleResponse(responseJSON.entry)}
             </Stack>,
             <Title order={1} align="center" key="modal-title">
-              <Check color="green" size={36} />
+              <Check color="green" size={36} key="green-check" />
               Transaction Bundle Upload Successful!
             </Title>,
           ]);
@@ -132,25 +136,44 @@ const CreateResourcePage = () => {
       });
   }
 
-  function processBundleResponse(responseArray: (fhirJson.BundleEntry | null)[]) {
+  function processBundleResponse(responseArray: fhirJson.BundleEntry[]) {
     return responseArray.map((el) => {
       console.log("mapping");
       if (el?.response?.location) {
+        const FHIR_VERSION_LENGTH = 6;
+        const resourceLocation = el.response.location.substring(FHIR_VERSION_LENGTH);
         return (
           <div>
             {el.response.status}:&nbsp;
-            <Link href={`/${el.response.location}`} key={`${el.response.location}`} passHref>
+            <Link href={`/${resourceLocation}`} key={`${el.response.location}`} passHref>
               <Text component="a" color="cyan">
-                {el.response.location}
+                {resourceLocation}
               </Text>
             </Link>
           </div>
         );
+      } else if (el?.response?.outcome?.resourceType === "OperationOutcome") {
+        console.log("el response: ", el?.response);
+        const responseAsAny = el?.response?.outcome as fhirJson.OperationOutcome;
+        if (responseAsAny.issue != null) {
+          const issueArray = responseAsAny?.issue[0] as fhirJson.OperationOutcomeIssue;
+          return (
+            <Text
+              key={`${el?.response?.status}`}
+            >{`${el?.response?.status}: ${issueArray.details?.text}`}</Text>
+          );
+        } else {
+          return el?.response?.status ? (
+            <Text key={`${el?.response?.status}`}>{el?.response?.status}</Text>
+          ) : (
+            <Text key="unexpected-response">Unexpected response</Text>
+          );
+        }
       } else {
-        return <Text>{el?.response?.status}</Text>; //{el?.response?.outcome?.issue?[0].details.text}
+        return <Text key="unexpected-response">Unexpected response</Text>;
       }
     });
   }
 };
 
-export default CreateResourcePage;
+export default TransactionUploadPage;
