@@ -8,13 +8,17 @@ import BackButton from "../components/BackButton";
 import { fhirJson } from "@fhir-typescript/r4-core";
 import Link from "next/link";
 
+/**
+ * TransactionUploadPage is a page that renders a code editor, a "submit" button for uploading transaction bundles, and a back button.
+ * When the upload button is clicked, a POST request is sent to the test server. If the upload is
+ * successful, a Modal pops up with a response for each request in the transaction bundle. Otherwise, an error notification appears.
+ * @returns React node with a ResourceEditor Component, upload button, back button, and a Modal
+ */
 const TransactionUploadPage = () => {
   const [codeEditorContents, setCodeEditorContents] = useState("");
   const [hasLintError, setHasLintError] = useState(true);
   const [openResponseModal, setOpenResponseModal] = useState(false);
-  const [modalContents, setModalContents] = useState([<>Empty</>, <>Empty</>]);
-  //const PUT_POST_SUCCESS_REGEX = new RegExp('20\d');
-  //const NEW_ID_IN_HEADER_REGEX = new RegExp(`${resourceType}/[A-Za-z0-9\-\.]{1,64}`);
+  const [modalContents, setModalContents] = useState<fhirJson.BundleEntry[] | null>(null);
 
   return (
     <div style={{ paddingLeft: "15px", paddingRight: "15px" }}>
@@ -25,20 +29,29 @@ const TransactionUploadPage = () => {
         size="60%"
         centered
         overflow="inside"
-        title={modalContents[1]}
+        title={
+          <Title order={1} align="center" key="modal-title">
+            <Check color="green" size={36} key="green-check" />
+            Transaction Bundle Upload Successful!
+          </Title>
+        }
       >
-        {modalContents[0]}
+        <Stack align="center" justify="space-between" spacing="xl" key="modal=contents">
+          {processBundleResponse(modalContents)}
+        </Stack>
       </Modal>
       <BackButton />
       <Stack spacing="xs">
-        <Center>
+        <Center key="Center-1">
           <h2 style={{ color: textGray, marginTop: "2px" }}>Upload Transaction Bundle</h2>
         </Center>
-        <Center>
+        <Center key="Center-2">
           <Text size="md" color={textGray}>
             Enter valid transaction bundle body. Then click the Upload button.
           </Text>
-          <Text size="sm" color={textGray}>
+        </Center>
+        <Center key="Center-3">
+          <Text size="xs" color={textGray}>
             Note: Only PUT and POST requests are supported in a TransactionBundle at this time.
           </Text>
         </Center>
@@ -97,18 +110,9 @@ const TransactionUploadPage = () => {
       })
       .then((responseJSON) => {
         if (uploadSuccessful) {
-          setModalContents([
-            <Stack align="center" justify="space-between" spacing="xl" key="modal=contents">
-              {processBundleResponse(responseJSON.entry)}
-            </Stack>,
-            <Title order={1} align="center" key="modal-title">
-              <Check color="green" size={36} key="green-check" />
-              Transaction Bundle Upload Successful!
-            </Title>,
-          ]);
           setOpenResponseModal(true);
+          setModalContents(responseJSON.entry);
         } else {
-          console.log("notif.color is red", responseJSON.issue[0].details.text);
           customMessage = (
             <>
               <Text weight={500}>{customMessage}&nbsp;</Text>
@@ -118,7 +122,6 @@ const TransactionUploadPage = () => {
           cleanNotifications();
           showNotification({ ...notifProps, message: customMessage });
         }
-        console.log("responseJSON: ", responseJSON);
       })
       .catch((error) => {
         if (error.name === "RegexError") {
@@ -136,16 +139,18 @@ const TransactionUploadPage = () => {
       });
   }
 
-  function processBundleResponse(responseArray: fhirJson.BundleEntry[]) {
-    return responseArray.map((el) => {
-      console.log("mapping");
+  //parses the response array from a transaction bundle upload and returns each response as an appropriate JSX Element
+  function processBundleResponse(responseArray: fhirJson.BundleEntry[] | null) {
+    return responseArray?.map((el, index) => {
+      console.log("index: ", index);
       if (el?.response?.location) {
         const FHIR_VERSION_LENGTH = 6;
         const resourceLocation = el.response.location.substring(FHIR_VERSION_LENGTH);
+        console.log(`${index}-${el.response.location}`);
         return (
-          <div>
+          <div key={`${index}-${el.response.location}`}>
             {el.response.status}:&nbsp;
-            <Link href={`/${resourceLocation}`} key={`${el.response.location}`} passHref>
+            <Link href={`/${resourceLocation}`} passHref>
               <Text component="a" color="cyan">
                 {resourceLocation}
               </Text>
@@ -153,24 +158,26 @@ const TransactionUploadPage = () => {
           </div>
         );
       } else if (el?.response?.outcome?.resourceType === "OperationOutcome") {
-        console.log("el response: ", el?.response);
         const responseAsAny = el?.response?.outcome as fhirJson.OperationOutcome;
         if (responseAsAny.issue != null) {
           const issueArray = responseAsAny?.issue[0] as fhirJson.OperationOutcomeIssue;
+          console.log(`response-${index}`);
           return (
             <Text
-              key={`${el?.response?.status}`}
+              key={`response-${index}`}
             >{`${el?.response?.status}: ${issueArray.details?.text}`}</Text>
           );
         } else {
+          console.log(`response-${index}`);
           return el?.response?.status ? (
-            <Text key={`${el?.response?.status}`}>{el?.response?.status}</Text>
+            <Text key={`response-${index}`}>{el?.response?.status}</Text>
           ) : (
-            <Text key="unexpected-response">Unexpected response</Text>
+            <Text key={`response-${index}`}>Unexpected response</Text>
           );
         }
       } else {
-        return <Text key="unexpected-response">Unexpected response</Text>;
+        console.log(`response-${index}`);
+        return <Text key={`response-${index}`}>Unexpected response</Text>;
       }
     });
   }
