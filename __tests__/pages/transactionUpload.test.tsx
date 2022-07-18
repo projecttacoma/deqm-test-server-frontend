@@ -56,7 +56,7 @@ const SUCCESSFUL_UPLOAD_RESPONSE_JSON = {
 
 const ERROR_400_RESPONSE_BODY = { issue: [{ details: { text: "Invalid resource body" } }] };
 
-describe.skip("Upload transaction bundle page render", () => {
+describe("Upload transaction bundle page render", () => {
   it("should display a code editor component, upload bundle button, and a back button", async () => {
     await act(async () => {
       render(<TransactionUploadPage />);
@@ -70,7 +70,7 @@ describe.skip("Upload transaction bundle page render", () => {
   });
 });
 
-describe.skip("Successful resource creation", () => {
+describe("Successful resource creation", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(SUCCESSFUL_UPLOAD_RESPONSE_JSON, 200);
     document.createRange = createRectRange;
@@ -133,14 +133,14 @@ describe("Invalid resource creation", () => {
       render(mantineRecoilWrap(<TransactionUploadPage />));
     });
 
-    const submitButton = screen.getByRole("button", {
-      name: "Upload Bundle",
-    }) as HTMLButtonElement;
+    const submitButton = await screen.findByTestId("upload-button");
 
-    const codeEditor = screen.getByRole("textbox");
+    //NOTE: user.type works for the element returned from findByRole("textbox"), not for findByTestId("resource-code-editor")
+    const codeEditor = (await screen.findByRole("textbox")) as HTMLDivElement;
 
     //await act(async () => {
     await user.type(codeEditor, "{{");
+    //expect(submitButton).not.toBeDisabled();
     await user.click(submitButton);
     //});
 
@@ -155,7 +155,7 @@ describe("Invalid resource creation", () => {
   });
 });
 
-describe.skip("Error thrown during create test", () => {
+describe("Error thrown during create test", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementationError("400 Bad Request");
     document.createRange = createRectRange;

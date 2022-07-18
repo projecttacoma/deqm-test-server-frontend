@@ -65,6 +65,7 @@ const TransactionUploadPage = () => {
       </div>
       <Center>
         <Button
+          data-testid="upload-button"
           disabled={hasLintError}
           onClick={editorSubmitHandler}
           color="cyan"
@@ -142,11 +143,9 @@ const TransactionUploadPage = () => {
   //parses the response array from a transaction bundle upload and returns each response as an appropriate JSX Element
   function processBundleResponse(responseArray: fhirJson.BundleEntry[] | null) {
     return responseArray?.map((el, index) => {
-      console.log("index: ", index);
       if (el?.response?.location) {
         const FHIR_VERSION_LENGTH = 6;
         const resourceLocation = el.response.location.substring(FHIR_VERSION_LENGTH);
-        console.log(`${index}-${el.response.location}`);
         return (
           <div key={`${index}-${el.response.location}`}>
             {el.response.status}:&nbsp;
@@ -161,14 +160,12 @@ const TransactionUploadPage = () => {
         const responseAsAny = el?.response?.outcome as fhirJson.OperationOutcome;
         if (responseAsAny.issue != null) {
           const issueArray = responseAsAny?.issue[0] as fhirJson.OperationOutcomeIssue;
-          console.log(`response-${index}`);
           return (
             <Text
               key={`response-${index}`}
             >{`${el?.response?.status}: ${issueArray.details?.text}`}</Text>
           );
         } else {
-          console.log(`response-${index}`);
           return el?.response?.status ? (
             <Text key={`response-${index}`}>{el?.response?.status}</Text>
           ) : (
@@ -176,7 +173,6 @@ const TransactionUploadPage = () => {
           );
         }
       } else {
-        console.log(`response-${index}`);
         return <Text key={`response-${index}`}>Unexpected response</Text>;
       }
     });
