@@ -58,14 +58,14 @@ export function mantineRecoilWrap(children: JSX.Element) {
  */
 export function getMockFetchImplementation(
   desiredResponse: any,
-  desiredStatus?: number,
+  desiredStatus = 200,
   desiredStatusText?: string,
   desiredHeaders?: Headers,
 ) {
   return jest.fn(() => {
     return Promise.resolve({
       json: jest.fn().mockResolvedValue(desiredResponse),
-      status: desiredStatus ? desiredStatus : 200,
+      status: desiredStatus,
       statusText: desiredStatusText,
       headers: desiredHeaders,
     }) as any;

@@ -66,10 +66,8 @@ describe("Successful resource creation", () => {
     const codeEditor = screen.getByRole("textbox");
 
     //CodeMirror autocloses brackets, so only one is necessary to type
-    user.type(codeEditor, "{{").finally(() => {
-      //await user.Type Promise to resolve/reject before clicking the submit button
-      user.click(submitButton);
-    });
+    await user.type(codeEditor, "{{");
+    user.click(submitButton);
 
     const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
     expect(errorNotif).toBeInTheDocument();
@@ -107,9 +105,8 @@ describe("Invalid resource creation", () => {
 
     const codeEditor = screen.getByRole("textbox");
 
-    user.type(codeEditor, "{{").finally(() => {
-      user.click(submitButton);
-    });
+    await user.type(codeEditor, "{{");
+    user.click(submitButton);
 
     const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
     expect(errorNotif).toBeInTheDocument();
@@ -147,9 +144,8 @@ describe("Error thrown during create test", () => {
 
     const codeEditor = screen.getByRole("textbox");
 
-    user.type(codeEditor, "{{").finally(() => {
-      user.click(submitButton);
-    });
+    await user.type(codeEditor, "{{");
+    user.click(submitButton);
 
     const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
     expect(errorNotif).toBeInTheDocument();
