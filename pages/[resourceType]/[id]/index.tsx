@@ -1,10 +1,13 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Prism } from "@mantine/prism";
-import { Button, Divider, ScrollArea, Stack, Center, Loader } from "@mantine/core";
+import { Button, Divider, ScrollArea, Stack, Center, Loader, SimpleGrid } from "@mantine/core";
 import BackButton from "../../../components/BackButton";
 import Link from "next/link";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
+import DeleteButton from "../../../components/DeleteButton";
+import { ModalsProvider } from "@mantine/modals";
+
 
 /**
  * Component which displays the JSON body of an individual resource and a back button
@@ -46,7 +49,8 @@ function ResourceIDPage() {
 
   const renderButtons = (
     <div>
-      <BackButton />
+      <BackButton /> 
+      <SimpleGrid cols={2} style={{maxWidth:"200px", float: "right",}}>
       <Link
         href={{
           pathname: "/[resourceType]/[id]/update",
@@ -68,7 +72,11 @@ function ResourceIDPage() {
           <div> Update </div>
         </Button>
       </Link>
-    </div>
+    <ModalsProvider>
+      <DeleteButton/>
+    </ModalsProvider>
+    </SimpleGrid>
+      </div>
   );
 
   return loadingRequest ? ( //if loading, Loader object is returned
