@@ -1,10 +1,13 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Prism } from "@mantine/prism";
-import { Button, Divider, ScrollArea, Stack, Center, Loader } from "@mantine/core";
+import { Button, Divider, ScrollArea, Stack, Center, Loader, SimpleGrid } from "@mantine/core";
 import BackButton from "../../../components/BackButton";
 import Link from "next/link";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
+import DeleteButton from "../../../components/DeleteButton";
+import { ModalsProvider } from "@mantine/modals";
+
 
 /**
  * Component which displays the JSON body of an individual resource and a back button.
@@ -48,22 +51,6 @@ function ResourceIDPage() {
   const renderButtons = (
     <div>
       <BackButton />
-      <Link href={`/${resourceType}/${id}/update`} key={`update-${id}`} passHref>
-        <Button
-          component="a"
-          color="cyan"
-          radius="md"
-          size="sm"
-          variant="filled"
-          style={{
-            float: "right",
-            marginRight: "8px",
-            marginLeft: "8px",
-          }}
-        >
-          <div> Update </div>
-        </Button>
-      </Link>
       {resourceType === "Measure" && (
         <Link href={`/${resourceType}/${id}/evaluate`} key={`evaluate-measure-${id}`} passHref>
           <Button
@@ -82,6 +69,25 @@ function ResourceIDPage() {
           </Button>
         </Link>
       )}
+      <Link href={`/${resourceType}/${id}/update`} key={`update-${id}`} passHref>
+        <Button
+          component="a"
+          color="cyan"
+          radius="md"
+          size="sm"
+          variant="filled"
+          style={{
+            float: "right",
+            marginRight: "8px",
+            marginLeft: "8px",
+          }}
+        >
+          <div> Update </div>
+        </Button>
+      </Link>
+      <ModalsProvider>
+      <DeleteButton/>
+      </ModalsProvider>
     </div>
   );
 
