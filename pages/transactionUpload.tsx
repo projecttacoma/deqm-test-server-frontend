@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ResourceCodeEditor from "../components/ResourceCodeEditor";
-import { Button, Center, Modal, Stack, Text, Title } from "@mantine/core";
+import { Button, Center, Divider, Modal, Stack, Text, Title } from "@mantine/core";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import { Check, X } from "tabler-icons-react";
 import { textGray } from "../styles/appColors";
@@ -9,7 +9,7 @@ import { fhirJson } from "@fhir-typescript/r4-core";
 import Link from "next/link";
 
 /**
- * TransactionUploadPage is a page that renders a code editor, a "submit" button for uploading transaction bundles, and a back button.
+ * TransactionUploadPage is a page that renders a code editor, an upload button for uploading transaction bundles, and a back button.
  * When the upload button is clicked, a POST request is sent to the test server. If the upload is
  * successful, a Modal pops up with a response for each request in the transaction bundle. Otherwise, an error notification appears.
  * @returns React node with a ResourceEditor Component, upload button, back button, and a Modal
@@ -30,20 +30,31 @@ const TransactionUploadPage = () => {
         centered
         overflow="inside"
         title={
-          <Title order={1} align="center" key="modal-title">
-            <Check color="green" size={36} key="green-check" />
-            Transaction Bundle Upload Successful!
-          </Title>
+          <>
+            <Title order={1} align="center" style={{ marginRight: "0px" }} key="modal-title">
+              <Check color="green" size={40} style={{ paddingRight: 8 }} key="green-check" />
+              Transaction Bundle Upload Successful!
+            </Title>
+            <Divider />
+          </>
         }
       >
-        <Stack align="center" justify="space-between" spacing="xl" key="modal=contents">
+        <Stack
+          align="flex-start"
+          justify="space-between"
+          style={{ paddingLeft: 20 }}
+          spacing="xl"
+          key="modal=contents"
+        >
           {processBundleResponse(modalContents)}
         </Stack>
       </Modal>
       <BackButton />
       <Stack spacing="xs">
         <Center key="Center-1">
-          <h2 style={{ color: textGray, marginTop: "2px" }}>Upload Transaction Bundle</h2>
+          <h2 style={{ color: textGray, marginTop: "0px", marginBottom: "8px" }}>
+            Upload Transaction Bundle
+          </h2>
         </Center>
         <Center key="Center-2">
           <Text size="md" color={textGray}>
@@ -78,7 +89,7 @@ const TransactionUploadPage = () => {
     </div>
   );
 
-  //called when the submit button is clicked. Handles POST request and response
+  //called when the upload button is clicked. Handles POST request and response
   async function editorSubmitHandler() {
     let customMessage: NotificationProps["message"] = <div>Problem connecting to server</div>;
     const notifProps: NotificationProps = {
@@ -142,7 +153,7 @@ const TransactionUploadPage = () => {
 
   //parses the response array from a transaction bundle upload and returns each response as an appropriate JSX Element
   function processBundleResponse(responseArray: fhirJson.BundleEntry[] | null) {
-    return responseArray?.map((el, index) => {
+    return sortBundleArray(responseArray)?.map((el, index) => {
       if (el?.response?.location) {
         const FHIR_VERSION_LENGTH = 6;
         const resourceLocation = el.response.location.substring(FHIR_VERSION_LENGTH);
@@ -161,9 +172,12 @@ const TransactionUploadPage = () => {
         if (responseAsAny.issue != null) {
           const issueArray = responseAsAny?.issue[0] as fhirJson.OperationOutcomeIssue;
           return (
-            <Text
-              key={`response-${index}`}
-            >{`${el?.response?.status}: ${issueArray.details?.text}`}</Text>
+            <div key={`response-${index}`}>
+              {el?.response?.status}:&nbsp;
+              <Text component="a" color="red">
+                {issueArray.details?.text}
+              </Text>
+            </div>
           );
         } else {
           return el?.response?.status ? (
@@ -178,5 +192,34 @@ const TransactionUploadPage = () => {
     });
   }
 };
+
+/**
+ * Sorts an array of responses from a transaction bundle upload, by status code (descending).
+ * For responses of the same status that include locations, the responses are sorted alphabetically based on location
+ * @param toSort is the fhirJson.BundleEntry array that is to be sorted
+ * @returns the sorted fhirJson.BundleEntry array
+ */
+function sortBundleArray(toSort: fhirJson.BundleEntry[] | null) {
+  return toSort?.sort((a, b) => {
+    if (a?.response?.status && b?.response?.status) {
+      if (b.response.status === a.response.status) {
+        if (b?.response?.location && a?.response?.location) {
+          return compareTwoStrings(a.response.location, b.response.location);
+        } else {
+          return 1;
+        }
+      } else {
+        return compareTwoStrings(b.response.status, a.response.status);
+      }
+    } else {
+      return 1;
+    }
+  });
+
+  //compares strings alphabetically
+  function compareTwoStrings(a: string, b: string) {
+    return a === b ? 0 : a > b ? 1 : -1;
+  }
+}
 
 export default TransactionUploadPage;

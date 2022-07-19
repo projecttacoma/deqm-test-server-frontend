@@ -11,7 +11,7 @@
     "lint:fix": "next lint --fix",
     "prettier": "prettier --check \"**/*.{js,ts,jsx,tsx,css}\"",
     "prettier:fix": "prettier --write \"**/*.{js,ts,jsx,tsx,css}\"",
-    "test": "jest --runInBand",
+    "test": "jest",
     "test:watch": "jest --watch"
   },
   "dependencies": {
