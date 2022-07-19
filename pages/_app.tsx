@@ -15,7 +15,6 @@ import { NotificationsProvider } from "@mantine/notifications";
 import { ResourceCounts } from "../components/ResourceCounts";
 import Link from "next/link";
 import { textGray } from "../styles/appColors";
-// import { ModalsProvider } from '@mantine/modals';
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;

@@ -1,4 +1,4 @@
-import { render, screen, act, fireEvent } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import {
   getMockFetchImplementation,
@@ -16,7 +16,7 @@ const SINGLE_RESOURCE_BODY = {
   },
 };
 
-describe.only("resource ID render", () => {
+describe("resource ID render", () => {
   window.ResizeObserver = mockResizeObserver;
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(SINGLE_RESOURCE_BODY);
@@ -38,7 +38,6 @@ describe.only("resource ID render", () => {
     //check for the expected buttons on the page
     expect(await screen.findByTestId("back-button")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Update" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Delete" })).toBeInTheDocument();
 
     //parses out relevant information from the Prism HTML block and stores it in an array
     const spanText = [""];
@@ -59,20 +58,5 @@ describe.only("resource ID render", () => {
         '"http://hl7.org/fhir/us/core/StructureDefinition/us-core-diagnosticreport-note"',
       ),
     ).toBe(true);
-
-    const deleteButton = screen.getByRole("button", {
-      name: "Delete",
-
-    }) as HTMLButtonElement;
-    // fireEvent.click(deleteButton);
-    const mypromise = new Promise((resolve, reject) => setTimeout("3000"));
-    mypromise.finally(() => {fireEvent.click(deleteButton);})
-
-    const errorNotif = (await screen.findByTitle("Delete Resource!!!!!"));
-    expect(errorNotif).toBeInTheDocument();
-    // screen.debug()
-
-    // expect(within(errorNotif).getByText(/Resource successfully updated!/)).toBeInTheDocument();
-
   });
 });
