@@ -48,17 +48,25 @@ export function mantineRecoilWrap(children: JSX.Element) {
   );
 }
 
-/*
- * Generate a mock implementation for `fetch` with any desired 200 OK response
+/**
+ * Generate a mock implementation for `fetch` with any desired response of a Promise that resolves.
  * Use any type to avoid writing out every property of `fetch` responses
+ * @param desiredResponse is the response that the returned Promise is resolved to
+ * @param desiredStatus optional, for specifying the status code. Default is 200
+ * @param desiredStatusText optional, for specifying the status text
  */
-export function getMockFetchImplementation(desiredResponse: any) {
-  return jest.fn(
-    () =>
-      Promise.resolve({
-        json: jest.fn().mockResolvedValue(desiredResponse),
-      }) as any,
-  );
+export function getMockFetchImplementation(
+  desiredResponse: any,
+  desiredStatus?: number,
+  desiredStatusText?: string,
+) {
+  return jest.fn(() => {
+    return Promise.resolve({
+      json: jest.fn().mockResolvedValue(desiredResponse),
+      status: desiredStatus ? desiredStatus : 200,
+      statusText: desiredStatusText,
+    }) as any;
+  });
 }
 
 /*
@@ -73,3 +81,23 @@ export const mockResizeObserver = jest.fn().mockImplementation(() => ({
   unobserve: jest.fn(),
   disconnect: jest.fn(),
 }));
+
+/**
+ * Returns a Range object set up for a document that contains a CodeMirror component.
+ * Necessary when unit testing with CodeMirror component.
+ */
+export const createRectRange = () => {
+  const range = new Range();
+
+  range.getBoundingClientRect = jest.fn();
+
+  range.getClientRects = () => {
+    return {
+      item: () => null,
+      length: 0,
+      [Symbol.iterator]: jest.fn(),
+    };
+  };
+
+  return range;
+};
