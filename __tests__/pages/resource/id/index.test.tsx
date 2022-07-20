@@ -60,3 +60,26 @@ describe("resource ID render", () => {
     ).toBe(true);
   });
 });
+
+describe("measure resource ID render", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation("");
+  });
+
+  it("should display an evaluate measure button", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "Measure12" },
+          })}
+        >
+          <ResourceIDPage />
+        </RouterContext.Provider>,
+      );
+    });
+
+    //for Measure resources, an additional button named "Evaluate Measure" will be in the document
+    expect(screen.getByRole("link", { name: "Evaluate Measure" })).toBeInTheDocument();
+  });
+});
