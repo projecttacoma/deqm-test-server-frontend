@@ -1,7 +1,16 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Prism } from "@mantine/prism";
-import { Button, Divider, ScrollArea, Stack, Center, Loader, SimpleGrid, MantineProvider } from "@mantine/core";
+import {
+  Button,
+  Divider,
+  ScrollArea,
+  Stack,
+  Center,
+  Loader,
+  SimpleGrid,
+  MantineProvider,
+} from "@mantine/core";
 import BackButton from "../../../components/BackButton";
 import Link from "next/link";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
@@ -13,7 +22,7 @@ import {
   replaceTeal,
   replaceRed,
   replaceBlue,
-  replaceDelete
+  replaceDelete,
 } from "../../../styles/codeColorScheme";
 /**
  * Component which displays the JSON body of an individual resource and a back button.
@@ -57,9 +66,18 @@ function ResourceIDPage() {
   const renderButtons = (
     <div>
       <BackButton />
-      <ModalsProvider>
-      <DeleteButton />
-      </ModalsProvider>
+      <MantineProvider
+          //changes hex values associated with each Mantine color name to improve UI
+          theme={{
+            colors: {
+              pink: replaceDelete,
+            },
+          }}
+        >
+          <ModalsProvider>
+            <DeleteButton />
+          </ModalsProvider>
+      </MantineProvider>
       {resourceType === "Measure" && (
         <Link href={`/${resourceType}/${id}/evaluate`} key={`evaluate-measure-${id}`} passHref>
           <Button
@@ -115,7 +133,7 @@ function ResourceIDPage() {
         </div>
         <Divider my="sm" />
         <ScrollArea>
-<MantineProvider
+          <MantineProvider
             //changes hex values associated with each Mantine color name to improve UI
             theme={{
               colors: {

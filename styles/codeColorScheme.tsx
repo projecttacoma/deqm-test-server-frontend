@@ -66,14 +66,14 @@ export const replaceBlue: stringArray = [
 ];
 
 export const replaceDelete: stringArray = [
-    "#A61E4D",
-    "#A61E4D",
-    "#A61E4D",
-    "#A61E4D",
-    "#A61E4D",
-    "#CE3D4C",
-    "#EB5262",
-    "#CE3D4C",
-    "#A61E4D",
-    "#A61E4D",
-  ];
+  "#A61E4D",
+  "#A61E4D",
+  "#A61E4D",
+  "#A61E4D",
+  "#A61E4D",
+  "#CE3D4C",
+  "#EB5262",
+  "#CE3D4C",
+  "#A61E4D",
+  "#A61E4D",
+];

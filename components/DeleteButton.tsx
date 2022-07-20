@@ -1,9 +1,8 @@
 import { useRouter } from "next/router";
 import { Button, Text } from "@mantine/core";
-import { cleanNotifications, showNotification, NotificationProps, MantineProvider } from "@mantine/notifications";
+import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import { Check, X } from "tabler-icons-react";
 import { useModals } from "@mantine/modals";
-import { replaceTeal } from "../styles/codeColorScheme";
 
 /**
  * DeleteButton is a component for rendering a delete resource button
