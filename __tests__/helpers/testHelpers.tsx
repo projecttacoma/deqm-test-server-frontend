@@ -54,17 +54,20 @@ export function mantineRecoilWrap(children: JSX.Element) {
  * @param desiredResponse is the response that the returned Promise is resolved to
  * @param desiredStatus optional, for specifying the status code. Default is 200
  * @param desiredStatusText optional, for specifying the status text
+ * @param desiredHeaders optional, for specifying the header. Must be of type Headers
  */
 export function getMockFetchImplementation(
   desiredResponse: any,
-  desiredStatus?: number,
+  desiredStatus = 200,
   desiredStatusText?: string,
+  desiredHeaders?: Headers,
 ) {
   return jest.fn(() => {
     return Promise.resolve({
       json: jest.fn().mockResolvedValue(desiredResponse),
-      status: desiredStatus ? desiredStatus : 200,
+      status: desiredStatus,
       statusText: desiredStatusText,
+      headers: desiredHeaders,
     }) as any;
   });
 }

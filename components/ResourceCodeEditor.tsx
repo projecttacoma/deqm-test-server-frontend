@@ -27,7 +27,7 @@ const ResourceCodeEditor = (props: ResourceCodeEditorProps) => {
     <CodeMirror
       data-testid="resource-code-editor"
       value={props.initialValue}
-      height="80vh"
+      height="78vh"
       extensions={[json(), linter(jsonLinter)]}
       onUpdate={(v) => {
         if (props.onValidate) {
