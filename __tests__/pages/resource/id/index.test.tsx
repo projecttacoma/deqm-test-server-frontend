@@ -1,4 +1,4 @@
-import { render, screen, act, fireEvent } from "@testing-library/react";
+import { render, screen, act, fireEvent, within } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import {
   getMockFetchImplementation,
@@ -63,18 +63,18 @@ describe.only("resource ID render", () => {
 
     const deleteButton = screen.getByRole("button", {
       name: "Delete",
-
     }) as HTMLButtonElement;
-    // fireEvent.click(deleteButton);
-    const mypromise = new Promise((resolve, reject) => setTimeout("3000"));
-    mypromise.finally(() => {fireEvent.click(deleteButton);})
 
-    const errorNotif = (await screen.findByTitle("Delete Resource!!!!!"));
-    expect(errorNotif).toBeInTheDocument();
-    // screen.debug()
+    // click the identified delete button
+    fireEvent.click(deleteButton);
 
-    // expect(within(errorNotif).getByText(/Resource successfully updated!/)).toBeInTheDocument();
-
+    //make sure a modal with the correct information shows up. Mantine modals are classified as dialogs.
+    const deleteModal = await screen.findByRole("dialog");
+    expect(deleteModal).toBeInTheDocument();
+    expect(within(deleteModal).getByText(/DiagnosticReport/)).toBeInTheDocument();
+    expect(within(deleteModal).getByText(/denom-EXM125-3/)).toBeInTheDocument();
+    expect(within(deleteModal).getByRole("button", { name: "Delete" })).toBeInTheDocument();
+    expect(within(deleteModal).getByRole("button", { name: "Cancel" })).toBeInTheDocument();
   });
 });
 
