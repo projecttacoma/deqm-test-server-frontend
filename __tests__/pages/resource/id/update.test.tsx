@@ -126,7 +126,11 @@ describe("invalid update test", () => {
 
 describe("error thrown during update test", () => {
   beforeEach(() => {
-    global.fetch = getMockFetchImplementation(SINGLE_RESOURCE_BODY, 500);
+    global.fetch = getMockFetchImplementation(
+      SINGLE_RESOURCE_BODY,
+      500,
+      "Problem connecting to server",
+    );
     document.createRange = createRectRange;
   });
 
@@ -157,6 +161,6 @@ describe("error thrown during update test", () => {
     const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
     expect(errorNotif).toBeInTheDocument();
 
-    expect(within(errorNotif).getByText(/Problem connecting to server:/)).toBeInTheDocument();
+    expect(within(errorNotif).getByText(/500 Problem connecting to server/)).toBeInTheDocument();
   });
 });

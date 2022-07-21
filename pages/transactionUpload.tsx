@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ResourceCodeEditor from "../components/ResourceCodeEditor";
 import { Button, Center, Divider, Modal, Stack, Text, Title } from "@mantine/core";
-import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
+import { cleanNotifications, showNotification } from "@mantine/notifications";
 import { Check, X } from "tabler-icons-react";
 import { textGray } from "../styles/appColors";
 import BackButton from "../components/BackButton";
@@ -44,7 +44,7 @@ const TransactionUploadPage = () => {
           justify="space-between"
           style={{ paddingLeft: 20 }}
           spacing="xl"
-          key="modal=contents"
+          key="modal-contents"
         >
           {processBundleResponse(modalContents)}
         </Stack>
@@ -91,13 +91,7 @@ const TransactionUploadPage = () => {
 
   //called when the upload button is clicked. Handles POST request and response
   async function editorSubmitHandler() {
-    let customMessage: NotificationProps["message"] = <div>Problem connecting to server</div>;
-    const notifProps: NotificationProps = {
-      message: customMessage,
-      color: "red",
-      icon: <X size={18} />,
-      autoClose: false,
-    };
+    let customMessage = <Text weight={500}>Problem connecting to server:&nbsp;</Text>;
     let uploadSuccessful = false;
 
     fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/`, {
@@ -112,10 +106,14 @@ const TransactionUploadPage = () => {
       })
       .then((response) => {
         if (response.status === 201 || response.status === 200) {
-          customMessage = "Transaction Bundle Upload Successful";
+          customMessage = <Text>Transaction Bundle Upload Successful</Text>;
           uploadSuccessful = true;
         } else {
-          customMessage = `${response.status} ${response.statusText}`;
+          customMessage = (
+            <Text weight={500}>
+              {response.status} {response.statusText}&nbsp;
+            </Text>
+          );
           uploadSuccessful = false;
         }
         return response.json();
@@ -127,12 +125,17 @@ const TransactionUploadPage = () => {
         } else {
           customMessage = (
             <>
-              <Text weight={500}>{customMessage}&nbsp;</Text>
+              {customMessage}
               <Text color="red">{responseJSON.issue[0].details.text}</Text>
             </>
           );
           cleanNotifications();
-          showNotification({ ...notifProps, message: customMessage });
+          showNotification({
+            message: customMessage,
+            color: "red",
+            icon: <X size={18} />,
+            autoClose: false,
+          });
         }
       })
       .catch((error) => {
@@ -141,13 +144,18 @@ const TransactionUploadPage = () => {
         } else {
           customMessage = (
             <>
-              <Text weight={500}>Problem connecting to server:&nbsp;</Text>
+              {customMessage}
               <Text color="red">{error.message}</Text>
             </>
           );
         }
         cleanNotifications();
-        showNotification({ ...notifProps, message: customMessage });
+        showNotification({
+          message: customMessage,
+          color: "red",
+          icon: <X size={18} />,
+          autoClose: false,
+        });
       });
   }
 
@@ -168,14 +176,15 @@ const TransactionUploadPage = () => {
           </div>
         );
       } else if (el?.response?.outcome?.resourceType === "OperationOutcome") {
-        const responseAsAny = el?.response?.outcome as fhirJson.OperationOutcome;
-        if (responseAsAny.issue != null) {
-          const issueArray = responseAsAny?.issue[0] as fhirJson.OperationOutcomeIssue;
+        const operationOutcome = el?.response?.outcome as fhirJson.OperationOutcome;
+        if (operationOutcome.issue != null) {
+          const operationOutcomeIssue = operationOutcome
+            ?.issue[0] as fhirJson.OperationOutcomeIssue;
           return (
             <div key={`response-${index}`}>
               {el?.response?.status}:&nbsp;
               <Text component="a" color="red">
-                {issueArray.details?.text}
+                {operationOutcomeIssue.details?.text}
               </Text>
             </div>
           );
@@ -218,7 +227,7 @@ function sortBundleArray(toSort: fhirJson.BundleEntry[] | null) {
 
   //compares strings alphabetically
   function compareTwoStrings(a: string, b: string) {
-    return a === b ? 0 : a > b ? 1 : -1;
+    return a > b ? 1 : -1;
   }
 }
 

@@ -56,7 +56,7 @@ const CreateResourcePage = () => {
 
   //called when the submit button is clicked. Handles POST request and response
   async function editorSubmitHandler() {
-    let customMessage: NotificationProps["message"] = <div>Problem connecting to server</div>;
+    let customMessage = <Text weight={500}>Problem connecting to server:&nbsp;</Text>;
     let notifProps: NotificationProps = {
       message: customMessage,
       color: "red",
@@ -108,7 +108,11 @@ const CreateResourcePage = () => {
           //redirects user to the resourceType home page
           router.push({ pathname: `/${resourceType}` });
         } else {
-          customMessage = `${response.status} ${response.statusText}`;
+          customMessage = (
+            <Text weight={500}>
+              {response.status} {response.statusText}&nbsp;
+            </Text>
+          );
           return response.json();
         }
       })
@@ -116,7 +120,7 @@ const CreateResourcePage = () => {
         if (responseBody) {
           customMessage = (
             <>
-              <Text weight={500}>{customMessage}&nbsp;</Text>
+              {customMessage}
               <Text color="red">{responseBody.issue[0].details.text}</Text>
             </>
           );
@@ -128,7 +132,7 @@ const CreateResourcePage = () => {
         } else {
           customMessage = (
             <>
-              <Text weight={500}>Problem connecting to server:&nbsp;</Text>
+              {customMessage}
               <Text color="red">{error.message}</Text>
             </>
           );
