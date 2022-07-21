@@ -38,6 +38,7 @@ describe("resource ID render", () => {
     //check for the expected buttons on the page
     expect(await screen.findByTestId("back-button")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Update" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Evaluate Measure" })).toBeNull();
 
     //parses out relevant information from the Prism HTML block and stores it in an array
     const spanText = [""];
@@ -58,5 +59,28 @@ describe("resource ID render", () => {
         '"http://hl7.org/fhir/us/core/StructureDefinition/us-core-diagnosticreport-note"',
       ),
     ).toBe(true);
+  });
+});
+
+describe("measure resource ID render", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation("");
+  });
+
+  it("should display an evaluate measure button", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "Measure12" },
+          })}
+        >
+          <ResourceIDPage />
+        </RouterContext.Provider>,
+      );
+    });
+
+    //for Measure resources, an additional button named "Evaluate Measure" will be in the document
+    expect(screen.getByRole("link", { name: "Evaluate Measure" })).toBeInTheDocument();
   });
 });

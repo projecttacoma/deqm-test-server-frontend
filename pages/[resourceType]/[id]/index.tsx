@@ -7,7 +7,8 @@ import Link from "next/link";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
 
 /**
- * Component which displays the JSON body of an individual resource and a back button
+ * Component which displays the JSON body of an individual resource and a back button.
+ * If the resource is a Measure, an evaluate measure button is also displayed.
  * @returns JSON content of the individual resource in a Prism component, and a back button
  */
 function ResourceIDPage() {
@@ -47,14 +48,7 @@ function ResourceIDPage() {
   const renderButtons = (
     <div>
       <BackButton />
-      <Link
-        href={{
-          pathname: "/[resourceType]/[id]/update",
-          query: { resourceType: resourceType, id: id },
-        }}
-        key={`update-${id}`}
-        passHref
-      >
+      <Link href={`/${resourceType}/${id}/update`} key={`update-${id}`} passHref>
         <Button
           component="a"
           color="cyan"
@@ -63,11 +57,31 @@ function ResourceIDPage() {
           variant="filled"
           style={{
             float: "right",
+            marginRight: "8px",
+            marginLeft: "8px",
           }}
         >
           <div> Update </div>
         </Button>
       </Link>
+      {resourceType === "Measure" && (
+        <Link href={`/${resourceType}/${id}/evaluate`} key={`evaluate-measure-${id}`} passHref>
+          <Button
+            component="a"
+            color="cyan"
+            radius="md"
+            size="sm"
+            variant="filled"
+            style={{
+              float: "right",
+              marginRight: "8px",
+              marginLeft: "8px",
+            }}
+          >
+            <div>Evaluate Measure</div>
+          </Button>
+        </Link>
+      )}
     </div>
   );
 
@@ -88,7 +102,11 @@ function ResourceIDPage() {
         </div>
         <Divider my="sm" />
         <ScrollArea>
-          <Prism language="json" data-testid="prism-page-content" style={{ height: "80vh" }}>
+          <Prism
+            language="json"
+            data-testid="prism-page-content"
+            style={{ maxWidth: "77vw", height: "80vh" }}
+          >
             {pageBody}
           </Prism>
         </ScrollArea>
