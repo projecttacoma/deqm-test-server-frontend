@@ -17,7 +17,6 @@ function ResourceIDPage() {
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
   const [pageBody, setPageBody] = useState("");
-  const [evaluateMeasureButton, setEvaluateMeasureButton] = useState(<></>);
 
   useEffect(() => {
     if (resourceType && id) {
@@ -29,32 +28,6 @@ function ResourceIDPage() {
         })
         .then((resourcePageBody) => {
           setPageBody(JSON.stringify(resourcePageBody, null, 2));
-          console.log("resourceType: ", resourceType);
-          //if resource is a measure, an evaluate measure button will be rendered
-          if (resourceType === "Measure") {
-            setEvaluateMeasureButton(
-              <Link
-                href={`/${resourceType}/${id}/evaluate`}
-                key={`evaluate-measure-${id}`}
-                passHref
-              >
-                <Button
-                  component="a"
-                  color="cyan"
-                  radius="md"
-                  size="sm"
-                  variant="filled"
-                  style={{
-                    float: "right",
-                    marginRight: "8px",
-                    marginLeft: "8px",
-                  }}
-                >
-                  <div>Evaluate Measure</div>
-                </Button>
-              </Link>,
-            );
-          }
           setFetchingError(false);
           setLoadingRequest(false);
         })
@@ -91,7 +64,24 @@ function ResourceIDPage() {
           <div> Update </div>
         </Button>
       </Link>
-      {evaluateMeasureButton}
+      {resourceType === "Measure" && (
+        <Link href={`/${resourceType}/${id}/evaluate`} key={`evaluate-measure-${id}`} passHref>
+          <Button
+            component="a"
+            color="cyan"
+            radius="md"
+            size="sm"
+            variant="filled"
+            style={{
+              float: "right",
+              marginRight: "8px",
+              marginLeft: "8px",
+            }}
+          >
+            <div>Evaluate Measure</div>
+          </Button>
+        </Link>
+      )}
     </div>
   );
 
