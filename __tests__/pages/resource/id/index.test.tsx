@@ -16,7 +16,7 @@ const SINGLE_RESOURCE_BODY = {
   },
 };
 
-describe.only("resource ID render", () => {
+describe("resource ID render", () => {
   window.ResizeObserver = mockResizeObserver;
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(SINGLE_RESOURCE_BODY);

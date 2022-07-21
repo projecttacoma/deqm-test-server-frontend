@@ -84,7 +84,6 @@ export default function DeleteButton() {
       ),
       labels: { confirm: "Delete", cancel: "Cancel" },
       confirmProps: { color: "red" },
-      onCancel: () => console.log("cancel"),
       onConfirm: () => deleteHandler(),
     });
 
