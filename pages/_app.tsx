@@ -18,7 +18,7 @@ import { textGray } from "../styles/appColors";
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
- 
+
   return (
     <>
       <Head>
