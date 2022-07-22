@@ -1,16 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Prism } from "@mantine/prism";
-import {
-  Button,
-  Divider,
-  ScrollArea,
-  Stack,
-  Center,
-  Loader,
-  SimpleGrid,
-  MantineProvider,
-} from "@mantine/core";
+import { Button, Divider, ScrollArea, Stack, Center, Loader, MantineProvider } from "@mantine/core";
 import BackButton from "../../../components/BackButton";
 import Link from "next/link";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
@@ -67,16 +58,16 @@ function ResourceIDPage() {
     <div>
       <BackButton />
       <MantineProvider
-          //changes hex values associated with each Mantine color name to improve UI
-          theme={{
-            colors: {
-              pink: replaceDelete,
-            },
-          }}
-        >
-          <ModalsProvider>
-            <DeleteButton />
-          </ModalsProvider>
+        //changes hex values associated with each Mantine color name to improve UI
+        theme={{
+          colors: {
+            pink: replaceDelete,
+          },
+        }}
+      >
+        <ModalsProvider>
+          <DeleteButton />
+        </ModalsProvider>
       </MantineProvider>
       {resourceType === "Measure" && (
         <Link href={`/${resourceType}/${id}/evaluate`} key={`evaluate-measure-${id}`} passHref>
@@ -149,8 +140,8 @@ function ResourceIDPage() {
               language="json"
               data-testid="prism-page-content"
               colorScheme="dark"
-              style={{  maxWidth: "77vw", height: "80vh", backgroundColor: "#FFFFFF" }}
-            > 
+              style={{ maxWidth: "77vw", height: "80vh", backgroundColor: "#FFFFFF" }}
+            >
               {pageBody}
             </Prism>
           </MantineProvider>

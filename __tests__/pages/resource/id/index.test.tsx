@@ -16,6 +16,31 @@ const SINGLE_RESOURCE_BODY = {
   },
 };
 
+describe("measure resource ID render", () => {
+  window.ResizeObserver = mockResizeObserver;
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation("");
+  });
+
+  it("should display an evaluate measure button", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "Measure12" },
+          })}
+        >
+          <ResourceIDPage />
+        </RouterContext.Provider>,
+      );
+    });
+
+    //for Measure resources, an additional button named "Evaluate Measure" will be in the document
+    // expect(await screen.findByRole("button", { name: "Evaluate Measure" })).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: "Evaluate Measure" })).toBeInTheDocument();
+  });
+});
+
 describe("resource ID render", () => {
   window.ResizeObserver = mockResizeObserver;
   beforeAll(() => {
@@ -103,28 +128,5 @@ describe("resource ID render", () => {
     expect(within(deleteModal).getByText(/denom-EXM125-3/)).toBeInTheDocument();
     expect(within(deleteModal).getByRole("button", { name: "Delete" })).toBeInTheDocument();
     expect(within(deleteModal).getByRole("button", { name: "Cancel" })).toBeInTheDocument();
-  });
-});
-
-describe("measure resource ID render", () => {
-  beforeAll(() => {
-    global.fetch = getMockFetchImplementation("");
-  });
-
-  it("should display an evaluate measure button", async () => {
-    await act(async () => {
-      render(
-        <RouterContext.Provider
-          value={createMockRouter({
-            query: { resourceType: "Measure", id: "Measure12" },
-          })}
-        >
-          <ResourceIDPage />
-        </RouterContext.Provider>,
-      );
-    });
-
-    //for Measure resources, an additional button named "Evaluate Measure" will be in the document
-    expect(screen.getByRole("link", { name: "Evaluate Measure" })).toBeInTheDocument();
   });
 });
