@@ -9,6 +9,8 @@ import {
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import EvaluateMeasurePage from "../../../../pages/[resourceType]/[id]/evaluate";
 import { DateTime } from "luxon";
+import { fhirJson } from "@fhir-typescript/r4-core";
+
 
 const MEASURE_BODY_WITH_DATES = {
   resourceType: "Measure",
@@ -40,6 +42,42 @@ const MEASURE_BODY_NO_EFFECTIVE_PERIOD = {
 };
 
 const ERROR_400_RESPONSE_BODY = { issue: [{ details: { text: "Invalid resource ID" } }] };
+
+
+const RESOURCE_ID_BODY: fhirJson.Bundle = {
+  resourceType: "Bundle",
+  meta: {
+    lastUpdated: "2022-06-23T19:52:58.721Z",
+  },
+  type: "searchset",
+  total: 2,
+  entry: [
+    {
+      fullUrl: "http://localhost:3000/4_0_1/DiagnosticReport/denom-EXM125-3",
+      resource: {
+        resourceType: "Practitioner",
+        id: "denom-EXM125-3",
+        meta: {
+          profile: [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-diagnosticreport-note",
+          ],
+        },
+      },
+    },
+    {
+      fullUrl: "http://localhost:3000/4_0_1/DiagnosticReport/numer-EXM125-3",
+      resource: {
+        resourceType: "Practitioner",
+        id: "numer-EXM125-3",
+        meta: {
+          profile: [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-diagnosticreport-note",
+          ],
+        },
+      },
+    },
+  ],
+};
 
 describe("Test evaluate page render for measure", () => {
   beforeAll(() => {
@@ -108,12 +146,11 @@ describe("Test evaluate page render for measure", () => {
   });
 });
 
-describe("Test evaluate page render for measure without dates in effective period", () => {
+describe("Test evaluate page render for measure", () => {
   beforeAll(() => {
-    global.fetch = getMockFetchImplementation(MEASURE_BODY_NO_DATES);
+    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
   });
-
-  it("should display DatePickers with default dates", async () => {
+  it("should display expected text", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -149,11 +186,15 @@ describe("Test evaluate page render for measure without effective period", () =>
     });
     expect(await screen.findByDisplayValue("January 1, 2022")).toBeInTheDocument();
     expect(screen.getByDisplayValue("December 31, 2022")).toBeInTheDocument();
+    expect(screen.getByText("Select Practitioner")).toBeInTheDocument();
   });
 });
 
 describe("Test evaluate page render for non-measure", () => {
-  it("should display an error message and back button", async () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
+  });
+  it("should display an error message", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
