@@ -94,7 +94,7 @@ const UpdateResourcePage = () => {
 
   //called when submit button is clicked. Handles PUT request and response
   function editorSubmitHandler() {
-    let customMessage: NotificationProps["message"] = <div>Problem connecting to server</div>;
+    let customMessage = <Text weight={500}>Problem connecting to server:&nbsp;</Text>;
     let notifProps: NotificationProps = {
       message: customMessage,
       color: "red",
@@ -125,7 +125,11 @@ const UpdateResourcePage = () => {
           //redirects user to page with the resource's body
           router.push({ pathname: `/${resourceType}/${id}` });
         } else {
-          customMessage = `${response.status} ${response.statusText}`;
+          customMessage = (
+            <Text weight={500}>
+              {response.status} {response.statusText}&nbsp;
+            </Text>
+          );
           return response.json();
         }
       })
@@ -133,7 +137,7 @@ const UpdateResourcePage = () => {
         if (responseBody) {
           customMessage = (
             <>
-              <Text weight={500}>{customMessage}&nbsp;</Text>
+              {customMessage}
               <Text color="red">{responseBody.issue[0].details.text}</Text>
             </>
           );
@@ -142,7 +146,7 @@ const UpdateResourcePage = () => {
       .catch((error) => {
         customMessage = (
           <>
-            <Text weight={500}>Problem connecting to server:&nbsp;</Text>
+            {customMessage}
             <Text color="red">{error.message}</Text>
           </>
         );
