@@ -1,5 +1,6 @@
 import { Center } from "@mantine/core";
 import { useRouter } from "next/router";
+import SelectComponent from "../../../components/SelectComponent";
 
 /**
  * Page for evaluate measure functionality.
@@ -9,7 +10,12 @@ const EvaluateMeasurePage = () => {
   const router = useRouter();
   const { resourceType } = router.query;
   if (resourceType === "Measure") {
-    return <div>Coming soon...</div>;
+    return (
+      <div>
+        {" "}
+        <SelectComponent resourceType="Practitioner"> </SelectComponent>
+      </div>
+    );
   } else {
     return (
       <Center>
