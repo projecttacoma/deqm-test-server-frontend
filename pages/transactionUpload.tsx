@@ -102,9 +102,6 @@ const TransactionUploadPage = () => {
       },
     })
       .then((response) => {
-        return response;
-      })
-      .then((response) => {
         if (response.status === 201 || response.status === 200) {
           customMessage = <Text>Transaction Bundle Upload Successful</Text>;
           uploadSuccessful = true;
