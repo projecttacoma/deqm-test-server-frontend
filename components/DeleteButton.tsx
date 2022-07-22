@@ -10,7 +10,6 @@ import { useModals } from "@mantine/modals";
  * wants to delete the resource. Only deletes if the user confirms, cancels otherwise.
  */
 export default function DeleteButton() {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const router = useRouter();
   const modals = useModals();
   const { resourceType, id } = router.query;
@@ -29,7 +28,7 @@ export default function DeleteButton() {
       method: "DELETE",
     })
       .then((response) => {
-        if (response.status === 201 || response.status === 200 || response.status === 204) {
+        if (response.status === 204) {
           customMessage = (
             <>
               <Text>Resource successfully deleted!&nbsp;</Text>

@@ -22,7 +22,7 @@ describe("resource ID render", () => {
     global.fetch = getMockFetchImplementation(SINGLE_RESOURCE_BODY);
   });
 
-  it("should display the JSON content of a single resource, a back button, and an update button", async () => {
+  it("should display the back-button, update-button, and delete-button", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -40,6 +40,20 @@ describe("resource ID render", () => {
     expect(screen.getByRole("link", { name: "Update" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Evaluate Measure" })).toBeNull();
     expect(screen.getByRole("button", { name: "Delete" })).toBeInTheDocument();
+  });
+
+  it("should display the JSON content of a single resource", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "DiagnosticReport", id: "denom-EXM125-3" },
+          })}
+        >
+          <ResourceIDPage />
+        </RouterContext.Provider>,
+      );
+    });
 
     //parses out relevant information from the Prism HTML block and stores it in an array
     const spanText = [""];
@@ -60,6 +74,20 @@ describe("resource ID render", () => {
         '"http://hl7.org/fhir/us/core/StructureDefinition/us-core-diagnosticreport-note"',
       ),
     ).toBe(true);
+  });
+
+  it("should display the delete modal when the delete button is pressed", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "DiagnosticReport", id: "denom-EXM125-3" },
+          })}
+        >
+          <ResourceIDPage />
+        </RouterContext.Provider>,
+      );
+    });
 
     const deleteButton = screen.getByRole("button", {
       name: "Delete",
