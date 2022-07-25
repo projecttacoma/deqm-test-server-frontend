@@ -31,6 +31,14 @@ const MEASURE_BODY_NO_DATES = {
   effectivePeriod: {},
 };
 
+const MEASURE_BODY_NO_EFFECTIVE_PERIOD = {
+  resourceType: "Measure",
+  id: "measure-EXM104-8.4.000",
+  meta: {
+    lastUpdated: "2022-07-21T18:12:25.008Z",
+  },
+};
+
 const ERROR_400_RESPONSE_BODY = { issue: [{ details: { text: "Invalid resource ID" } }] };
 
 describe("Test evaluate page render for measure", () => {
@@ -100,9 +108,31 @@ describe("Test evaluate page render for measure", () => {
   });
 });
 
-describe("Test evaluate page render for measure without effective period dates", () => {
+describe("Test evaluate page render for measure without dates in effective period", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(MEASURE_BODY_NO_DATES);
+  });
+
+  it("should display DatePickers with default dates", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
+          })}
+        >
+          <EvaluateMeasurePage />
+        </RouterContext.Provider>,
+      );
+    });
+    expect(await screen.findByDisplayValue("January 1, 2022")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("December 31, 2022")).toBeInTheDocument();
+  });
+});
+
+describe("Test evaluate page render for measure without effective period", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(MEASURE_BODY_NO_EFFECTIVE_PERIOD);
   });
 
   it("should display DatePickers with default dates", async () => {
