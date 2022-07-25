@@ -1,5 +1,4 @@
 import { render, screen, act, fireEvent, within, waitFor } from "@testing-library/react";
-//import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import UpdateResourcePage from "../../../../pages/[resourceType]/[id]/update";
 import {
