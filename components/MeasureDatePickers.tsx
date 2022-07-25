@@ -19,14 +19,20 @@ export interface MeasureDatePickerProps {
  * then the DatePickers are given the values form that Measure's effectivePeriod
  * @returns two DatePickers inside a Grid or an error message
  */
-const MeasureDatePickers = (props: MeasureDatePickerProps) => {
+const MeasureDatePickers = ({
+  id,
+  periodStart,
+  periodEnd,
+  startOnUpdate,
+  endOnUpdate,
+}: MeasureDatePickerProps) => {
   const [fetchingError, setFetchingError] = useState(false);
 
   useEffect(() => {
-    if (props.id) {
+    if (id) {
       let fetchStatus = { status: 500, statusText: "Failed fetch request" };
       //fetch the Measure's JSON body from the test server based on id from url
-      fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure/${props.id}`)
+      fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure/${id}`)
         .then((data) => {
           fetchStatus = { status: data.status, statusText: data.statusText };
           return data.json();
@@ -34,14 +40,12 @@ const MeasureDatePickers = (props: MeasureDatePickerProps) => {
         .then((resourcePageBody) => {
           if (fetchStatus.status === 200 || fetchStatus.status === 201) {
             if (resourcePageBody.effectivePeriod.start) {
-              props.startOnUpdate(
+              startOnUpdate(
                 new Date(DateTime.fromISO(resourcePageBody.effectivePeriod.start).toISO()),
               );
             }
             if (resourcePageBody.effectivePeriod.end) {
-              props.endOnUpdate(
-                new Date(DateTime.fromISO(resourcePageBody.effectivePeriod.end).toISO()),
-              );
+              endOnUpdate(new Date(DateTime.fromISO(resourcePageBody.effectivePeriod.end).toISO()));
             }
           } else {
             cleanNotifications();
@@ -73,7 +77,7 @@ const MeasureDatePickers = (props: MeasureDatePickerProps) => {
           });
         });
     }
-  }, [props.id]);
+  }, [id, startOnUpdate, endOnUpdate]);
 
   if (!fetchingError) {
     return (
@@ -82,8 +86,8 @@ const MeasureDatePickers = (props: MeasureDatePickerProps) => {
           <DatePicker
             label={<Text>Period Start</Text>}
             icon={<Calendar size={16} color={"#40a5bf"} />}
-            value={props.periodStart}
-            onChange={(v) => props.startOnUpdate(v ? v : new Date())}
+            value={periodStart}
+            onChange={(v) => startOnUpdate(v ? v : new Date())}
             allowFreeInput
           ></DatePicker>
         </Grid.Col>
@@ -91,8 +95,8 @@ const MeasureDatePickers = (props: MeasureDatePickerProps) => {
           <DatePicker
             label={<Text>Period End</Text>}
             icon={<Calendar size={16} color={"#40a5bf"} />}
-            value={props.periodEnd}
-            onChange={(v) => props.endOnUpdate(v ? v : new Date())}
+            value={periodEnd}
+            onChange={(v) => endOnUpdate(v ? v : new Date())}
             allowFreeInput
           ></DatePicker>
         </Grid.Col>
