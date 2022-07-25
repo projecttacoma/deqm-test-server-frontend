@@ -110,6 +110,7 @@ describe("Select component render", () => {
         </RouterContext.Provider>,
       );
     });
+    
     // //retrieves the combobox and the input field within the combobox
     const radio = screen.getByLabelText("Subject");
     await act(async () => {
