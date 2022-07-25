@@ -44,6 +44,16 @@ const RESOURCE_ID_BODY: fhirJson.Bundle = {
   ],
 };
 
+const NO_RESOURCE_ID: fhirJson.Bundle = {
+  resourceType: "Bundle",
+  meta: {
+    lastUpdated: "2022-06-23T19:52:58.721Z",
+  },
+  type: "searchset",
+  total: 0,
+  entry: [],
+};
+
 describe("Select component render", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
@@ -77,5 +87,22 @@ describe("Select component render", () => {
     expect(options[0].textContent).toBe("Practitioner/denom-EXM125-3");
     expect(options[1].textContent).toBe("Practitioner/numer-EXM125-3");
     screen.debug();
+  });
+});
+
+describe("Select component no practitioners", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(NO_RESOURCE_ID);
+  });
+
+  window.ResizeObserver = mockResizeObserver;
+  const user = userEvent.setup();
+
+  it("should display no practioners", async () => {
+    await act(async () => {
+      render(mantineRecoilWrap(<SelectComponent resourceType="Practitioner" />));
+    });
+
+    expect(screen.getByText("No resources of type Practitioner found")).toBeInTheDocument;
   });
 });
