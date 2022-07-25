@@ -95,7 +95,6 @@ describe("Select component no practitioners", () => {
   });
 
   window.ResizeObserver = mockResizeObserver;
-  const user = userEvent.setup();
 
   it("should display no practioners", async () => {
     await act(async () => {
