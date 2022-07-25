@@ -47,7 +47,6 @@ export default function SelectComponent(props) {
  */
 function PopulateIDHelper(props: { jsonBody: fhirJson.Bundle; resourceType: string }) {
   const entryArray = props.jsonBody.entry;
-  console.log(entryArray);
   if (props.jsonBody.total && props.jsonBody.total > 0 && entryArray != undefined) {
     return PopulateSelect(entryArray, props.resourceType);
   } else {
