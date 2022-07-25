@@ -64,11 +64,7 @@ describe("Select component no practitioners", () => {
     await act(async () => {
       render(
         mantineRecoilWrap(
-          <SelectComponent
-            resourceType="Practitioner"
-            practitionerValue=""
-            setPractitionerValue={jest.fn()}
-          />,
+          <SelectComponent resourceType="Practitioner" value="" setValue={jest.fn()} />,
         ),
       );
     });
@@ -87,11 +83,7 @@ describe("Select component render", () => {
     await act(async () => {
       render(
         mantineRecoilWrap(
-          <SelectComponent
-            resourceType="Practitioner"
-            practitionerValue=""
-            setPractitionerValue={jest.fn()}
-          />,
+          <SelectComponent resourceType="Practitioner" value="" setValue={jest.fn()} />,
         ),
       );
     });
