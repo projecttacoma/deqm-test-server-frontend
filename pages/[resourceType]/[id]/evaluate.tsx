@@ -16,6 +16,7 @@ import SelectComponent from "../../../components/SelectComponent";
  * @returns React node with a back button and MeasureDatePickers if on a valid Measure url
  */
 const EvaluateMeasurePage = () => {
+  const [practitionerValue, setPractitionerValue] = useState("");
   const router = useRouter();
   const { resourceType, id } = router.query;
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
@@ -39,18 +40,21 @@ const EvaluateMeasurePage = () => {
           startOnUpdate={setPeriodStart}
           endOnUpdate={setPeriodEnd}
         />
-        <SelectComponent resourceType="Practitioner"/>
+          <SelectComponent
+            resourceType="Practitioner"
+            setPractitionerValue={setPractitionerValue}
+            practitionerValue={practitionerValue}
+        />
       </> )
       } else {
-    //if resourceType is not a Measure, an error message is displayed
-    return (
-      <>
-        <BackButton />
-        <Center>
-          <div>
-            Cannot evaluate on resourceType: {`${resourceType}`}, only on resourceType: Measure
-          </div>
-        </Center>
+        return (
+        <>
+          <BackButton />
+          <Center>
+            <div>
+              Cannot evaluate on resourceType: {`${resourceType}`}, only on resourceType: Measure
+            </div>
+          </Center>
       </>
     );
   }
