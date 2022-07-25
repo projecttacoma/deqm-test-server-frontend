@@ -53,6 +53,29 @@ const NO_RESOURCE_ID: fhirJson.Bundle = {
   entry: [],
 };
 
+describe("Select component no practitioners", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(NO_RESOURCE_ID);
+  });
+
+  window.ResizeObserver = mockResizeObserver;
+
+  it("should display no practioners", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <SelectComponent
+            resourceType="Practitioner"
+            practitionerValue=""
+            setPractitionerValue={jest.fn()}
+          />,
+        ),
+      );
+    });
+  });
+  expect(screen.findByText("No resources of type Practitioner found")).toBeInTheDocument;
+});
+
 describe("Select component render", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
@@ -62,7 +85,15 @@ describe("Select component render", () => {
 
   it("should display a dropdown menu populated with resource ID's when prompted by user key presses", async () => {
     await act(async () => {
-      render(mantineRecoilWrap(<SelectComponent resourceType="Practitioner" />));
+      render(
+        mantineRecoilWrap(
+          <SelectComponent
+            resourceType="Practitioner"
+            practitionerValue=""
+            setPractitionerValue={jest.fn()}
+          />,
+        ),
+      );
     });
 
     //retrieves the combobox and the input field within the combobox
@@ -77,29 +108,9 @@ describe("Select component render", () => {
       fireEvent.keyDown(autocomplete, { key: "Enter" });
     });
 
-    //verifies that the input field updates appropriately
-    expect(input.getAttribute("value")).toBe("P");
-
     //verifies that the drop down autocomplete menu is populated with the resource IDs fetched from the server
     const options = screen.getAllByRole("option");
     expect(options[0].textContent).toBe("Practitioner/denom-EXM125-3");
     expect(options[1].textContent).toBe("Practitioner/numer-EXM125-3");
-    screen.debug();
-  });
-});
-
-describe("Select component no practitioners", () => {
-  beforeAll(() => {
-    global.fetch = getMockFetchImplementation(NO_RESOURCE_ID);
-  });
-
-  window.ResizeObserver = mockResizeObserver;
-
-  it("should display no practioners", async () => {
-    await act(async () => {
-      render(mantineRecoilWrap(<SelectComponent resourceType="Practitioner" />));
-    });
-
-    expect(screen.getByText("No resources of type Practitioner found")).toBeInTheDocument;
   });
 });
