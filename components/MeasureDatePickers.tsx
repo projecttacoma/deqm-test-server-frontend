@@ -4,9 +4,10 @@ import React, { useEffect, useState } from "react";
 import { Calendar, X } from "tabler-icons-react";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
 import { DateTime } from "luxon";
+import { fhirJson } from "@fhir-typescript/r4-core";
 
 export interface MeasureDatePickerProps {
-  id?: string;
+  measureID?: string;
   periodStart: Date;
   periodEnd: Date;
   startOnUpdate: (submittedVal: Date) => void;
@@ -20,7 +21,7 @@ export interface MeasureDatePickerProps {
  * @returns two DatePickers inside a Grid or an error message
  */
 const MeasureDatePickers = ({
-  id,
+  measureID: id,
   periodStart,
   periodEnd,
   startOnUpdate,
@@ -35,19 +36,19 @@ const MeasureDatePickers = ({
       fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure/${id}`)
         .then((data) => {
           fetchStatus = { status: data.status, statusText: data.statusText };
-          return data.json();
+          return data.json() as Promise<fhirJson.Measure | fhirJson.OperationOutcome>;
         })
         .then((resourcePageBody) => {
           if (fetchStatus.status === 200 || fetchStatus.status === 201) {
-            if (resourcePageBody.effectivePeriod.start) {
-              startOnUpdate(
-                new Date(DateTime.fromISO(resourcePageBody.effectivePeriod.start).toISO()),
-              );
+            const measureBody = resourcePageBody as fhirJson.Measure;
+            if (measureBody.effectivePeriod?.start) {
+              startOnUpdate(new Date(DateTime.fromISO(measureBody.effectivePeriod.start).toISO()));
             }
-            if (resourcePageBody.effectivePeriod.end) {
-              endOnUpdate(new Date(DateTime.fromISO(resourcePageBody.effectivePeriod.end).toISO()));
+            if (measureBody.effectivePeriod?.end) {
+              endOnUpdate(new Date(DateTime.fromISO(measureBody.effectivePeriod.end).toISO()));
             }
           } else {
+            const operationOutcomeBody = resourcePageBody as fhirJson.OperationOutcome;
             cleanNotifications();
             showNotification({
               message: (
@@ -55,7 +56,11 @@ const MeasureDatePickers = ({
                   <Text weight={500}>
                     {fetchStatus.status} {fetchStatus.statusText}:&nbsp;
                   </Text>
-                  <Text color="red">{resourcePageBody.issue[0].details.text}</Text>
+                  <Text color="red">
+                    {operationOutcomeBody.issue
+                      ? operationOutcomeBody.issue[0]?.details?.text
+                      : "Operation Outcome Issue undefined."}
+                  </Text>
                 </>
               ),
               color: "red",

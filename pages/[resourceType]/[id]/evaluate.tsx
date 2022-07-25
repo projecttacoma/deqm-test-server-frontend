@@ -33,7 +33,7 @@ const EvaluateMeasurePage = () => {
         </Center>
         <Divider my="md" />
         <MeasureDatePickers
-          id={id as string}
+          measureID={id as string}
           periodStart={periodStart}
           periodEnd={periodEnd}
           startOnUpdate={setPeriodStart}
