@@ -1,6 +1,11 @@
-import { render, screen, act } from "@testing-library/react";
+import { render, screen, act, within, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { createMockRouter, getMockFetchImplementation } from "../../../helpers/testHelpers";
+import {
+  mantineRecoilWrap,
+  getMockFetchImplementation,
+  mockResizeObserver,
+  createMockRouter,
+} from "../../../helpers/testHelpers";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import EvaluateMeasurePage from "../../../../pages/[resourceType]/[id]/evaluate";
 import { fhirJson } from "@fhir-typescript/r4-core";
@@ -85,3 +90,62 @@ describe("Test evaluate page render for non-measure", () => {
     ).toBeInTheDocument();
   });
 });
+
+describe("Select component render", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
+  });
+
+  window.ResizeObserver = mockResizeObserver;
+
+  it("should display a dropdown menu populated with resource ID's when prompted by user key presses", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "Measure-12" },
+          })}
+        >
+          <EvaluateMeasurePage />
+        </RouterContext.Provider>,
+      );
+    });
+    // //retrieves the combobox and the input field within the combobox
+    const radio = screen.getByLabelText("Subject");
+    await act(async () => {
+      fireEvent.click(radio);
+    });
+    expect(screen.getByText("Select Patient")).toBeInTheDocument;
+  });
+});
+
+describe("Select component render1", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
+  });
+
+  window.ResizeObserver = mockResizeObserver;
+
+  it("should display a dropdown menu populated with resource ID's when prompted by user key presses1", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "Measure-12" },
+          })}
+        >
+          <EvaluateMeasurePage />
+        </RouterContext.Provider>,
+      );
+    });
+
+    // //retrieves the combobox and the input field within the combobox
+    const radio2 = screen.getByLabelText("Population");
+    // const radio = screen.getByLabelText("radio");
+    await act(async () => {
+      fireEvent.click(radio2);
+    });
+    expect(screen.findByText("Select Patient")).not.toBeInTheDocument;
+  });
+});
+
