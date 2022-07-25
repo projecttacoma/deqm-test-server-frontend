@@ -4,6 +4,7 @@ import {
   mantineRecoilWrap,
   createMockRouter,
   getMockFetchImplementation,
+  getMockFetchImplementationError,
 } from "../../../helpers/testHelpers";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import EvaluateMeasurePage from "../../../../pages/[resourceType]/[id]/evaluate";
@@ -169,5 +170,33 @@ describe("non 20x response in evaluate measure page", () => {
 
     expect(within(errorNotif).getByText(/400 BadRequest/)).toBeInTheDocument();
     expect(within(errorNotif).getByText(/Invalid resource ID/)).toBeInTheDocument();
+  });
+});
+
+describe("Evaluate measure page fetch throws error", () => {
+  beforeEach(() => {
+    global.fetch = getMockFetchImplementationError("Problem connecting to server");
+  });
+
+  it("Server error notification should appear with expected messages", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
+            })}
+          >
+            <EvaluateMeasurePage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
+    expect(errorNotif).toBeInTheDocument();
+
+    expect(within(errorNotif).getByText(/Not connected to server!/)).toBeInTheDocument();
+    expect(screen.getByText("Something went wrong.")).toBeInTheDocument();
   });
 });
