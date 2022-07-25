@@ -86,7 +86,6 @@ describe("Select component render", () => {
     const options = screen.getAllByRole("option");
     expect(options[0].textContent).toBe("Practitioner/denom-EXM125-3");
     expect(options[1].textContent).toBe("Practitioner/numer-EXM125-3");
-    screen.debug();
   });
 });
 

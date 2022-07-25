@@ -6,7 +6,7 @@ import { Autocomplete } from "@mantine/core";
  * @param props include the string resourceType
  * @returns a component with a loading component, server error, or autocomplete select component populated with resource IDs
  */
-export default function SelectComponent(props) {
+export default function SelectComponent(props: { resourceType: string }) {
   const resourceType = props.resourceType;
   const [pageBody, setPageBody] = useState<fhirJson.Bundle>();
   const [fetchingError, setFetchingError] = useState(false);

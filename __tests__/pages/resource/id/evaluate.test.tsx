@@ -1,7 +1,6 @@
-import { render, screen, act, within, fireEvent } from "@testing-library/react";
+import { render, screen, act, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import {
-  mantineRecoilWrap,
   getMockFetchImplementation,
   mockResizeObserver,
   createMockRouter,
@@ -91,14 +90,14 @@ describe("Test evaluate page render for non-measure", () => {
   });
 });
 
-describe("Select component render", () => {
+describe("Radio button render subject", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
   });
 
   window.ResizeObserver = mockResizeObserver;
 
-  it("should display a dropdown menu populated with resource ID's when prompted by user key presses", async () => {
+  it("should display an autocomplete component when the subject radio is selected", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -110,24 +109,24 @@ describe("Select component render", () => {
         </RouterContext.Provider>,
       );
     });
-    
-    // //retrieves the combobox and the input field within the combobox
-    const radio = screen.getByLabelText("Subject");
+
+    // click the subject radio button to ensure an autocomplete component appears
+    const subjectRadio = screen.getByLabelText("Subject");
     await act(async () => {
-      fireEvent.click(radio);
+      fireEvent.click(subjectRadio);
     });
     expect(screen.getByText("Select Patient")).toBeInTheDocument;
   });
 });
 
-describe("Select component render1", () => {
+describe("Radio button render population", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
   });
 
   window.ResizeObserver = mockResizeObserver;
 
-  it("should display a dropdown menu populated with resource ID's when prompted by user key presses1", async () => {
+  it("should not display an autocomplete component when the population radio is selected", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -140,13 +139,11 @@ describe("Select component render1", () => {
       );
     });
 
-    // //retrieves the combobox and the input field within the combobox
-    const radio2 = screen.getByLabelText("Population");
-    // const radio = screen.getByLabelText("radio");
+    // click the population radio button to ensure an autocomplete component doesn't appear
+    const populationRadio = screen.getByLabelText("Population");
     await act(async () => {
-      fireEvent.click(radio2);
+      fireEvent.click(populationRadio);
     });
     expect(screen.findByText("Select Patient")).not.toBeInTheDocument;
   });
 });
-
