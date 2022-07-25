@@ -1,11 +1,20 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Prism } from "@mantine/prism";
-import { Button, Divider, ScrollArea, Stack, Center, Loader } from "@mantine/core";
+import { Button, Divider, ScrollArea, Stack, Center, Loader, MantineProvider } from "@mantine/core";
 import BackButton from "../../../components/BackButton";
 import Link from "next/link";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
-
+import DeleteButton from "../../../components/DeleteButton";
+import { ModalsProvider } from "@mantine/modals";
+import {
+  replaceDark,
+  replaceGray,
+  replaceTeal,
+  replaceRed,
+  replaceBlue,
+  replaceDelete,
+} from "../../../styles/codeColorScheme";
 /**
  * Component which displays the JSON body of an individual resource and a back button.
  * If the resource is a Measure, an evaluate measure button is also displayed.
@@ -48,22 +57,18 @@ function ResourceIDPage() {
   const renderButtons = (
     <div>
       <BackButton />
-      <Link href={`/${resourceType}/${id}/update`} key={`update-${id}`} passHref>
-        <Button
-          component="a"
-          color="cyan"
-          radius="md"
-          size="sm"
-          variant="filled"
-          style={{
-            float: "right",
-            marginRight: "8px",
-            marginLeft: "8px",
-          }}
-        >
-          <div> Update </div>
-        </Button>
-      </Link>
+      <MantineProvider
+        //changes hex values associated with each Mantine color name to improve UI
+        theme={{
+          colors: {
+            pink: replaceDelete,
+          },
+        }}
+      >
+        <ModalsProvider>
+          <DeleteButton />
+        </ModalsProvider>
+      </MantineProvider>
       {resourceType === "Measure" && (
         <Link href={`/${resourceType}/${id}/evaluate`} key={`evaluate-measure-${id}`} passHref>
           <Button
@@ -82,6 +87,23 @@ function ResourceIDPage() {
           </Button>
         </Link>
       )}
+      <Link href={`/${resourceType}/${id}/update`} key={`update-${id}`} passHref>
+        <Button
+          component="a"
+          color="cyan"
+          radius="md"
+          size="sm"
+          variant="filled"
+          style={{
+            float: "right",
+            marginRight: "8px",
+            marginLeft: "8px",
+          }}
+          key={`update-${id}`}
+        >
+          <div> Update </div>
+        </Button>
+      </Link>
     </div>
   );
 
@@ -102,13 +124,27 @@ function ResourceIDPage() {
         </div>
         <Divider my="sm" />
         <ScrollArea>
-          <Prism
-            language="json"
-            data-testid="prism-page-content"
-            style={{ maxWidth: "77vw", height: "80vh" }}
+          <MantineProvider
+            //changes hex values associated with each Mantine color name to improve UI
+            theme={{
+              colors: {
+                gray: replaceGray,
+                dark: replaceDark,
+                teal: replaceTeal,
+                red: replaceRed,
+                blue: replaceBlue,
+              },
+            }}
           >
-            {pageBody}
-          </Prism>
+            <Prism
+              language="json"
+              data-testid="prism-page-content"
+              colorScheme="dark"
+              style={{ maxWidth: "77vw", height: "80vh", backgroundColor: "#FFFFFF" }}
+            >
+              {pageBody}
+            </Prism>
+          </MantineProvider>
         </ScrollArea>
       </Stack>
     </div>

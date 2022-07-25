@@ -1,4 +1,4 @@
-import { render, screen, act } from "@testing-library/react";
+import { render, screen, act, fireEvent, within } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import {
   getMockFetchImplementation,
@@ -16,13 +16,38 @@ const SINGLE_RESOURCE_BODY = {
   },
 };
 
+describe("measure resource ID render", () => {
+  window.ResizeObserver = mockResizeObserver;
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation("");
+  });
+
+  it("should display an evaluate measure button", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "Measure12" },
+          })}
+        >
+          <ResourceIDPage />
+        </RouterContext.Provider>,
+      );
+    });
+
+    //for Measure resources, an additional button named "Evaluate Measure" will be in the document
+    // expect(await screen.findByRole("button", { name: "Evaluate Measure" })).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: "Evaluate Measure" })).toBeInTheDocument();
+  });
+});
+
 describe("resource ID render", () => {
   window.ResizeObserver = mockResizeObserver;
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(SINGLE_RESOURCE_BODY);
   });
 
-  it("should display the JSON content of a single resource, a back button, and an update button", async () => {
+  it("should display the back-button, update-button, and delete-button", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -39,6 +64,21 @@ describe("resource ID render", () => {
     expect(await screen.findByTestId("back-button")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Update" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Evaluate Measure" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Delete" })).toBeInTheDocument();
+  });
+
+  it("should display the JSON content of a single resource", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "DiagnosticReport", id: "denom-EXM125-3" },
+          })}
+        >
+          <ResourceIDPage />
+        </RouterContext.Provider>,
+      );
+    });
 
     //parses out relevant information from the Prism HTML block and stores it in an array
     const spanText = [""];
@@ -60,19 +100,13 @@ describe("resource ID render", () => {
       ),
     ).toBe(true);
   });
-});
 
-describe("measure resource ID render", () => {
-  beforeAll(() => {
-    global.fetch = getMockFetchImplementation("");
-  });
-
-  it("should display an evaluate measure button", async () => {
+  it("should display the delete modal when the delete button is pressed", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
           value={createMockRouter({
-            query: { resourceType: "Measure", id: "Measure12" },
+            query: { resourceType: "DiagnosticReport", id: "denom-EXM125-3" },
           })}
         >
           <ResourceIDPage />
@@ -80,7 +114,19 @@ describe("measure resource ID render", () => {
       );
     });
 
-    //for Measure resources, an additional button named "Evaluate Measure" will be in the document
-    expect(screen.getByRole("link", { name: "Evaluate Measure" })).toBeInTheDocument();
+    const deleteButton = screen.getByRole("button", {
+      name: "Delete",
+    }) as HTMLButtonElement;
+
+    // click the identified delete button
+    fireEvent.click(deleteButton);
+
+    //make sure a modal with the correct information shows up. Mantine modals are classified as dialogs.
+    const deleteModal = await screen.findByRole("dialog");
+    expect(deleteModal).toBeInTheDocument();
+    expect(within(deleteModal).getByText(/DiagnosticReport/)).toBeInTheDocument();
+    expect(within(deleteModal).getByText(/denom-EXM125-3/)).toBeInTheDocument();
+    expect(within(deleteModal).getByRole("button", { name: "Delete" })).toBeInTheDocument();
+    expect(within(deleteModal).getByRole("button", { name: "Cancel" })).toBeInTheDocument();
   });
 });
