@@ -42,7 +42,7 @@ export default function SelectComponent(props) {
 }
 
 /**
- * @param props.jsonBody: fhirJson.Bundle
+ * @param props include a fhirJson.Bundle jsonBody, and a string resourceType
  * @returns a component with an error message that resources don't exist or autocomplete select component populated with resource IDs
  */
 function PopulateIDHelper(props: { jsonBody: fhirJson.Bundle; resourceType: string }) {
@@ -51,7 +51,7 @@ function PopulateIDHelper(props: { jsonBody: fhirJson.Bundle; resourceType: stri
   if (props.jsonBody.total && props.jsonBody.total > 0 && entryArray != undefined) {
     return PopulateSelect(entryArray, props.resourceType);
   } else {
-    return <div> No resources found </div>;
+    return <div> {`No resources of type ${props.resourceType} found`} </div>;
   }
 }
 
