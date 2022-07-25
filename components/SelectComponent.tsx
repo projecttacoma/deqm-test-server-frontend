@@ -14,7 +14,6 @@ export default function SelectComponent(props: { resourceType: string }) {
 
   useEffect(() => {
     if (resourceType) {
-      //setLoadingRequest(true);
       fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`)
         .then((data) => {
           return data.json() as Promise<fhirJson.Bundle>;
@@ -47,7 +46,6 @@ export default function SelectComponent(props: { resourceType: string }) {
  */
 function PopulateIDHelper(props: { jsonBody: fhirJson.Bundle; resourceType: string }) {
   const entryArray = props.jsonBody.entry;
-  console.log(entryArray);
   if (props.jsonBody.total && props.jsonBody.total > 0 && entryArray != undefined) {
     return PopulateSelect(entryArray, props.resourceType);
   } else {

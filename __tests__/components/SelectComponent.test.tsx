@@ -7,7 +7,6 @@ import {
 } from "../helpers/testHelpers";
 import { fhirJson } from "@fhir-typescript/r4-core";
 import SelectComponent from "../../components/SelectComponent";
-import userEvent from "@testing-library/user-event";
 
 const RESOURCE_ID_BODY: fhirJson.Bundle = {
   resourceType: "Bundle",
@@ -60,7 +59,6 @@ describe("Select component render", () => {
   });
 
   window.ResizeObserver = mockResizeObserver;
-  const user = userEvent.setup();
 
   it("should display a dropdown menu populated with resource ID's when prompted by user key presses", async () => {
     await act(async () => {
@@ -96,7 +94,6 @@ describe("Select component no practitioners", () => {
   });
 
   window.ResizeObserver = mockResizeObserver;
-  const user = userEvent.setup();
 
   it("should display no practioners", async () => {
     await act(async () => {

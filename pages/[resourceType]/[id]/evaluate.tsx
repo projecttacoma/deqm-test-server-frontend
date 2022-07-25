@@ -39,7 +39,7 @@ const EvaluateMeasurePage = () => {
           startOnUpdate={setPeriodStart}
           endOnUpdate={setPeriodEnd}
         />
-        <SelectComponent resourceType="Practitioner"> </SelectComponent>
+        <SelectComponent resourceType="Practitioner"/>
       </> )
       } else {
     //if resourceType is not a Measure, an error message is displayed
