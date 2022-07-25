@@ -12,6 +12,8 @@ const EvaluateMeasurePage = () => {
   const router = useRouter();
   const { resourceType } = router.query;
   const [radioValue, setRadioValue] = useState("react");
+  const [practitionerValue, setPractitionerValue] = useState("");
+  const [patientValue, setPatientValue] = useState("");
 
   if (resourceType === "Measure") {
     return (
@@ -27,10 +29,17 @@ const EvaluateMeasurePage = () => {
         </RadioGroup>
         {/* only displays autocomplete component if radio value is Patient */}
         {radioValue === "Subject" ? (
-          <SelectComponent resourceType="Patient"></SelectComponent>
+          <SelectComponent
+            resourceType="Patient"
+            setPractitionerValue={setPatientValue}
+            practitionerValue={patientValue}
+          />
         ) : null}
-
-        <SelectComponent resourceType="Practitioner" />
+        <SelectComponent
+          resourceType="Practitioner"
+          setPractitionerValue={setPractitionerValue}
+          practitionerValue={practitionerValue}
+        />
       </div>
     );
   } else {
