@@ -11,7 +11,6 @@ import { RouterContext } from "next/dist/shared/lib/router-context";
 import EvaluateMeasurePage from "../../../../pages/[resourceType]/[id]/evaluate";
 import { DateTime } from "luxon";
 import { fhirJson } from "@fhir-typescript/r4-core";
-import SelectComponent from "../../../../components/SelectComponent";
 
 const MEASURE_BODY_WITH_DATES = {
   resourceType: "Measure",
@@ -162,13 +161,12 @@ describe("Test evaluate page render for measure", () => {
     expect(screen.getByDisplayValue("February 2, 2018")).toBeInTheDocument();
     expect(screen.getByDisplayValue("November 13, 2020")).toBeInTheDocument();
 
+    //request preview should include the updated dates
     expect(
       screen.getByText(
         "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2018-02-02T05:00:00.000Z&periodEnd=2020-11-13T05:00:00.000Z",
       ),
     ).toBeInTheDocument();
-
-    //screen.debug(undefined, 30000);
   });
 });
 
@@ -319,48 +317,13 @@ describe("Select component no practitioners", () => {
   expect(screen.findByText("No resources of type Practitioner found")).toBeInTheDocument;
 });
 
-describe("Select component render", () => {
-  beforeAll(() => {
-    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
-  });
-
-  it("should display a dropdown menu populated with resource ID's when prompted by user key presses", async () => {
-    await act(async () => {
-      render(
-        <RouterContext.Provider
-          value={createMockRouter({
-            query: { resourceType: "Measure", id: "Measure-12" },
-          })}
-        >
-          <EvaluateMeasurePage />
-        </RouterContext.Provider>,
-      );
-    });
-
-    const autocomplete = screen.getByRole("combobox");
-    const input = within(autocomplete).getByRole("searchbox");
-    autocomplete.focus();
-    //mocks user key clicks to test the input fields and drop down menus
-    await act(async () => {
-      fireEvent.change(input, { target: { value: "P" } });
-      fireEvent.keyDown(autocomplete, { key: "ArrowDown" });
-      fireEvent.keyDown(autocomplete, { key: "Enter" });
-    });
-
-    expect(
-      screen.getByText(
-        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01T05:00:00.000Z&periodEnd=2022-12-31T05:00:00.000Z&practitioner=P",
-      ),
-    ).toBeInTheDocument();
-  });
-});
-
-describe("Radio button render subject", () => {
+describe("Select component, Radio button, and request preview render", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
   });
   window.ResizeObserver = mockResizeObserver;
-  it("should display an autocomplete component when the subject radio is selected", async () => {
+
+  it("tests for expected request preview and both Select Components", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -376,31 +339,27 @@ describe("Radio button render subject", () => {
     const subjectRadio = screen.getByLabelText("Subject");
     expect(subjectRadio).toBeChecked();
     expect(screen.getByText("Select Patient")).toBeInTheDocument;
+    expect(screen.getByText("Select Practitioner")).toBeInTheDocument;
 
-    //expect(within(deleteModal).getByRole("button", { name: "Cancel" })).toBeInTheDocument();
-    //const autocomplete = screen.getByRole("combobox");
-    const input = screen.getByRole("searchbox", { name: "Select Patient" });
-    //autocomplete.focus();
-    //mocks user key clicks to test the input fields and drop down menus
+    //mocks user typing into both SelectComponents to check for updating request preview
+    const patientSelectComponent = screen.getByRole("searchbox", { name: "Select Patient" });
     await act(async () => {
-      fireEvent.change(input, { target: { value: "P" } });
+      fireEvent.change(patientSelectComponent, { target: { value: "P" } });
     });
-
-    screen.debug(undefined, 30000);
+    const practitionerSelectComponent = screen.getByRole("searchbox", {
+      name: "Select Practitioner",
+    });
+    await act(async () => {
+      fireEvent.change(practitionerSelectComponent, { target: { value: "P" } });
+    });
     expect(
       screen.getByText(
-        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01T05:00:00.000Z&periodEnd=2022-12-31T05:00:00.000Z&reportType=subject&subject=Patient/P",
+        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01T05:00:00.000Z&periodEnd=2022-12-31T05:00:00.000Z&reportType=subject&subject=P&practitioner=P",
       ),
     ).toBeInTheDocument();
   });
-});
 
-describe("Radio button render population", () => {
-  beforeAll(() => {
-    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
-  });
-  window.ResizeObserver = mockResizeObserver;
-  it("should not display an autocomplete component when the population radio is selected", async () => {
+  it("tests for expected request preview and absence of Patient Select Component", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -412,7 +371,7 @@ describe("Radio button render population", () => {
         </RouterContext.Provider>,
       );
     });
-    // click the population radio button to ensure an autocomplete component doesn't appear
+    //click the population radio button to ensure the Patient autocomplete component doesn't appear
     const populationRadio = screen.getByLabelText("Population");
     //Population radio button should not be pre-selected
     expect(populationRadio).not.toBeChecked();

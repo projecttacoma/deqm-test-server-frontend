@@ -16,7 +16,7 @@ const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
  * The DatePickers are pre-filled with a Measure's effective period dates or default dates.
  * The Patient SelectComponent only appears if the reportType selected is "Subject".
  * If the url resourceType is not a Measure, an error message is displayed.
- * @returns React node with a back button, MeasureDatePickers, SelectComponents, and a RadioGroup if on a valid Measure url
+ * @returns React node with a back button, MeasureDatePickers, SelectComponents, a RadioGroup, and Text for the request preview
  */
 const EvaluateMeasurePage = () => {
   const router = useRouter();
@@ -27,12 +27,16 @@ const EvaluateMeasurePage = () => {
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
   const [periodEnd, setPeriodEnd] = useState<Date>(DEFAULT_PERIOD_END);
 
+  /**
+   * createRequestPreview builds the request preview with the evaluate measure state variables
+   * @returns the request preview as a string
+   */
   const createRequestPreview = () => {
     let requestPreview = `/Measure/${id}/$evaluate-measure?periodStart=${periodStart.toJSON()}&periodEnd=${periodEnd.toISOString()}`;
     if (radioValue) {
       requestPreview += `&reportType=${radioValue.toLowerCase()}`;
       if (radioValue.toLowerCase() === "subject" && patientValue) {
-        requestPreview += `&subject=Patient/${patientValue}`;
+        requestPreview += `&subject=${patientValue}`;
       }
     }
     if (practitionerValue) {
