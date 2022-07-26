@@ -5,9 +5,9 @@ import { DateTime } from "luxon";
 import { textGray } from "../../../styles/appColors";
 import BackButton from "../../../components/BackButton";
 import MeasureDatePickers from "../../../components/MeasureDatePickers";
-
 const DEFAULT_PERIOD_START = new Date(`${DateTime.now().year}-01-01T00:00:00`);
 const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
+import SelectComponent from "../../../components/SelectComponent";
 
 /**
  * EvaluateMeasurePage is a page that renders a back button and DatePickers that are pre-filled with
@@ -16,6 +16,7 @@ const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
  * @returns React node with a back button and MeasureDatePickers if on a valid Measure url
  */
 const EvaluateMeasurePage = () => {
+  const [practitionerValue, setPractitionerValue] = useState("");
   const router = useRouter();
   const { resourceType, id } = router.query;
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
@@ -39,10 +40,14 @@ const EvaluateMeasurePage = () => {
           startOnUpdate={setPeriodStart}
           endOnUpdate={setPeriodEnd}
         />
+        <SelectComponent
+          resourceType="Practitioner"
+          setValue={setPractitionerValue}
+          value={practitionerValue}
+        />
       </>
     );
   } else {
-    //if resourceType is not a Measure, an error message is displayed
     return (
       <>
         <BackButton />
