@@ -5,12 +5,13 @@ import {
   createMockRouter,
   getMockFetchImplementation,
   getMockFetchImplementationError,
+  mockResizeObserver,
 } from "../../../helpers/testHelpers";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import EvaluateMeasurePage from "../../../../pages/[resourceType]/[id]/evaluate";
 import { DateTime } from "luxon";
 import { fhirJson } from "@fhir-typescript/r4-core";
-
+import SelectComponent from "../../../../components/SelectComponent";
 
 const MEASURE_BODY_WITH_DATES = {
   resourceType: "Measure",
@@ -42,7 +43,6 @@ const MEASURE_BODY_NO_EFFECTIVE_PERIOD = {
 };
 
 const ERROR_400_RESPONSE_BODY = { issue: [{ details: { text: "Invalid resource ID" } }] };
-
 
 const RESOURCE_ID_BODY: fhirJson.Bundle = {
   resourceType: "Bundle",
@@ -77,6 +77,16 @@ const RESOURCE_ID_BODY: fhirJson.Bundle = {
       },
     },
   ],
+};
+
+const NO_RESOURCE_ID: fhirJson.Bundle = {
+  resourceType: "Bundle",
+  meta: {
+    lastUpdated: "2022-06-23T19:52:58.721Z",
+  },
+  type: "searchset",
+  total: 0,
+  entry: [],
 };
 
 describe("Test evaluate page render for measure", () => {
@@ -186,7 +196,6 @@ describe("Test evaluate page render for measure without effective period", () =>
     });
     expect(await screen.findByDisplayValue("January 1, 2022")).toBeInTheDocument();
     expect(screen.getByDisplayValue("December 31, 2022")).toBeInTheDocument();
-    expect(screen.getByText("Select Practitioner")).toBeInTheDocument();
   });
 });
 
@@ -213,6 +222,50 @@ describe("Test evaluate page render for non-measure", () => {
         /Cannot evaluate on resourceType: DiagnosticReport, only on resourceType: Measure/,
       ),
     ).toBeInTheDocument();
+  });
+});
+
+describe("Test evaluate page render for measure without dates in effective period", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(MEASURE_BODY_NO_DATES);
+  });
+
+  it("should display DatePickers with default dates", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
+          })}
+        >
+          <EvaluateMeasurePage />
+        </RouterContext.Provider>,
+      );
+    });
+    expect(await screen.findByDisplayValue("January 1, 2022")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("December 31, 2022")).toBeInTheDocument();
+  });
+});
+
+describe("Test evaluate page render for measure without effective period", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(MEASURE_BODY_NO_EFFECTIVE_PERIOD);
+  });
+
+  it("should display DatePickers with default dates", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
+          })}
+        >
+          <EvaluateMeasurePage />
+        </RouterContext.Provider>,
+      );
+    });
+    expect(await screen.findByDisplayValue("January 1, 2022")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("December 31, 2022")).toBeInTheDocument();
   });
 });
 
@@ -269,5 +322,55 @@ describe("Evaluate measure page fetch throws error", () => {
 
     expect(within(errorNotif).getByText(/Not connected to server!/)).toBeInTheDocument();
     expect(screen.getByText("Something went wrong.")).toBeInTheDocument();
+  });
+});
+
+describe("Select component no practitioners", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(NO_RESOURCE_ID);
+  });
+
+  window.ResizeObserver = mockResizeObserver;
+
+  it("should display no practioners", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <SelectComponent resourceType="Practitioner" value="" setValue={jest.fn()} />,
+        ),
+      );
+    });
+  });
+  expect(screen.findByText("No resources of type Practitioner found")).toBeInTheDocument;
+});
+
+describe("Select component render", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
+  });
+
+  it("should display a dropdown menu populated with resource ID's when prompted by user key presses", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <SelectComponent resourceType="Practitioner" value="" setValue={jest.fn()} />,
+        ),
+      );
+    });
+
+    const autocomplete = screen.getByRole("combobox");
+    const input = within(autocomplete).getByRole("searchbox");
+    autocomplete.focus();
+    //mocks user key clicks to test the input fields and drop down menus
+    await act(async () => {
+      fireEvent.change(input, { target: { value: "P" } });
+      fireEvent.keyDown(autocomplete, { key: "ArrowDown" });
+      fireEvent.keyDown(autocomplete, { key: "Enter" });
+    });
+
+    //verifies that the drop down autocomplete menu is populated with the resource IDs fetched from the server
+    const options = screen.getAllByRole("option");
+    expect(options[0].textContent).toBe("Practitioner/denom-EXM125-3");
+    expect(options[1].textContent).toBe("Practitioner/numer-EXM125-3");
   });
 });

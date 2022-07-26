@@ -40,21 +40,22 @@ const EvaluateMeasurePage = () => {
           startOnUpdate={setPeriodStart}
           endOnUpdate={setPeriodEnd}
         />
-          <SelectComponent
-            resourceType="Practitioner"
-            setValue={setPractitionerValue}
-            value={practitionerValue}
+        <SelectComponent
+          resourceType="Practitioner"
+          setValue={setPractitionerValue}
+          value={practitionerValue}
         />
-      </> )
-      } else {
-        return (
-        <>
-          <BackButton />
-          <Center>
-            <div>
-              Cannot evaluate on resourceType: {`${resourceType}`}, only on resourceType: Measure
-            </div>
-          </Center>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <BackButton />
+        <Center>
+          <div>
+            Cannot evaluate on resourceType: {`${resourceType}`}, only on resourceType: Measure
+          </div>
+        </Center>
       </>
     );
   }
