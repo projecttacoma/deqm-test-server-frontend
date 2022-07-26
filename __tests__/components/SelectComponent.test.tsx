@@ -98,12 +98,10 @@ describe("Select component render", () => {
 
     //mocks user key clicks to test the input fields and drop down menus
     await act(async () => {
-      //fireEvent.change(input, { target: { value: "P" } });
+      fireEvent.change(input, { target: { value: "P" } });
       fireEvent.keyDown(autocomplete, { key: "ArrowDown" });
       fireEvent.keyDown(autocomplete, { key: "Enter" });
     });
-
-    screen.debug(undefined, 30000);
 
     //verifies that the drop down autocomplete menu is populated with the resource IDs fetched from the server
     const options = screen.getAllByRole("option");
