@@ -29,16 +29,12 @@ const EvaluateMeasurePage = () => {
         </RadioGroup>
         {/* only displays autocomplete component if radio value is Patient */}
         {radioValue === "Subject" ? (
-          <SelectComponent
-            resourceType="Patient"
-            setPractitionerValue={setPatientValue}
-            practitionerValue={patientValue}
-          />
+          <SelectComponent resourceType="Patient" setValue={setPatientValue} value={patientValue} />
         ) : null}
         <SelectComponent
           resourceType="Practitioner"
-          setPractitionerValue={setPractitionerValue}
-          practitionerValue={practitionerValue}
+          setValue={setPractitionerValue}
+          value={practitionerValue}
         />
       </div>
     );
