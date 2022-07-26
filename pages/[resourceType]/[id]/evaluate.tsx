@@ -11,10 +11,12 @@ const DEFAULT_PERIOD_START = new Date(`${DateTime.now().year}-01-01T00:00:00`);
 const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
 
 /**
- * EvaluateMeasurePage is a page that renders a back button and DatePickers that are pre-filled with
- * a Measure's effective period dates or default dates.
+ * EvaluateMeasurePage is a page that renders a back button pre-filled DatePickers, radio buttons,
+ * auto-complete boxes, and a text preview of the measure request.
+ * The DatePickers are pre-filled with a Measure's effective period dates or default dates.
+ * The Patient SelectComponent only appears if the reportType selected is "Subject".
  * If the url resourceType is not a Measure, an error message is displayed.
- * @returns React node with a back button and MeasureDatePickers if on a valid Measure url
+ * @returns React node with a back button, MeasureDatePickers, SelectComponents, and a RadioGroup if on a valid Measure url
  */
 const EvaluateMeasurePage = () => {
   const router = useRouter();
