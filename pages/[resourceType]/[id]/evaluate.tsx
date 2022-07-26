@@ -1,4 +1,4 @@
-import { Center, Divider, RadioGroup, Radio } from "@mantine/core";
+import { Center, Divider, RadioGroup, Radio, Text } from "@mantine/core";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { DateTime } from "luxon";
@@ -24,6 +24,20 @@ const EvaluateMeasurePage = () => {
   const [patientValue, setPatientValue] = useState("");
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
   const [periodEnd, setPeriodEnd] = useState<Date>(DEFAULT_PERIOD_END);
+
+  const createRequestPreview = () => {
+    let requestPreview = `/Measure/${id}/$evaluate-measure?periodStart=${periodStart.toJSON()}&periodEnd=${periodEnd.toISOString()}`;
+    if (radioValue) {
+      requestPreview += `&reportType=${radioValue.toLowerCase()}`;
+      if (radioValue.toLowerCase() === "subject" && patientValue) {
+        requestPreview += `&subject=Patient/${patientValue}`;
+      }
+    }
+    if (practitionerValue) {
+      requestPreview += `&practitioner=${practitionerValue}`;
+    }
+    return requestPreview;
+  };
 
   if (resourceType === "Measure" && id) {
     //for resourceType Measure, evaluate measure components are rendered
@@ -66,6 +80,13 @@ const EvaluateMeasurePage = () => {
           setValue={setPractitionerValue}
           value={practitionerValue}
         />
+        <h3 style={{ color: textGray, marginTop: "20px", marginBottom: "2px" }}>
+          Request Preview:{" "}
+        </h3>
+        <Text
+          size="md"
+          style={{ backgroundColor: "#e3fafc", color: textGray }}
+        >{`${createRequestPreview()}`}</Text>
       </>
     );
   } else {
