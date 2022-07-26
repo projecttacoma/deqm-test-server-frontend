@@ -23,18 +23,19 @@ export default function SelectComponent(props: SelectComponentProps) {
   const setValue = props.setValue;
   const value = props.value;
 
-  const [pageBody, setPageBody] = useState<fhirJson.Bundle>();
+  const [responseBody, setResponseBody] = useState<fhirJson.Bundle>();
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
 
   useEffect(() => {
     if (resourceType) {
+      setLoadingRequest(true);
       fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`)
         .then((data) => {
           return data.json() as Promise<fhirJson.Bundle>;
         })
-        .then((resourcePageBody) => {
-          setPageBody(resourcePageBody);
+        .then((resourceResponseBody) => {
+          setResponseBody(resourceResponseBody);
           setFetchingError(false);
           setLoadingRequest(false);
         })
@@ -47,8 +48,8 @@ export default function SelectComponent(props: SelectComponentProps) {
 
   return loadingRequest ? (
     <div>Loading content...</div>
-  ) : !fetchingError && pageBody ? (
-    <PopulateIDHelper jsonBody={pageBody} />
+  ) : !fetchingError && responseBody ? (
+    <PopulateIDHelper jsonBody={responseBody} />
   ) : (
     <div>Problem connecting to server</div>
   );

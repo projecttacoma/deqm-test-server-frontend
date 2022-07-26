@@ -53,25 +53,25 @@ const RESOURCE_ID_BODY: fhirJson.Bundle = {
   total: 2,
   entry: [
     {
-      fullUrl: "http://localhost:3000/4_0_1/DiagnosticReport/denom-EXM125-3",
+      fullUrl: "http://localhost:3000/4_0_1/PractitionerReport/denom-EXM125-3",
       resource: {
         resourceType: "Practitioner",
         id: "denom-EXM125-3",
         meta: {
           profile: [
-            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-diagnosticreport-note",
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitionerreport-note",
           ],
         },
       },
     },
     {
-      fullUrl: "http://localhost:3000/4_0_1/DiagnosticReport/numer-EXM125-3",
+      fullUrl: "http://localhost:3000/4_0_1/PractitionerReport/numer-EXM125-3",
       resource: {
         resourceType: "Practitioner",
         id: "numer-EXM125-3",
         meta: {
           profile: [
-            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-diagnosticreport-note",
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitionerreport-note",
           ],
         },
       },

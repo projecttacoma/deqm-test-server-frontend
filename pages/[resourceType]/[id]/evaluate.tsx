@@ -42,8 +42,8 @@ const EvaluateMeasurePage = () => {
         />
           <SelectComponent
             resourceType="Practitioner"
-            setPractitionerValue={setPractitionerValue}
-            practitionerValue={practitionerValue}
+            setValue={setPractitionerValue}
+            value={practitionerValue}
         />
       </> )
       } else {
