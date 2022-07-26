@@ -46,7 +46,7 @@ const EvaluateMeasurePage = () => {
         <RadioGroup
           value={radioValue}
           onChange={setRadioValue}
-          label="Select Subject or Population"
+          label="Select a reportType"
           required
         >
           <Radio value="Subject" label="Subject" />
