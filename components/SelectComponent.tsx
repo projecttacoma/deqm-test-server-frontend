@@ -55,28 +55,6 @@ export default function SelectComponent({ resourceType, setValue, value }: Selec
   ) : (
     <div>Problem connecting to server</div>
   );
-  // function PopulateIDHelper(props: { jsonBody: fhirJson.Bundle }) {
-  //   const entryArray = props.jsonBody.entry;
-
-  //   //makes sure there are resources to display in the dropdown
-  //   if (props.jsonBody.total && props.jsonBody.total > 0 && entryArray != undefined) {
-  //     const myArray = entryArray.map((el) => {
-  //       return el?.resource ? `${el.resource.resourceType}/${el.resource.id}` : "";
-  //     });
-  //     return (
-  //       <Autocomplete
-  //         value={value}
-  //         onChange={setValue}
-  //         label={`Select ${resourceType}`}
-  //         placeholder="Start typing to see options"
-  //         data={myArray}
-  //         limit={10}
-  //       />
-  //     );
-  //   } else {
-  //     return <div> {`No resources of type ${resourceType} found`} </div>;
-  //   }
-  // }
 }
 
 function PopulateIDHelper({ resourceType, setValue, value, jsonBody }: SelectComponentProps) {
