@@ -94,19 +94,25 @@ const MeasureDatePickers = ({
 
   if (!fetchingError) {
     return (
-      <Grid gutter="lg" min-width="15px" style={{ margin: 10 }}>
-        <Grid.Col md={4} lg={3} xl={2}>
+      <Grid gutter="lg" min-width="15px">
+        <Grid.Col md={6} lg={6} xl={6}>
           <DatePicker
-            label={<Text>Period Start</Text>}
+            label={<Text size="lg">Period Start</Text>}
             icon={<Calendar size={16} color={"#40a5bf"} />}
+            variant="filled"
+            radius="xl"
+            size="lg"
             value={periodStart}
             onChange={(v) => startOnUpdate(v ? v : new Date())}
             allowFreeInput
           ></DatePicker>
         </Grid.Col>
-        <Grid.Col md={4} lg={3} xl={2}>
+        <Grid.Col md={6} lg={6} xl={6}>
           <DatePicker
-            label={<Text>Period End</Text>}
+            label={<Text size="lg">Period End</Text>}
+            variant="filled"
+            radius="xl"
+            size="lg"
             icon={<Calendar size={16} color={"#40a5bf"} />}
             value={periodEnd}
             onChange={(v) => endOnUpdate(v ? v : new Date())}
