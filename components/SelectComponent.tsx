@@ -13,13 +13,19 @@ export interface SelectComponentProps {
   setValue: Dispatch<SetStateAction<string>>;
   value: string;
   jsonBody?: fhirJson.Bundle;
+  required?: boolean;
 }
 
 /**
  * @param props include the type interface SelectComponentProps
  * @returns a component with a loading component, server error, or autocomplete select component populated with resource IDs
  */
-export default function SelectComponent({ resourceType, setValue, value }: SelectComponentProps) {
+export default function SelectComponent({
+  resourceType,
+  setValue,
+  value,
+  required,
+}: SelectComponentProps) {
   const [responseBody, setResponseBody] = useState<fhirJson.Bundle>();
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
@@ -51,13 +57,20 @@ export default function SelectComponent({ resourceType, setValue, value }: Selec
       resourceType={resourceType}
       setValue={setValue}
       value={value}
+      required={required}
     />
   ) : (
     <div>Problem connecting to server</div>
   );
 }
 
-function PopulateIDHelper({ resourceType, setValue, value, jsonBody }: SelectComponentProps) {
+function PopulateIDHelper({
+  resourceType,
+  setValue,
+  value,
+  jsonBody,
+  required,
+}: SelectComponentProps) {
   const entryArray = jsonBody?.entry;
 
   //makes sure there are resources to display in the dropdown
@@ -73,6 +86,7 @@ function PopulateIDHelper({ resourceType, setValue, value, jsonBody }: SelectCom
         placeholder="Start typing to see options"
         data={myArray}
         limit={10}
+        required={required ? required : false}
       />
     );
   } else {

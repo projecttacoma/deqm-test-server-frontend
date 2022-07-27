@@ -374,3 +374,55 @@ describe("Select component render", () => {
     expect(options[1].textContent).toBe("Practitioner/numer-EXM125-3");
   });
 });
+
+describe("Radio button render subject", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
+  });
+  window.ResizeObserver = mockResizeObserver;
+  it("should display an autocomplete component when the subject radio is selected", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "Measure-12" },
+          })}
+        >
+          <EvaluateMeasurePage />
+        </RouterContext.Provider>,
+      );
+    });
+    // Subject radio button should be pre-selected, so Select Patient component should appear
+    const subjectRadio = screen.getByLabelText("Subject");
+    expect(subjectRadio).toBeChecked();
+    expect(screen.getByText("Select Patient")).toBeInTheDocument;
+  });
+});
+
+describe("Radio button render population", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
+  });
+  window.ResizeObserver = mockResizeObserver;
+  it("should not display an autocomplete component when the population radio is selected", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "Measure-12" },
+          })}
+        >
+          <EvaluateMeasurePage />
+        </RouterContext.Provider>,
+      );
+    });
+    // click the population radio button to ensure an autocomplete component doesn't appear
+    const populationRadio = screen.getByLabelText("Population");
+    //Population radio button should not be pre-selected
+    expect(populationRadio).not.toBeChecked();
+    await act(async () => {
+      fireEvent.click(populationRadio);
+    });
+    expect(screen.findByText("Select Patient")).not.toBeInTheDocument;
+  });
+});
