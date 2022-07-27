@@ -112,7 +112,7 @@ describe("Test evaluate page render for measure", () => {
     //Request preview should include the dates from the Measure's effective period
     expect(
       screen.getByText(
-        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2019-01-01T05:00:00.000Z&periodEnd=2019-12-31T05:00:00.000Z",
+        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2019-01-01T05:00:00.000Z&periodEnd=2019-12-31T05:00:00.000Z&reportType=subject",
       ),
     ).toBeInTheDocument();
   });
@@ -164,7 +164,7 @@ describe("Test evaluate page render for measure", () => {
     //request preview should include the updated dates
     expect(
       screen.getByText(
-        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2018-02-02T05:00:00.000Z&periodEnd=2020-11-13T05:00:00.000Z",
+        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2018-02-02T05:00:00.000Z&periodEnd=2020-11-13T05:00:00.000Z&reportType=subject",
       ),
     ).toBeInTheDocument();
   });
