@@ -4,9 +4,10 @@ import {
   RadioGroup,
   Radio,
   Text,
-  MantineProvider,
   Button,
   Loader,
+  ScrollArea,
+  MantineProvider,
 } from "@mantine/core";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -23,6 +24,14 @@ import {
 } from "../../../styles/codeColorScheme";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import { Check, X } from "tabler-icons-react";
+import { Prism } from "@mantine/prism";
+import {
+  replaceDark,
+  replaceGray,
+  replaceTeal,
+  replaceRed,
+  replaceBlue,
+} from "../../../styles/codeColorScheme";
 
 const DEFAULT_PERIOD_START = new Date(`${DateTime.now().year}-01-01T00:00:00`);
 const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
@@ -41,7 +50,8 @@ const EvaluateMeasurePage = () => {
   const [radioValue, setRadioValue] = useState("Subject");
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
-  const [pageBody, setPageBody] = useState("");
+  const [measureReportBody, setMeasureReportBody] = useState("");
+
   const [practitionerValue, setPractitionerValue] = useState("");
   const [patientValue, setPatientValue] = useState("");
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
@@ -77,13 +87,6 @@ const EvaluateMeasurePage = () => {
       return true;
     } else return false;
   };
-  // ((periodStart && periodEnd && radioValue === "Population" && practitionerValue) as boolean) ||
-  // ((periodStart &&
-  //   periodEnd &&
-  //   radioValue === "Subject" &&
-  //   practitionerValue &&
-  //   patientValue) as boolean);
-  console.log("validSelections:", validSelections());
 
   if (resourceType === "Measure" && id) {
     if (!loadingRequest && !fetchingError) {
@@ -148,6 +151,34 @@ const EvaluateMeasurePage = () => {
           >
             <div>Calculate</div>
           </Button>
+          {measureReportBody && (
+            <>
+              <Divider my="sm" />
+              <ScrollArea>
+                <MantineProvider
+                  //changes hex values associated with each Mantine color name to improve UI
+                  theme={{
+                    colors: {
+                      gray: replaceGray,
+                      dark: replaceDark,
+                      teal: replaceTeal,
+                      red: replaceRed,
+                      blue: replaceBlue,
+                    },
+                  }}
+                >
+                  <Prism
+                    language="json"
+                    data-testid="prism-page-content"
+                    colorScheme="dark"
+                    style={{ maxWidth: "77vw", height: "80vh", backgroundColor: "#FFFFFF" }}
+                  >
+                    {measureReportBody}
+                  </Prism>
+                </MantineProvider>
+              </ScrollArea>
+            </>
+          )}
         </>
       );
     } else if (loadingRequest && !fetchingError) {
@@ -301,7 +332,7 @@ const EvaluateMeasurePage = () => {
       `${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2022-01-12T05:00:00.000Z&periodEnd=2019-05-02T04:00:00.000Z&reportType=individual&subject=Patient/numer-EXM104`,
     )
       .then((response) => {
-        console.log("response: ", response);
+        //console.log("response: ", response);
         if (response.status === 201 || response.status === 200) {
           customMessage = (
             <>
@@ -326,10 +357,10 @@ const EvaluateMeasurePage = () => {
         return response.json();
       })
       .then((responseBody) => {
-        console.log("responseBody: ", responseBody);
+        //console.log("responseBody: ", responseBody);
         if (responseBody) {
-          setPageBody(JSON.stringify(responseBody));
-          console.log("pageBody: ", pageBody);
+          setMeasureReportBody(JSON.stringify(responseBody, null, 2));
+          console.log("measureReport: ", measureReportBody);
           setFetchingError(false);
           setLoadingRequest(false);
         } else {
