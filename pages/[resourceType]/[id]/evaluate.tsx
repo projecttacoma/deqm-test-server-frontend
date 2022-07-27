@@ -19,7 +19,7 @@ const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
 const EvaluateMeasurePage = () => {
   const router = useRouter();
   const { resourceType, id } = router.query;
-  const [radioValue, setRadioValue] = useState("react");
+  const [radioValue, setRadioValue] = useState("Subject");
   const [practitionerValue, setPractitionerValue] = useState("");
   const [patientValue, setPatientValue] = useState("");
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
@@ -54,7 +54,12 @@ const EvaluateMeasurePage = () => {
         </RadioGroup>
         {/* only displays autocomplete component if radio value is Patient */}
         {radioValue === "Subject" ? (
-          <SelectComponent resourceType="Patient" setValue={setPatientValue} value={patientValue} />
+          <SelectComponent
+            resourceType="Patient"
+            setValue={setPatientValue}
+            value={patientValue}
+            required={true}
+          />
         ) : null}
         <SelectComponent
           resourceType="Practitioner"

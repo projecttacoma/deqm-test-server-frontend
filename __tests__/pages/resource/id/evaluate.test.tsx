@@ -392,11 +392,9 @@ describe("Radio button render subject", () => {
         </RouterContext.Provider>,
       );
     });
-    // click the subject radio button to ensure an autocomplete component appears
+    // Subject radio button should be pre-selected, so Select Patient component should appear
     const subjectRadio = screen.getByLabelText("Subject");
-    await act(async () => {
-      fireEvent.click(subjectRadio);
-    });
+    expect(subjectRadio).toBeChecked();
     expect(screen.getByText("Select Patient")).toBeInTheDocument;
   });
 });
@@ -420,6 +418,8 @@ describe("Radio button render population", () => {
     });
     // click the population radio button to ensure an autocomplete component doesn't appear
     const populationRadio = screen.getByLabelText("Population");
+    //Population radio button should not be pre-selected
+    expect(populationRadio).not.toBeChecked();
     await act(async () => {
       fireEvent.click(populationRadio);
     });
