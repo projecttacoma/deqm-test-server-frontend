@@ -63,7 +63,7 @@ export default function App(props: AppProps) {
                 </Navbar>
               }
               header={
-                <Header height={80} style={{ backgroundColor: "#D0F1F4", color: textGray }}>
+                <Header height={80} style={{ backgroundColor: "#bdebf0", color: textGray }}>
                   <Center>
                     <Link href={"/"}>
                       <h1 style={{ marginTop: "12px", cursor: "pointer" }}>
