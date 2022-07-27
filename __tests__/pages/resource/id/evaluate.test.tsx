@@ -386,3 +386,40 @@ describe("Select component, Radio button, and request preview render", () => {
     ).toBeInTheDocument();
   });
 });
+
+describe.only("Error thrown during create test", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementationError("400 Bad Request");
+  });
+
+  it.only("Test for error notification when error is thrown", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: { resourceType: "Measure", id: "Measure-12" },
+            })}
+          >
+            <EvaluateMeasurePage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    screen.debug(undefined, 30000);
+
+    /* const submitButton = screen.getByRole("button", {
+      name: "Submit Resource",
+    }) as HTMLButtonElement;
+
+    const codeEditor = screen.getByRole("textbox");
+
+    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
+    expect(errorNotif).toBeInTheDocument();
+
+    expect(within(errorNotif).getByText(/Problem connecting to server:/)).toBeInTheDocument();
+    expect(within(errorNotif).getByText(/400 Bad Request/)).toBeInTheDocument();
+    */
+  });
+});

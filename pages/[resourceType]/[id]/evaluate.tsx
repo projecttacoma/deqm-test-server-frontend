@@ -1,4 +1,13 @@
-import { Center, Divider, RadioGroup, Radio, Text, MantineProvider, Button } from "@mantine/core";
+import {
+  Center,
+  Divider,
+  RadioGroup,
+  Radio,
+  Text,
+  MantineProvider,
+  Button,
+  Loader,
+} from "@mantine/core";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { DateTime } from "luxon";
@@ -12,6 +21,8 @@ import {
   replaceOutline,
   replaceSecondRed,
 } from "../../../styles/codeColorScheme";
+import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
+import { Check, X } from "tabler-icons-react";
 
 const DEFAULT_PERIOD_START = new Date(`${DateTime.now().year}-01-01T00:00:00`);
 const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
@@ -28,6 +39,9 @@ const EvaluateMeasurePage = () => {
   const router = useRouter();
   const { resourceType, id } = router.query;
   const [radioValue, setRadioValue] = useState("Subject");
+  const [fetchingError, setFetchingError] = useState(false);
+  const [loadingRequest, setLoadingRequest] = useState(false);
+  const [pageBody, setPageBody] = useState("");
   const [practitionerValue, setPractitionerValue] = useState("");
   const [patientValue, setPatientValue] = useState("");
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
@@ -55,18 +69,94 @@ const EvaluateMeasurePage = () => {
   };
 
   //only appears on the measure page
-  if (resourceType === "Measure" && id) {
-    //for resourceType Measure, evaluate measure components are rendered
-    return (
-      <>
-        <BackButton />
-        <Center>
-          <h2 style={{ color: textGray, marginTop: "0px", marginBottom: "4px" }}>
-            Evaluate Measure: {id}
-          </h2>
-        </Center>
+  const validSelections = () => {
+    if (
+      (periodStart && periodEnd && radioValue === "Population" && practitionerValue) ||
+      (periodStart && periodEnd && radioValue === "Subject" && practitionerValue && patientValue)
+    ) {
+      return true;
+    } else return false;
+  };
+  // ((periodStart && periodEnd && radioValue === "Population" && practitionerValue) as boolean) ||
+  // ((periodStart &&
+  //   periodEnd &&
+  //   radioValue === "Subject" &&
+  //   practitionerValue &&
+  //   patientValue) as boolean);
+  console.log("validSelections:", validSelections());
 
-        <Divider my="md" />
+  if (resourceType === "Measure" && id) {
+    if (!loadingRequest && !fetchingError) {
+      //for resourceType Measure, evaluate measure components are rendered
+      return (
+        <>
+          <BackButton />
+          <Center>
+            <h2 style={{ color: textGray, marginTop: "0px", marginBottom: "4px" }}>
+              Evaluate Measure: {id}
+            </h2>
+          </Center>
+          <Divider my="md" />
+          <MeasureDatePickers
+            measureID={id as string}
+            periodStart={periodStart}
+            periodEnd={periodEnd}
+            startOnUpdate={setPeriodStart}
+            endOnUpdate={setPeriodEnd}
+          />
+          <RadioGroup
+            value={radioValue}
+            onChange={setRadioValue}
+            label="Select Subject or Population"
+            required
+          >
+            <Radio value="Subject" label="Subject" />
+            <Radio value="Population" label="Population" />
+          </RadioGroup>
+          {/* only displays autocomplete component if radio value is Patient */}
+          {radioValue === "Subject" ? (
+            <SelectComponent
+              resourceType="Patient"
+              setValue={setPatientValue}
+              value={patientValue}
+            />
+          ) : null}
+          <SelectComponent
+            resourceType="Practitioner"
+            setValue={setPractitionerValue}
+            value={practitionerValue}
+          />
+          <h3 style={{ color: textGray, marginTop: "20px", marginBottom: "2px" }}>
+            Request Preview:
+          </h3>
+          <Text
+            size="md"
+            style={{ backgroundColor: "#e3fafc", color: textGray }}
+          >{`${createRequestPreview()}`}</Text>
+
+          <Button
+            disabled={!validSelections()}
+            color="cyan"
+            radius="md"
+            size="sm"
+            variant="filled"
+            style={{
+              marginRight: "8px",
+              marginLeft: "8px",
+            }}
+            onClick={calculateHandler}
+          >
+            <div>Calculate</div>
+          </Button>
+        </>
+      );
+    } else if (loadingRequest && !fetchingError) {
+      return (
+        // <Center>
+        //   <div>Loading content...</div>
+        //   <Loader color="cyan"></Loader>
+        // </Center>
+        // <Divider my="md" />
         <div>
           <Grid columns={3} style={{ margin: 15 }}>
             <MantineProvider
@@ -178,8 +268,10 @@ const EvaluateMeasurePage = () => {
             </MantineProvider>
           </Grid>
         </div>
-      </>
-    );
+      );
+    } else {
+      return <div>Something went wrong.</div>;
+    }
   } else {
     return (
       <>
@@ -191,6 +283,75 @@ const EvaluateMeasurePage = () => {
         </Center>
       </>
     );
+  }
+
+  //called when submit button is clicked. Handles PUT request and response
+  function calculateHandler() {
+    let customMessage = <Text weight={500}>Problem connecting to server:&nbsp;</Text>;
+    let notifProps: NotificationProps = {
+      message: customMessage,
+      color: "red",
+      icon: <X size={18} />,
+      autoClose: false,
+    };
+
+    setLoadingRequest(true);
+    //${process.env.NEXT_PUBLIC_DEQM_SERVER}/${createRequestPreview}
+    fetch(
+      `${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2022-01-12T05:00:00.000Z&periodEnd=2019-05-02T04:00:00.000Z&reportType=individual&subject=Patient/numer-EXM104`,
+    )
+      .then((response) => {
+        console.log("response: ", response);
+        if (response.status === 201 || response.status === 200) {
+          customMessage = (
+            <>
+              <Text>Evaluate Measure successful!&nbsp;</Text>
+            </>
+          );
+          notifProps = {
+            ...notifProps,
+            color: "green",
+            icon: <Check size={18} />,
+          };
+
+          //redirects user to page with the resource's body
+          //router.push({ pathname: `/${resourceType}/${id}` });
+        } else {
+          customMessage = (
+            <Text weight={500}>
+              {response.status} {response.statusText}&nbsp;
+            </Text>
+          );
+        }
+        return response.json();
+      })
+      .then((responseBody) => {
+        console.log("responseBody: ", responseBody);
+        if (responseBody) {
+          setPageBody(JSON.stringify(responseBody));
+          console.log("pageBody: ", pageBody);
+          setFetchingError(false);
+          setLoadingRequest(false);
+        } else {
+          throw {
+            name: "FetchingError",
+            message: "No response.json returned from fetch.",
+          };
+        }
+      })
+      .catch((error) => {
+        setFetchingError(true);
+        customMessage = (
+          <>
+            {customMessage}
+            <Text color="red">{error.message}</Text>
+          </>
+        );
+      })
+      .finally(() => {
+        cleanNotifications();
+        showNotification({ ...notifProps, message: customMessage });
+      });
   }
 };
 
