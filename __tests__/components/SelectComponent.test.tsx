@@ -93,6 +93,9 @@ describe("Select component render", () => {
     const input = within(autocomplete).getByRole("searchbox");
     autocomplete.focus();
 
+    //SelectComponent should not be required
+    expect(input).not.toBeRequired();
+
     //mocks user key clicks to test the input fields and drop down menus
     await act(async () => {
       fireEvent.change(input, { target: { value: "P" } });
@@ -104,5 +107,22 @@ describe("Select component render", () => {
     const options = screen.getAllByRole("option");
     expect(options[0].textContent).toBe("Practitioner/denom-EXM125-3");
     expect(options[1].textContent).toBe("Practitioner/numer-EXM125-3");
+  });
+
+  it("tests for SelectComponent that is required", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <SelectComponent
+            resourceType="Practitioner"
+            value=""
+            setValue={jest.fn()}
+            required={true}
+          />,
+        ),
+      );
+    });
+
+    expect(within(screen.getByRole("combobox")).getByRole("searchbox")).toBeRequired();
   });
 });

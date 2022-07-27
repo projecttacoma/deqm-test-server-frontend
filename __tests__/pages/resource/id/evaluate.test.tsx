@@ -112,7 +112,11 @@ describe("Test evaluate page render for measure", () => {
     //Request preview should include the dates from the Measure's effective period
     expect(
       screen.getByText(
+<<<<<<< HEAD
         "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2019-01-01T05:00:00.000Z&periodEnd=2019-12-31T05:00:00.000Z",
+=======
+        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2019-01-01T05:00:00.000Z&periodEnd=2019-12-31T05:00:00.000Z&reportType=subject",
+>>>>>>> ba36e56f71daeb08aa12ce1c2592efc7ab380e15
       ),
     ).toBeInTheDocument();
   });
@@ -164,7 +168,11 @@ describe("Test evaluate page render for measure", () => {
     //request preview should include the updated dates
     expect(
       screen.getByText(
+<<<<<<< HEAD
         "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2018-02-02T05:00:00.000Z&periodEnd=2020-11-13T05:00:00.000Z",
+=======
+        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2018-02-02T05:00:00.000Z&periodEnd=2020-11-13T05:00:00.000Z&reportType=subject",
+>>>>>>> ba36e56f71daeb08aa12ce1c2592efc7ab380e15
       ),
     ).toBeInTheDocument();
   });
@@ -335,6 +343,7 @@ describe("Select component, Radio button, and request preview render", () => {
         </RouterContext.Provider>,
       );
     });
+<<<<<<< HEAD
 
     // click the subject radio button to ensure Patient autocomplete component appears
     const subjectRadio = screen.getByLabelText("Subject");
@@ -362,6 +371,32 @@ describe("Select component, Radio button, and request preview render", () => {
     ).toBeInTheDocument();
   });
 
+=======
+    // Subject radio button should be pre-selected, so Select Patient component should appear
+    const subjectRadio = screen.getByLabelText("Subject");
+    expect(subjectRadio).toBeChecked();
+    expect(screen.getByText("Select Patient")).toBeInTheDocument;
+    expect(screen.getByText("Select Practitioner")).toBeInTheDocument;
+
+    //mocks user typing into both SelectComponents to check for updating request preview
+    const patientSelectComponent = screen.getByRole("searchbox", { name: "Select Patient" });
+    await act(async () => {
+      fireEvent.change(patientSelectComponent, { target: { value: "P" } });
+    });
+    const practitionerSelectComponent = screen.getByRole("searchbox", {
+      name: "Select Practitioner",
+    });
+    await act(async () => {
+      fireEvent.change(practitionerSelectComponent, { target: { value: "P" } });
+    });
+    expect(
+      screen.getByText(
+        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01T05:00:00.000Z&periodEnd=2022-12-31T05:00:00.000Z&reportType=subject&subject=P&practitioner=P",
+      ),
+    ).toBeInTheDocument();
+  });
+
+>>>>>>> ba36e56f71daeb08aa12ce1c2592efc7ab380e15
   it("tests for expected request preview and absence of Patient Select Component", async () => {
     await act(async () => {
       render(
@@ -376,6 +411,11 @@ describe("Select component, Radio button, and request preview render", () => {
     });
     //click the population radio button to ensure the Patient autocomplete component doesn't appear
     const populationRadio = screen.getByLabelText("Population");
+<<<<<<< HEAD
+=======
+    //Population radio button should not be pre-selected
+    expect(populationRadio).not.toBeChecked();
+>>>>>>> ba36e56f71daeb08aa12ce1c2592efc7ab380e15
     await act(async () => {
       fireEvent.click(populationRadio);
     });
