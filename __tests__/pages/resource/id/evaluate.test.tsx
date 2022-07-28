@@ -11,7 +11,6 @@ import { RouterContext } from "next/dist/shared/lib/router-context";
 import EvaluateMeasurePage from "../../../../pages/[resourceType]/[id]/evaluate";
 import { DateTime } from "luxon";
 import { fhirJson } from "@fhir-typescript/r4-core";
-import SelectComponent from "../../../../components/SelectComponent";
 
 const MEASURE_BODY_WITH_DATES = {
   resourceType: "Measure",
@@ -94,7 +93,7 @@ describe("Test evaluate page render for measure", () => {
     global.fetch = getMockFetchImplementation(MEASURE_BODY_WITH_DATES);
   });
 
-  it("should display back button and expected title", async () => {
+  it("should display back button, expected title, and request preview", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -108,6 +107,13 @@ describe("Test evaluate page render for measure", () => {
     });
     expect(screen.getByTestId("back-button")).toBeInTheDocument();
     expect(screen.getByText("Evaluate Measure: measure-EXM104-8.2.000")).toBeInTheDocument();
+    expect(screen.getByText("Request Preview:")).toBeInTheDocument();
+    //Request preview should include the dates from the Measure's effective period
+    expect(
+      screen.getByText(
+        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2019-01-01&periodEnd=2019-12-31&reportType=subject",
+      ),
+    ).toBeInTheDocument();
   });
 
   it("should display two DatePickers pre-filled with expected dates", async () => {
@@ -127,7 +133,7 @@ describe("Test evaluate page render for measure", () => {
     expect(screen.getByDisplayValue("December 31, 2019")).toBeInTheDocument();
   });
 
-  it("DatePickers display value should changed when value is updated", async () => {
+  it("DatePickers and request preview display value should changed when dates are updated", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -153,73 +159,11 @@ describe("Test evaluate page render for measure", () => {
     });
     expect(screen.getByDisplayValue("February 2, 2018")).toBeInTheDocument();
     expect(screen.getByDisplayValue("November 13, 2020")).toBeInTheDocument();
-  });
-});
 
-describe("Test evaluate page render for measure", () => {
-  beforeAll(() => {
-    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
-  });
-  it("should display expected text", async () => {
-    await act(async () => {
-      render(
-        <RouterContext.Provider
-          value={createMockRouter({
-            query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
-          })}
-        >
-          <EvaluateMeasurePage />
-        </RouterContext.Provider>,
-      );
-    });
-    expect(await screen.findByDisplayValue("January 1, 2022")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("December 31, 2022")).toBeInTheDocument();
-  });
-});
-
-describe("Test evaluate page render for measure without effective period", () => {
-  beforeAll(() => {
-    global.fetch = getMockFetchImplementation(MEASURE_BODY_NO_EFFECTIVE_PERIOD);
-  });
-
-  it("should display DatePickers with default dates", async () => {
-    await act(async () => {
-      render(
-        <RouterContext.Provider
-          value={createMockRouter({
-            query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
-          })}
-        >
-          <EvaluateMeasurePage />
-        </RouterContext.Provider>,
-      );
-    });
-    expect(await screen.findByDisplayValue("January 1, 2022")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("December 31, 2022")).toBeInTheDocument();
-  });
-});
-
-describe("Test evaluate page render for non-measure", () => {
-  beforeAll(() => {
-    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
-  });
-  it("should display an error message", async () => {
-    await act(async () => {
-      render(
-        <RouterContext.Provider
-          value={createMockRouter({
-            query: { resourceType: "DiagnosticReport", id: "denom-EXM125-3" },
-          })}
-        >
-          <EvaluateMeasurePage />
-        </RouterContext.Provider>,
-      );
-    });
-
-    expect(screen.getByTestId("back-button")).toBeInTheDocument();
+    //request preview should include the updated dates
     expect(
       screen.getByText(
-        /Cannot evaluate on resourceType: DiagnosticReport, only on resourceType: Measure/,
+        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2018-02-02&periodEnd=2020-11-13&reportType=subject",
       ),
     ).toBeInTheDocument();
   });
@@ -266,6 +210,29 @@ describe("Test evaluate page render for measure without effective period", () =>
     });
     expect(await screen.findByDisplayValue("January 1, 2022")).toBeInTheDocument();
     expect(screen.getByDisplayValue("December 31, 2022")).toBeInTheDocument();
+  });
+});
+
+describe("Test evaluate page render for non-measure", () => {
+  it("should display an error message", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "DiagnosticReport", id: "denom-EXM125-3" },
+          })}
+        >
+          <EvaluateMeasurePage />
+        </RouterContext.Provider>,
+      );
+    });
+
+    expect(screen.getByTestId("back-button")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Cannot evaluate on resourceType: DiagnosticReport, only on resourceType: Measure/,
+      ),
+    ).toBeInTheDocument();
   });
 });
 
@@ -335,52 +302,27 @@ describe("Select component no practitioners", () => {
   it("should display no practioners", async () => {
     await act(async () => {
       render(
-        mantineRecoilWrap(
-          <SelectComponent resourceType="Practitioner" value="" setValue={jest.fn()} />,
-        ),
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "Measure-12" },
+          })}
+        >
+          <EvaluateMeasurePage />
+        </RouterContext.Provider>,
       );
     });
   });
+
   expect(screen.findByText("No resources of type Practitioner found")).toBeInTheDocument;
 });
 
-describe("Select component render", () => {
-  beforeAll(() => {
-    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
-  });
-
-  it("should display a dropdown menu populated with resource ID's when prompted by user key presses", async () => {
-    await act(async () => {
-      render(
-        mantineRecoilWrap(
-          <SelectComponent resourceType="Practitioner" value="" setValue={jest.fn()} />,
-        ),
-      );
-    });
-
-    const autocomplete = screen.getByRole("combobox");
-    const input = within(autocomplete).getByRole("searchbox");
-    autocomplete.focus();
-    //mocks user key clicks to test the input fields and drop down menus
-    await act(async () => {
-      fireEvent.change(input, { target: { value: "P" } });
-      fireEvent.keyDown(autocomplete, { key: "ArrowDown" });
-      fireEvent.keyDown(autocomplete, { key: "Enter" });
-    });
-
-    //verifies that the drop down autocomplete menu is populated with the resource IDs fetched from the server
-    const options = screen.getAllByRole("option");
-    expect(options[0].textContent).toBe("Practitioner/denom-EXM125-3");
-    expect(options[1].textContent).toBe("Practitioner/numer-EXM125-3");
-  });
-});
-
-describe("Radio button render subject", () => {
+describe("Select component, Radio button, and request preview render", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
   });
   window.ResizeObserver = mockResizeObserver;
-  it("should display an autocomplete component when the subject radio is selected", async () => {
+
+  it("tests for expected request preview and both Select Components", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -396,15 +338,27 @@ describe("Radio button render subject", () => {
     const subjectRadio = screen.getByLabelText("Subject");
     expect(subjectRadio).toBeChecked();
     expect(screen.getByText("Select Patient")).toBeInTheDocument;
-  });
-});
+    expect(screen.getByText("Select Practitioner")).toBeInTheDocument;
 
-describe("Radio button render population", () => {
-  beforeAll(() => {
-    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
+    //mocks user typing into both SelectComponents to check for updating request preview
+    const patientSelectComponent = screen.getByRole("searchbox", { name: "Select Patient" });
+    await act(async () => {
+      fireEvent.change(patientSelectComponent, { target: { value: "P" } });
+    });
+    const practitionerSelectComponent = screen.getByRole("searchbox", {
+      name: "Select Practitioner",
+    });
+    await act(async () => {
+      fireEvent.change(practitionerSelectComponent, { target: { value: "P" } });
+    });
+    expect(
+      screen.getByText(
+        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01&periodEnd=2022-12-31&reportType=subject&subject=P&practitioner=P",
+      ),
+    ).toBeInTheDocument();
   });
-  window.ResizeObserver = mockResizeObserver;
-  it("should not display an autocomplete component when the population radio is selected", async () => {
+
+  it("tests for expected request preview and absence of Patient Select Component", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -416,7 +370,7 @@ describe("Radio button render population", () => {
         </RouterContext.Provider>,
       );
     });
-    // click the population radio button to ensure an autocomplete component doesn't appear
+    //click the population radio button to ensure the Patient autocomplete component doesn't appear
     const populationRadio = screen.getByLabelText("Population");
     //Population radio button should not be pre-selected
     expect(populationRadio).not.toBeChecked();
@@ -424,5 +378,11 @@ describe("Radio button render population", () => {
       fireEvent.click(populationRadio);
     });
     expect(screen.findByText("Select Patient")).not.toBeInTheDocument;
+    //expect the request preview to include reportType=population
+    expect(
+      screen.getByText(
+        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01&periodEnd=2022-12-31&reportType=population",
+      ),
+    ).toBeInTheDocument();
   });
 });

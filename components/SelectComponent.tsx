@@ -84,7 +84,11 @@ function PopulateIDHelper({
         onChange={setValue}
         label={`Select ${resourceType}`}
         placeholder="Start typing to see options"
+        sx={{ color: "#ffffff" }}
         data={myArray}
+        variant="filled"
+        radius="xl"
+        size="lg"
         limit={10}
         required={required ? required : false}
       />
