@@ -1,4 +1,4 @@
-import { render, screen, act, fireEvent, within } from "@testing-library/react";
+import { render, screen, act, fireEvent, within, configure } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import {
   mantineRecoilWrap,
@@ -11,6 +11,8 @@ import { RouterContext } from "next/dist/shared/lib/router-context";
 import EvaluateMeasurePage from "../../../../pages/[resourceType]/[id]/evaluate";
 import { DateTime } from "luxon";
 import { fhirJson } from "@fhir-typescript/r4-core";
+
+configure({ asyncUtilTimeout: 5000 });
 
 const MEASURE_BODY_WITH_DATES = {
   resourceType: "Measure",
