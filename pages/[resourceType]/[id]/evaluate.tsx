@@ -42,6 +42,8 @@ const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
  * The DatePickers are pre-filled with a Measure's effective period dates or default dates.
  * The Patient SelectComponent only appears if the reportType selected is "Subject".
  * If the url resourceType is not a Measure, an error message is displayed.
+ * If the Evaluate Measure request succeeds, a Prism component with the MeasureReport is rendered.
+ * If the Evaluate Measure request fails, an error notification appears instead.
  * @returns React node with a back button, MeasureDatePickers, SelectComponents, a RadioGroup, and Text for the request preview
  */
 const EvaluateMeasurePage = () => {
@@ -81,8 +83,8 @@ const EvaluateMeasurePage = () => {
   //only appears on the measure page
   const validSelections = () => {
     if (
-      (periodStart && periodEnd && radioValue === "Population" && practitionerValue) ||
-      (periodStart && periodEnd && radioValue === "Subject" && practitionerValue && patientValue)
+      (periodStart && periodEnd && radioValue === "Population") ||
+      (periodStart && periodEnd && radioValue === "Subject" && patientValue)
     ) {
       return true;
     } else return false;
@@ -175,7 +177,7 @@ const EvaluateMeasurePage = () => {
                 >
                   <Prism
                     language="json"
-                    data-testid="prism-page-content"
+                    data-testid="prism-measure-report"
                     colorScheme="dark"
                     style={{ maxWidth: "77vw", height: "80vh", backgroundColor: "#FFFFFF" }}
                   >
@@ -333,10 +335,8 @@ const EvaluateMeasurePage = () => {
     };
     let fetchStatus = { status: 500, statusText: "Failed fetch request" };
     setLoadingRequest(true);
-    //${process.env.NEXT_PUBLIC_DEQM_SERVER}/${createRequestPreview}
-    fetch(
-      `${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure/measure-EXM130-7.3.000/$evaluate-measure?periodStart=2019-01-01T05:00:00.000Z&periodEnd=2019-12-31T05:00:00.000Z&subject=Patient%2Fdenom-EXM130&reportType=individual`,
-    )
+
+    fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${createRequestPreview}`)
       .then((response) => {
         fetchStatus = { status: response.status, statusText: response.statusText };
         return response.json();
