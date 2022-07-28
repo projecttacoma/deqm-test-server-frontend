@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Badge, Button, Stack } from "@mantine/core";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
 import Link from "next/link";
+import { CountContext } from "./CountContext";
 
 /**
  * interface for object that is returned from a request to the resourceCunt endpoint.
@@ -18,6 +19,7 @@ export interface ResourceCountResponse {
  */
 const ResourceCounts = () => {
   const [resources, setResources] = useState<ResourceCountResponse>({});
+  const context = useContext(CountContext);
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/resourceCount`)
       .then((data) => {
@@ -35,7 +37,7 @@ const ResourceCounts = () => {
           autoClose: false,
         });
       });
-  }, []);
+  }, [context.countChange]);
 
   /**
    * Sorts the resource counts key:value pairs object, then returns them as an array of buttons

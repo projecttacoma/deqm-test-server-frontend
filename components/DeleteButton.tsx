@@ -1,8 +1,10 @@
 import { useRouter } from "next/router";
+import { useContext } from "react";
 import { Button, Text } from "@mantine/core";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import { Check, X } from "tabler-icons-react";
 import { useModals } from "@mantine/modals";
+import { CountContext } from "./CountContext";
 
 /**
  * DeleteButton is a component for rendering a delete resource button
@@ -13,6 +15,7 @@ export default function DeleteButton() {
   const router = useRouter();
   const modals = useModals();
   const { resourceType, id } = router.query;
+  const context = useContext(CountContext);
 
   let customMessage: NotificationProps["message"] = <div>Problem connecting to server</div>;
   let notifProps: NotificationProps = {
@@ -39,6 +42,9 @@ export default function DeleteButton() {
             color: "green",
             icon: <Check size={18} />,
           };
+
+          //updates state to reflect that a resource count has been changed
+          context.setCountChange(!context.countChange);
 
           //return to resource page
           router.push({ pathname: `/${resourceType}` });

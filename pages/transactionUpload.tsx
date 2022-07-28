@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import ResourceCodeEditor from "../components/ResourceCodeEditor";
 import { Button, Center, Divider, Modal, Stack, Text, Title } from "@mantine/core";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
@@ -7,6 +7,7 @@ import { textGray } from "../styles/appColors";
 import BackButton from "../components/BackButton";
 import { fhirJson } from "@fhir-typescript/r4-core";
 import Link from "next/link";
+import { CountContext } from "../components/CountContext";
 
 /**
  * TransactionUploadPage is a page that renders a code editor, an upload button for uploading transaction bundles, and a back button.
@@ -19,6 +20,7 @@ const TransactionUploadPage = () => {
   const [hasLintError, setHasLintError] = useState(true);
   const [openResponseModal, setOpenResponseModal] = useState(false);
   const [modalContents, setModalContents] = useState<fhirJson.BundleEntry[] | null>(null);
+  const context = useContext(CountContext);
 
   return (
     <div style={{ paddingLeft: "15px", paddingRight: "15px" }}>
@@ -105,6 +107,8 @@ const TransactionUploadPage = () => {
         if (response.status === 201 || response.status === 200) {
           customMessage = <Text>Transaction Bundle Upload Successful</Text>;
           uploadSuccessful = true;
+          //updates state to reflect that a resource count has been changed
+          context.setCountChange(!context.countChange);
         } else {
           customMessage = (
             <Text weight={500}>
