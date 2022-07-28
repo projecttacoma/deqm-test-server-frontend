@@ -108,11 +108,11 @@ describe("Test evaluate page render for measure", () => {
     expect(screen.getByTestId("back-button")).toBeInTheDocument();
     expect(screen.getByText("Evaluate Measure: measure-EXM104-8.2.000")).toBeInTheDocument();
     expect(screen.getByText("Request Preview:")).toBeInTheDocument();
-
+    screen.debug(undefined, 30000);
     //Request preview should include the dates from the Measure's effective period
     expect(
-      screen.getByText(
-        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2019-01-01T05:00:00.000Z&periodEnd=2019-12-31T05:00:00.000Z&reportType=subject",
+      await screen.findByText(
+        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2019-01-01&periodEnd=2019-12-31&reportType=subject",
       ),
     ).toBeInTheDocument();
   });
@@ -163,8 +163,8 @@ describe("Test evaluate page render for measure", () => {
 
     //request preview should include the updated dates
     expect(
-      screen.getByText(
-        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2018-02-02T05:00:00.000Z&periodEnd=2020-11-13T05:00:00.000Z&reportType=subject",
+      await screen.findByText(
+        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2018-02-02&periodEnd=2020-11-13&reportType=subject",
       ),
     ).toBeInTheDocument();
   });
@@ -352,9 +352,10 @@ describe("Select component, Radio button, and request preview render", () => {
     await act(async () => {
       fireEvent.change(practitionerSelectComponent, { target: { value: "P" } });
     });
+    screen.debug(undefined, 30000);
     expect(
-      screen.getByText(
-        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01T05:00:00.000Z&periodEnd=2022-12-31T05:00:00.000Z&reportType=subject&subject=P&practitioner=P",
+      await screen.findByText(
+        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01&periodEnd=2022-12-31&reportType=subject&subject=P&practitioner=P",
       ),
     ).toBeInTheDocument();
   });
@@ -381,8 +382,8 @@ describe("Select component, Radio button, and request preview render", () => {
     expect(screen.findByText("Select Patient")).not.toBeInTheDocument;
     //expect the request preview to include reportType=population
     expect(
-      screen.getByText(
-        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01T05:00:00.000Z&periodEnd=2022-12-31T05:00:00.000Z&reportType=population",
+      await screen.findByText(
+        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01&periodEnd=2022-12-31&reportType=population",
       ),
     ).toBeInTheDocument();
   });
