@@ -32,7 +32,7 @@ const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
 
 /**
  * EvaluateMeasurePage is a page that renders a back button pre-filled DatePickers, radio buttons,
- * auto-complete boxes, and a text preview of the measure request.
+ * auto-complete boxes, a text preview of the measure request, and a display of the measure report response.
  * The DatePickers are pre-filled with a Measure's effective period dates or default dates.
  * The Patient SelectComponent only appears if the reportType selected is "Subject".
  * If the url resourceType is not a Measure, an error message is displayed.
@@ -79,7 +79,7 @@ const EvaluateMeasurePage = () => {
   };
 
   if (resourceType === "Measure" && id) {
-    if (!loadingRequest && !fetchingError) {
+    if (!fetchingError) {
       //for resourceType Measure, evaluate measure components are rendered
       return (
         <>
@@ -139,9 +139,15 @@ const EvaluateMeasurePage = () => {
             }}
             onClick={calculateHandler}
           >
-            <div>Calculate</div>
+            Calculate
           </Button>
-          {measureReportBody && (
+          {loadingRequest && (
+            <Center>
+              <div>Loading content...</div>
+              <Loader color="cyan"></Loader>
+            </Center>
+          )}
+          {measureReportBody && !loadingRequest && (
             <>
               <Divider my="sm" />
               <ScrollArea>
@@ -171,13 +177,6 @@ const EvaluateMeasurePage = () => {
           )}
         </>
       );
-    } else if (loadingRequest && !fetchingError) {
-      return (
-        <Center>
-          <div>Loading content...</div>
-          <Loader color="cyan"></Loader>
-        </Center>
-      );
     } else {
       return <div>Something went wrong.</div>;
     }
@@ -194,7 +193,7 @@ const EvaluateMeasurePage = () => {
     );
   }
 
-  //called when submit button is clicked. Handles PUT request and response
+  //called when calculate button is clicked. Handles evaluate measure request and response
   function calculateHandler() {
     let customMessage = <Text weight={500}>Problem connecting to server:&nbsp;</Text>;
     let notifProps: NotificationProps = {
@@ -203,15 +202,18 @@ const EvaluateMeasurePage = () => {
       icon: <X size={18} />,
       autoClose: false,
     };
-
+    let fetchStatus = { status: 500, statusText: "Failed fetch request" };
     setLoadingRequest(true);
     //${process.env.NEXT_PUBLIC_DEQM_SERVER}/${createRequestPreview}
     fetch(
-      `${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2022-01-12T05:00:00.000Z&periodEnd=2019-05-02T04:00:00.000Z&reportType=individual`,
+      `${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure/measure-EXM130-7.3.000/$evaluate-measure?periodStart=2019-01-01T05:00:00.000Z&periodEnd=2019-12-31T05:00:00.000Z&subject=Patient%2Fdenom-EXM130&reportType=individual`,
     )
       .then((response) => {
-        //console.log("response: ", response);
-        if (response.status === 201 || response.status === 200) {
+        fetchStatus = { status: response.status, statusText: response.statusText };
+        return response.json();
+      })
+      .then((responseBody) => {
+        if (fetchStatus.status === 201 || fetchStatus.status === 200) {
           customMessage = (
             <>
               <Text>Evaluate Measure successful!&nbsp;</Text>
@@ -222,29 +224,28 @@ const EvaluateMeasurePage = () => {
             color: "green",
             icon: <Check size={18} />,
           };
-
-          //redirects user to page with the resource's body
-          //router.push({ pathname: `/${resourceType}/${id}` });
-        } else {
-          customMessage = (
-            <Text weight={500}>
-              {response.status} {response.statusText}&nbsp;
-            </Text>
-          );
-        }
-        return response.json();
-      })
-      .then((responseBody) => {
-        //console.log("responseBody: ", responseBody);
-        if (responseBody) {
           setMeasureReportBody(JSON.stringify(responseBody, null, 2));
-          console.log("measureReport: ", measureReportBody);
+          setFetchingError(false);
+          setLoadingRequest(false);
+        } else if (fetchStatus.status > 299) {
+          customMessage = (
+            <>
+              <Text weight={500}>
+                {fetchStatus.status} {fetchStatus.statusText}&nbsp;
+              </Text>
+              <Text color="red">
+                {responseBody.issue
+                  ? responseBody.issue[0]?.details?.text
+                  : "Fetch Issue undefined."}
+              </Text>
+            </>
+          );
           setFetchingError(false);
           setLoadingRequest(false);
         } else {
           throw {
             name: "FetchingError",
-            message: "No response.json returned from fetch.",
+            message: "Bad status returned",
           };
         }
       })

@@ -93,7 +93,7 @@ describe("Test evaluate page render for measure", () => {
     global.fetch = getMockFetchImplementation(MEASURE_BODY_WITH_DATES);
   });
 
-  it("should display back button, expected title, and request preview", async () => {
+  it("should display back button, expected title, request preview, and disabled calculate button", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -108,6 +108,10 @@ describe("Test evaluate page render for measure", () => {
     expect(screen.getByTestId("back-button")).toBeInTheDocument();
     expect(screen.getByText("Evaluate Measure: measure-EXM104-8.2.000")).toBeInTheDocument();
     expect(screen.getByText("Request Preview:")).toBeInTheDocument();
+
+    const calculateButton = screen.getByRole("button", { name: "Calculate" }) as HTMLButtonElement;
+    expect(calculateButton).toBeInTheDocument();
+    expect(calculateButton).toBeDisabled();
 
     //Request preview should include the dates from the Measure's effective period
     expect(
@@ -237,62 +241,6 @@ describe("Test evaluate page render for non-measure", () => {
   });
 });
 
-describe("non 20x response in evaluate measure page", () => {
-  beforeEach(() => {
-    global.fetch = getMockFetchImplementation(ERROR_400_RESPONSE_BODY, 400, "BadRequest");
-  });
-
-  it("error notification should appear with expected messages", async () => {
-    await act(async () => {
-      render(
-        mantineRecoilWrap(
-          <RouterContext.Provider
-            value={createMockRouter({
-              query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
-            })}
-          >
-            <EvaluateMeasurePage />
-          </RouterContext.Provider>,
-        ),
-      );
-    });
-
-    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
-    expect(errorNotif).toBeInTheDocument();
-
-    expect(within(errorNotif).getByText(/400 BadRequest/)).toBeInTheDocument();
-    expect(within(errorNotif).getByText(/Invalid resource ID/)).toBeInTheDocument();
-  });
-});
-
-describe("Evaluate measure page fetch throws error", () => {
-  beforeEach(() => {
-    global.fetch = getMockFetchImplementationError("Problem connecting to server");
-  });
-
-  it("Server error notification should appear with expected messages", async () => {
-    await act(async () => {
-      render(
-        mantineRecoilWrap(
-          <RouterContext.Provider
-            value={createMockRouter({
-              query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
-            })}
-          >
-            <EvaluateMeasurePage />
-          </RouterContext.Provider>,
-        ),
-      );
-    });
-
-    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
-    expect(errorNotif).toBeInTheDocument();
-
-    expect(within(errorNotif).getByText(/Not connected to server!/)).toBeInTheDocument();
-    expect(screen.getByText("Something went wrong.")).toBeInTheDocument();
-  });
-});
-
 describe("Select component no practitioners", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(NO_RESOURCE_ID);
@@ -360,6 +308,10 @@ describe("Select component, Radio button, and request preview render", () => {
         "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01T05:00:00.000Z&periodEnd=2022-12-31T05:00:00.000Z&reportType=subject&subject=P&practitioner=P",
       ),
     ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("button", { name: "Calculate" }) as HTMLButtonElement,
+    ).not.toBeDisabled();
   });
 
   it("tests for expected request preview and absence of Patient Select Component", async () => {
@@ -386,15 +338,19 @@ describe("Select component, Radio button, and request preview render", () => {
         "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01T05:00:00.000Z&periodEnd=2022-12-31T05:00:00.000Z&reportType=population",
       ),
     ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("button", { name: "Calculate" }) as HTMLButtonElement,
+    ).not.toBeDisabled();
   });
 });
 
-describe.only("Error thrown during create test", () => {
+describe("Error thrown during create test", () => {
   beforeAll(() => {
-    global.fetch = getMockFetchImplementationError("400 Bad Request");
+    global.fetch = getMockFetchImplementation("400 Bad Request");
   });
 
-  it.only("Test for error notification when error is thrown", async () => {
+  it("Test for error notification when error is thrown", async () => {
     await act(async () => {
       render(
         mantineRecoilWrap(
@@ -423,5 +379,64 @@ describe.only("Error thrown during create test", () => {
     expect(within(errorNotif).getByText(/Problem connecting to server:/)).toBeInTheDocument();
     expect(within(errorNotif).getByText(/400 Bad Request/)).toBeInTheDocument();
     */
+  });
+});
+
+describe("non 20x response in evaluate measure page", () => {
+  beforeEach(() => {
+    global.fetch = getMockFetchImplementation(ERROR_400_RESPONSE_BODY, 400, "BadRequest");
+  });
+
+  it("error notification should appear with expected messages", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
+            })}
+          >
+            <EvaluateMeasurePage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
+    expect(errorNotif).toBeInTheDocument();
+
+    expect(within(errorNotif).getByText(/400 BadRequest/)).toBeInTheDocument();
+    expect(within(errorNotif).getByText(/Invalid resource ID/)).toBeInTheDocument();
+    screen.debug(undefined, 30000);
+  });
+});
+
+describe("Evaluate measure page fetch throws error", () => {
+  beforeEach(() => {
+    global.fetch = getMockFetchImplementationError("Problem connecting to server");
+  });
+
+  it("Server error notification should appear with expected messages", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
+            })}
+          >
+            <EvaluateMeasurePage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
+    expect(errorNotif).toBeInTheDocument();
+
+    expect(within(errorNotif).getByText(/Not connected to server!/)).toBeInTheDocument();
+    expect(screen.getByText("Something went wrong.")).toBeInTheDocument();
+
+    screen.debug(undefined, 30000);
   });
 });
