@@ -38,7 +38,10 @@ const EvaluateMeasurePage = () => {
    * @returns the request preview as a string
    */
   const createRequestPreview = () => {
-    let requestPreview = `/Measure/${id}/$evaluate-measure?periodStart=${periodStart.toJSON()}&periodEnd=${periodEnd.toISOString()}`;
+    //dates are formatted to be in the form "YYYY-MM-DD", with no timezone info
+    let requestPreview = `/Measure/${id}/$evaluate-measure?periodStart=${DateTime.fromISO(
+      periodStart.toISOString(),
+    ).toISODate()}&periodEnd=${DateTime.fromISO(periodEnd.toISOString()).toISODate()}`;
     if (radioValue) {
       requestPreview += `&reportType=${radioValue.toLowerCase()}`;
       if (radioValue.toLowerCase() === "subject" && patientValue) {

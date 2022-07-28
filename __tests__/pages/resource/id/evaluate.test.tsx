@@ -1,4 +1,4 @@
-import { render, screen, act, fireEvent, within, configure } from "@testing-library/react";
+import { render, screen, act, fireEvent, within } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import {
   mantineRecoilWrap,
@@ -11,8 +11,6 @@ import { RouterContext } from "next/dist/shared/lib/router-context";
 import EvaluateMeasurePage from "../../../../pages/[resourceType]/[id]/evaluate";
 import { DateTime } from "luxon";
 import { fhirJson } from "@fhir-typescript/r4-core";
-
-configure({ asyncUtilTimeout: 5000 });
 
 const MEASURE_BODY_WITH_DATES = {
   resourceType: "Measure",
@@ -114,7 +112,7 @@ describe("Test evaluate page render for measure", () => {
     //Request preview should include the dates from the Measure's effective period
     expect(
       await screen.findByText(
-        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2019-01-01T05:00:00.000Z&periodEnd=2019-12-31T05:00:00.000Z&reportType=subject",
+        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2019-01-01&periodEnd=2019-12-31&reportType=subject",
       ),
     ).toBeInTheDocument();
   });
@@ -166,7 +164,7 @@ describe("Test evaluate page render for measure", () => {
     //request preview should include the updated dates
     expect(
       await screen.findByText(
-        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2018-02-02T05:00:00.000Z&periodEnd=2020-11-13T05:00:00.000Z&reportType=subject",
+        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2018-02-02&periodEnd=2020-11-13&reportType=subject",
       ),
     ).toBeInTheDocument();
   });
@@ -357,7 +355,7 @@ describe("Select component, Radio button, and request preview render", () => {
     screen.debug(undefined, 30000);
     expect(
       await screen.findByText(
-        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01T05:00:00.000Z&periodEnd=2022-12-31T05:00:00.000Z&reportType=subject&subject=P&practitioner=P",
+        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01&periodEnd=2022-12-31&reportType=subject&subject=P&practitioner=P",
       ),
     ).toBeInTheDocument();
   });
@@ -385,7 +383,7 @@ describe("Select component, Radio button, and request preview render", () => {
     //expect the request preview to include reportType=population
     expect(
       await screen.findByText(
-        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01T05:00:00.000Z&periodEnd=2022-12-31T05:00:00.000Z&reportType=population",
+        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01&periodEnd=2022-12-31&reportType=population",
       ),
     ).toBeInTheDocument();
   });
