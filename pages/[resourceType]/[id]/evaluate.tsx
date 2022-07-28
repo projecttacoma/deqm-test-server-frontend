@@ -329,7 +329,7 @@ const EvaluateMeasurePage = () => {
     setLoadingRequest(true);
     //${process.env.NEXT_PUBLIC_DEQM_SERVER}/${createRequestPreview}
     fetch(
-      `${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2022-01-12T05:00:00.000Z&periodEnd=2019-05-02T04:00:00.000Z&reportType=individual&subject=Patient/numer-EXM104`,
+      `${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2022-01-12T05:00:00.000Z&periodEnd=2019-05-02T04:00:00.000Z&reportType=individual`,
     )
       .then((response) => {
         //console.log("response: ", response);
