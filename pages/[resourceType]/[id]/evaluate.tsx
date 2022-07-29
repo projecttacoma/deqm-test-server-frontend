@@ -94,7 +94,7 @@ const EvaluateMeasurePage = () => {
     if (!fetchingError) {
       //for resourceType Measure, evaluate measure components are rendered
       return (
-        <>
+        <div>
           <BackButton />
           <Center>
             <h2 style={{ color: textGray, marginTop: "0px", marginBottom: "4px" }}>
@@ -102,101 +102,6 @@ const EvaluateMeasurePage = () => {
             </h2>
           </Center>
           <Divider my="md" />
-          <MeasureDatePickers
-            measureID={id as string}
-            periodStart={periodStart}
-            periodEnd={periodEnd}
-            startOnUpdate={setPeriodStart}
-            endOnUpdate={setPeriodEnd}
-          />
-          <RadioGroup
-            value={radioValue}
-            onChange={setRadioValue}
-            label="Select Subject or Population"
-            required
-          >
-            <Radio value="Subject" label="Subject" />
-            <Radio value="Population" label="Population" />
-          </RadioGroup>
-          {/* only displays autocomplete component if radio value is Patient */}
-          {radioValue === "Subject" ? (
-            <SelectComponent
-              resourceType="Patient"
-              setValue={setPatientValue}
-              value={patientValue}
-            />
-          ) : null}
-          <SelectComponent
-            resourceType="Practitioner"
-            setValue={setPractitionerValue}
-            value={practitionerValue}
-          />
-          <h3 style={{ color: textGray, marginTop: "20px", marginBottom: "2px" }}>
-            Request Preview:
-          </h3>
-          <Text
-            size="md"
-            style={{ backgroundColor: "#e3fafc", color: textGray }}
-          >{`${createRequestPreview()}`}</Text>
-
-          <Button
-            disabled={!validSelections()}
-            color="cyan"
-            radius="md"
-            size="sm"
-            variant="filled"
-            style={{
-              marginRight: "8px",
-              marginLeft: "8px",
-            }}
-            onClick={calculateHandler}
-          >
-            Calculate
-          </Button>
-          {loadingRequest && (
-            <Center>
-              <div>Loading content...</div>
-              <Loader color="cyan"></Loader>
-            </Center>
-          )}
-          {measureReportBody && !loadingRequest && (
-            <>
-              <Divider my="sm" />
-              <ScrollArea>
-                <MantineProvider
-                  //changes hex values associated with each Mantine color name to improve UI
-                  theme={{
-                    colors: {
-                      gray: replaceGray,
-                      dark: replaceDark,
-                      teal: replaceTeal,
-                      red: replaceRed,
-                      blue: replaceBlue,
-                    },
-                  }}
-                >
-                  <Prism
-                    language="json"
-                    data-testid="prism-measure-report"
-                    colorScheme="dark"
-                    style={{ maxWidth: "77vw", height: "80vh", backgroundColor: "#FFFFFF" }}
-                  >
-                    {measureReportBody}
-                  </Prism>
-                </MantineProvider>
-              </ScrollArea>
-            </>
-          )}
-        </>
-      );
-    } else if (loadingRequest && !fetchingError) {
-      return (
-        // <Center>
-        //   <div>Loading content...</div>
-        //   <Loader color="cyan"></Loader>
-        // </Center>
-        // <Divider my="md" />
-        <div>
           <Grid columns={3} style={{ margin: 15 }}>
             <MantineProvider
               // changes hex values associated with each Mantine color name to improve UI
@@ -265,7 +170,7 @@ const EvaluateMeasurePage = () => {
                     textAlign: "center",
                   }}
                 >
-                  Request Preview:{" "}
+                  Request Preview:
                 </h3>
                 <div
                   style={{
@@ -293,19 +198,58 @@ const EvaluateMeasurePage = () => {
                   }}
                 >
                   <Button
+                    disabled={!validSelections()}
                     color="cyan"
-                    radius="lg"
-                    size="md"
+                    radius="md"
+                    size="sm"
+                    variant="filled"
                     style={{
-                      textAlign: "center",
+                      marginRight: "8px",
+                      marginLeft: "8px",
                     }}
+                    onClick={calculateHandler}
                   >
-                    Sample Submit Button
+                    Calculate
                   </Button>
                 </div>
               </Grid.Col>
             </MantineProvider>
           </Grid>
+
+          {loadingRequest && (
+            <Center>
+              <div>Loading content...</div>
+              <Loader color="cyan"></Loader>
+            </Center>
+          )}
+          {measureReportBody && !loadingRequest && (
+            <>
+              <Divider my="sm" />
+              <ScrollArea>
+                <MantineProvider
+                  //changes hex values associated with each Mantine color name to improve UI
+                  theme={{
+                    colors: {
+                      gray: replaceGray,
+                      dark: replaceDark,
+                      teal: replaceTeal,
+                      red: replaceRed,
+                      blue: replaceBlue,
+                    },
+                  }}
+                >
+                  <Prism
+                    language="json"
+                    data-testid="prism-measure-report"
+                    colorScheme="dark"
+                    style={{ maxWidth: "77vw", height: "80vh", backgroundColor: "#FFFFFF" }}
+                  >
+                    {measureReportBody}
+                  </Prism>
+                </MantineProvider>
+              </ScrollArea>
+            </>
+          )}
         </div>
       );
     } else {
@@ -369,6 +313,7 @@ const EvaluateMeasurePage = () => {
               </Text>
             </>
           );
+          setMeasureReportBody("");
           setFetchingError(false);
           setLoadingRequest(false);
         } else {
@@ -379,6 +324,7 @@ const EvaluateMeasurePage = () => {
         }
       })
       .catch((error) => {
+        setMeasureReportBody("");
         setFetchingError(true);
         customMessage = (
           <>
