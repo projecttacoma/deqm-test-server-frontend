@@ -140,7 +140,7 @@ function ResourceIDPage() {
               language="json"
               data-testid="prism-page-content"
               colorScheme="dark"
-              style={{ maxWidth: "77vw", height: "80vh", backgroundColor: "#FFFFFF" }}
+              style={{ maxWidth: "78vw", height: "80vh", backgroundColor: "#FFFFFF" }}
             >
               {pageBody}
             </Prism>
