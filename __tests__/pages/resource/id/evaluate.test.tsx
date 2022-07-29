@@ -374,6 +374,7 @@ describe("non 20x response in evaluate measure page", () => {
     const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
     expect(errorNotif).toBeInTheDocument();
 
+    expect(screen.queryByTestId("prism-measure-report")).not.toBeInTheDocument();
     expect(within(errorNotif).getByText(/400 BadRequest/)).toBeInTheDocument();
     expect(within(errorNotif).getByText(/Invalid resource ID/)).toBeInTheDocument();
   });
@@ -402,19 +403,20 @@ describe("Evaluate measure page fetch throws error", () => {
     const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
     expect(errorNotif).toBeInTheDocument();
 
+    expect(screen.queryByTestId("prism-measure-report")).not.toBeInTheDocument();
     expect(within(errorNotif).getByText(/Not connected to server!/)).toBeInTheDocument();
     expect(screen.getByText("Something went wrong.")).toBeInTheDocument();
   });
 });
 
-describe.only("Evaluate measure successful request", () => {
+describe("Evaluate measure successful request", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(MEASURE_BODY_NO_EFFECTIVE_PERIOD);
   });
 
   window.ResizeObserver = mockResizeObserver;
 
-  it.only("should display success notif and Prism component with MeasureReport", async () => {
+  it("should display success notif and Prism component with fetch response json body", async () => {
     await act(async () => {
       render(
         mantineRecoilWrap(

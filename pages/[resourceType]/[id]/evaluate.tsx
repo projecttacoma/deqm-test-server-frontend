@@ -336,7 +336,7 @@ const EvaluateMeasurePage = () => {
     let fetchStatus = { status: 500, statusText: "Failed fetch request" };
     setLoadingRequest(true);
 
-    fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${createRequestPreview}`)
+    fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}${createRequestPreview()}`)
       .then((response) => {
         fetchStatus = { status: response.status, statusText: response.statusText };
         return response.json();
