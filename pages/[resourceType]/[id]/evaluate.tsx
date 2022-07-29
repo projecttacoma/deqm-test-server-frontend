@@ -53,6 +53,7 @@ const EvaluateMeasurePage = () => {
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
   const [measureReportBody, setMeasureReportBody] = useState("");
+  const [gridColSpans, setGridColSpans] = useState([3, 3, 0]);
 
   const [practitionerValue, setPractitionerValue] = useState("");
   const [patientValue, setPatientValue] = useState("");
@@ -102,7 +103,7 @@ const EvaluateMeasurePage = () => {
             </h2>
           </Center>
           <Divider my="md" />
-          <Grid columns={3} style={{ margin: 15 }}>
+          <Grid columns={gridColSpans[0]}>
             <MantineProvider
               // changes hex values associated with each Mantine color name to improve UI
               theme={{
@@ -113,143 +114,145 @@ const EvaluateMeasurePage = () => {
                 },
               }}
             >
-              <Grid.Col span={3}>
-                <Grid.Col span={3} style={{ minHeight: 100, margin: 5 }}>
-                  <MeasureDatePickers
-                    measureID={id as string}
-                    periodStart={periodStart}
-                    periodEnd={periodEnd}
-                    startOnUpdate={setPeriodStart}
-                    endOnUpdate={setPeriodEnd}
-                  />
-                </Grid.Col>
-                <Grid.Col span={3} style={{ margin: 5 }}>
-                  <RadioGroup
-                    value={radioValue}
-                    onChange={setRadioValue}
-                    label={<Text size="lg">Select a reportType</Text>}
-                    style={{ marginBottom: "25px" }}
-                  >
-                    <Radio value="Subject" label="Subject" />
-                    <Radio value="Population" label="Population" />
-                  </RadioGroup>
-
-                  {/* only displays autocomplete component if radio value is Patient */}
-                  {radioValue === "Subject" ? (
-                    <SelectComponent
-                      resourceType="Patient"
-                      setValue={setPatientValue}
-                      value={patientValue}
-                      required={true}
+              <Grid.Col span={gridColSpans[1]}>
+                <Grid.Col>
+                  <Grid.Col style={{ minHeight: 100 }}>
+                    <MeasureDatePickers
+                      measureID={id as string}
+                      periodStart={periodStart}
+                      periodEnd={periodEnd}
+                      startOnUpdate={setPeriodStart}
+                      endOnUpdate={setPeriodEnd}
                     />
-                  ) : (
-                    <SelectComponent
-                      resourceType="Patient"
-                      setValue={setPatientValue}
-                      value={patientValue}
-                      disabled={true}
-                      placeholder="Patient selection disabled when 'Population' is selected"
-                    />
-                  )}
-                </Grid.Col>
+                  </Grid.Col>
+                  <Grid.Col>
+                    <RadioGroup
+                      value={radioValue}
+                      onChange={setRadioValue}
+                      label={<Text size="lg">Select a reportType</Text>}
+                      style={{ marginBottom: "25px" }}
+                    >
+                      <Radio value="Subject" label="Subject" />
+                      <Radio value="Population" label="Population" />
+                    </RadioGroup>
 
-                <Grid.Col span={3} style={{ margin: 5 }}>
-                  <SelectComponent
-                    resourceType="Practitioner"
-                    setValue={setPractitionerValue}
-                    value={practitionerValue}
-                  />
+                    {/* only displays autocomplete component if radio value is Patient */}
+                    {radioValue === "Subject" ? (
+                      <SelectComponent
+                        resourceType="Patient"
+                        setValue={setPatientValue}
+                        value={patientValue}
+                        required={true}
+                      />
+                    ) : (
+                      <SelectComponent
+                        resourceType="Patient"
+                        setValue={setPatientValue}
+                        value={patientValue}
+                        disabled={true}
+                        placeholder="Patient selection disabled when 'Population' is selected"
+                      />
+                    )}
+                  </Grid.Col>
+                  <Grid.Col>
+                    <SelectComponent
+                      resourceType="Practitioner"
+                      setValue={setPractitionerValue}
+                      value={practitionerValue}
+                    />
+                  </Grid.Col>
                 </Grid.Col>
-              </Grid.Col>
-              <Grid.Col span={3} style={{ margin: 5 }}>
-                <h3
-                  style={{
-                    color: textGray,
-                    marginTop: "20px",
-                    marginBottom: "2px",
-                    textAlign: "center",
-                  }}
-                >
-                  Request Preview:
-                </h3>
-                <div
-                  style={{
-                    textAlign: "center",
-                    overflowWrap: "break-word",
-                    padding: "10px",
-                    backgroundColor: "#F1F3F5",
-                    border: "1px solid",
-                    borderColor: "#4a4f4f",
-                    borderRadius: "20px",
-                    marginLeft: "30px",
-                    marginRight: "30px",
-                  }}
-                >
-                  <Text
-                    size="md"
-                    style={{ color: textGray, textAlign: "left" }}
-                  >{`${createRequestPreview()}`}</Text>
-                </div>
-              </Grid.Col>
-              <Grid.Col span={3} style={{ minHeight: 100, margin: 5 }}>
-                <div
-                  style={{
-                    textAlign: "center",
-                  }}
-                >
-                  <Button
-                    disabled={!validSelections()}
-                    color="cyan"
-                    radius="md"
-                    size="sm"
-                    variant="filled"
+                <Grid.Col>
+                  <h3
                     style={{
-                      marginRight: "8px",
-                      marginLeft: "8px",
+                      color: textGray,
+                      marginTop: "20px",
+                      marginBottom: "2px",
+                      textAlign: "center",
                     }}
-                    onClick={calculateHandler}
                   >
-                    Calculate
-                  </Button>
-                </div>
+                    Request Preview:
+                  </h3>
+                  <div
+                    style={{
+                      textAlign: "center",
+                      overflowWrap: "break-word",
+                      padding: "10px",
+                      backgroundColor: "#F1F3F5",
+                      border: "1px solid",
+                      borderColor: "#4a4f4f",
+                      borderRadius: "20px",
+                      marginLeft: "30px",
+                      marginRight: "30px",
+                    }}
+                  >
+                    <Text
+                      size="md"
+                      style={{ color: textGray, textAlign: "left" }}
+                    >{`${createRequestPreview()}`}</Text>
+                  </div>
+                </Grid.Col>
+                <Grid.Col style={{ minHeight: 100 }}>
+                  <div
+                    style={{
+                      textAlign: "center",
+                    }}
+                  >
+                    <Button
+                      disabled={!validSelections()}
+                      color="cyan"
+                      radius="md"
+                      size="sm"
+                      variant="filled"
+                      // style={{
+                      //   marginRight: "8px",
+                      //   marginLeft: "8px",
+                      // }}
+                      onClick={calculateHandler}
+                    >
+                      Calculate
+                    </Button>
+                  </div>
+                </Grid.Col>
+              </Grid.Col>
+              <Grid.Col span={gridColSpans[2]}>
+                {loadingRequest && (
+                  <Center>
+                    <div>Loading content...</div>
+                    <Loader color="cyan"></Loader>
+                  </Center>
+                )}
+                {measureReportBody && !loadingRequest && (
+                  <>
+                    {/* <Divider my="sm" /> */}
+                    <ScrollArea>
+                      <MantineProvider
+                        //changes hex values associated with each Mantine color name to improve UI
+                        theme={{
+                          colors: {
+                            gray: replaceGray,
+                            dark: replaceDark,
+                            teal: replaceTeal,
+                            red: replaceRed,
+                            blue: replaceBlue,
+                          },
+                        }}
+                      >
+                        <Prism
+                          language="json"
+                          data-testid="prism-measure-report"
+                          colorScheme="dark"
+                          style={{ maxWidth: "77vw", height: "80vh", backgroundColor: "#FFFFFF" }}
+                        >
+                          {measureReportBody}
+                        </Prism>
+                      </MantineProvider>
+                    </ScrollArea>
+                  </>
+                )}
               </Grid.Col>
             </MantineProvider>
           </Grid>
-
-          {loadingRequest && (
-            <Center>
-              <div>Loading content...</div>
-              <Loader color="cyan"></Loader>
-            </Center>
-          )}
-          {measureReportBody && !loadingRequest && (
-            <>
-              <Divider my="sm" />
-              <ScrollArea>
-                <MantineProvider
-                  //changes hex values associated with each Mantine color name to improve UI
-                  theme={{
-                    colors: {
-                      gray: replaceGray,
-                      dark: replaceDark,
-                      teal: replaceTeal,
-                      red: replaceRed,
-                      blue: replaceBlue,
-                    },
-                  }}
-                >
-                  <Prism
-                    language="json"
-                    data-testid="prism-measure-report"
-                    colorScheme="dark"
-                    style={{ maxWidth: "77vw", height: "80vh", backgroundColor: "#FFFFFF" }}
-                  >
-                    {measureReportBody}
-                  </Prism>
-                </MantineProvider>
-              </ScrollArea>
-            </>
-          )}
         </div>
       );
     } else {
@@ -298,6 +301,7 @@ const EvaluateMeasurePage = () => {
             icon: <Check size={18} />,
           };
           setMeasureReportBody(JSON.stringify(responseBody, null, 2));
+          setGridColSpans([8, 3, 5]);
           setFetchingError(false);
           setLoadingRequest(false);
         } else if (fetchStatus.status > 299) {
@@ -314,6 +318,7 @@ const EvaluateMeasurePage = () => {
             </>
           );
           setMeasureReportBody("");
+          setGridColSpans([3, 3, 0]);
           setFetchingError(false);
           setLoadingRequest(false);
         } else {
@@ -325,6 +330,7 @@ const EvaluateMeasurePage = () => {
       })
       .catch((error) => {
         setMeasureReportBody("");
+        setGridColSpans([3, 3, 0]);
         setFetchingError(true);
         customMessage = (
           <>
