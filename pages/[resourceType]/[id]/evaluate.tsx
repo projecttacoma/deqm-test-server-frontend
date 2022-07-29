@@ -1,4 +1,4 @@
-import { Center, Divider, RadioGroup, Radio, Text, MantineProvider } from "@mantine/core";
+import { Center, Divider, RadioGroup, Radio, Text, MantineProvider, Button } from "@mantine/core";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { DateTime } from "luxon";
@@ -54,6 +54,7 @@ const EvaluateMeasurePage = () => {
     return requestPreview;
   };
 
+  //only appears on the measure page
   if (resourceType === "Measure" && id) {
     //for resourceType Measure, evaluate measure components are rendered
     return (
@@ -66,65 +67,118 @@ const EvaluateMeasurePage = () => {
         </Center>
 
         <Divider my="md" />
+        <div>
+          <Grid columns={3} style={{ margin: 15 }}>
+            <MantineProvider
+              // changes hex values associated with each Mantine color name to improve UI
+              theme={{
+                colors: {
+                  gray: replaceBackground,
+                  blue: replaceOutline,
+                  red: replaceSecondRed,
+                },
+              }}
+            >
+              <Grid.Col span={3}>
+                <Grid.Col span={3} style={{ minHeight: 100, margin: 5 }}>
+                  <MeasureDatePickers
+                    measureID={id as string}
+                    periodStart={periodStart}
+                    periodEnd={periodEnd}
+                    startOnUpdate={setPeriodStart}
+                    endOnUpdate={setPeriodEnd}
+                  />
+                </Grid.Col>
+                <Grid.Col span={3} style={{ margin: 5 }}>
+                  <RadioGroup
+                    value={radioValue}
+                    onChange={setRadioValue}
+                    label={<Text size="lg">Select a reportType</Text>}
+                    style={{ marginBottom: "25px" }}
+                  >
+                    <Radio value="Subject" label="Subject" />
+                    <Radio value="Population" label="Population" />
+                  </RadioGroup>
 
-        <Grid columns={8} style={{ margin: 10 }}>
-          <MantineProvider
-            // changes hex values associated with each Mantine color name to improve UI
-            theme={{
-              colors: {
-                gray: replaceBackground,
-                blue: replaceOutline,
-                red: replaceSecondRed,
-              },
-            }}
-          >
-            <Grid.Col span={8} style={{ minHeight: 100 }}>
-              <MeasureDatePickers
-                measureID={id as string}
-                periodStart={periodStart}
-                periodEnd={periodEnd}
-                startOnUpdate={setPeriodStart}
-                endOnUpdate={setPeriodEnd}
-              />
-            </Grid.Col>
+                  {/* only displays autocomplete component if radio value is Patient */}
+                  {radioValue === "Subject" ? (
+                    <SelectComponent
+                      resourceType="Patient"
+                      setValue={setPatientValue}
+                      value={patientValue}
+                      required={true}
+                    />
+                  ) : (
+                    <SelectComponent
+                      resourceType="Patient"
+                      setValue={setPatientValue}
+                      value={patientValue}
+                      disabled={true}
+                      placeholder="Patient selection disabled when 'Population' is selected"
+                    />
+                  )}
+                </Grid.Col>
 
-            <Grid.Col span={4} style={{ minHeight: 100 }}>
-              <RadioGroup
-                value={radioValue}
-                onChange={setRadioValue}
-                label="Select a reportType"
-                required
-              >
-                <Radio value="Subject" label="Subject" />
-                <Radio value="Population" label="Population" />
-              </RadioGroup>
-              {/* only displays autocomplete component if radio value is Patient */}
-              {radioValue === "Subject" ? (
-                <SelectComponent
-                  resourceType="Patient"
-                  setValue={setPatientValue}
-                  value={patientValue}
-                  required={true}
-                />
-              ) : null}
-            </Grid.Col>
-
-            <Grid.Col span={4} style={{ minHeight: 100 }}>
-              <SelectComponent
-                resourceType="Practitioner"
-                setValue={setPractitionerValue}
-                value={practitionerValue}
-              />
-            </Grid.Col>
-
-            <Grid.Col span={8} style={{ minHeight: 100 }}>
-              <h3 style={{ color: textGray, marginTop: "20px", marginBottom: "2px" }}>
-                Request Preview:{" "}
-              </h3>
-              <Text size="md" style={{ color: textGray }}>{`${createRequestPreview()}`}</Text>{" "}
-            </Grid.Col>
-          </MantineProvider>
-        </Grid>
+                <Grid.Col span={3} style={{ margin: 5 }}>
+                  <SelectComponent
+                    resourceType="Practitioner"
+                    setValue={setPractitionerValue}
+                    value={practitionerValue}
+                  />
+                </Grid.Col>
+              </Grid.Col>
+              <Grid.Col span={3} style={{ margin: 5 }}>
+                <h3
+                  style={{
+                    color: textGray,
+                    marginTop: "20px",
+                    marginBottom: "2px",
+                    textAlign: "center",
+                  }}
+                >
+                  Request Preview:{" "}
+                </h3>
+                <div
+                  style={{
+                    textAlign: "center",
+                    overflowWrap: "break-word",
+                    padding: "10px",
+                    backgroundColor: "#F1F3F5",
+                    border: "1px solid",
+                    borderColor: "#4a4f4f",
+                    borderRadius: "20px",
+                    marginLeft: "30px",
+                    marginRight: "30px",
+                  }}
+                >
+                  <Text
+                    size="md"
+                    style={{ color: textGray, textAlign: "left" }}
+                  >{`${createRequestPreview()}`}</Text>{" "}
+                </div>
+              </Grid.Col>
+              <Grid.Col span={3} style={{ minHeight: 100, margin: 5 }}>
+                <div
+                  style={{
+                    textAlign: "center",
+                  }}
+                >
+                  <Button
+                    color="cyan"
+                    radius="lg"
+                    size="md"
+                    style={{
+                      textAlign: "center",
+                    }}
+                  >
+                    {" "}
+                    Sample Submit Button
+                  </Button>
+                </div>
+              </Grid.Col>
+            </MantineProvider>
+          </Grid>
+        </div>
       </>
     );
   } else {

@@ -35,6 +35,7 @@ export default function App(props: AppProps) {
         }}
       >
         <NotificationsProvider position="top-center">
+<<<<<<< HEAD
           <CountProvider>
             <AppShell
               padding="md"
@@ -82,6 +83,53 @@ export default function App(props: AppProps) {
               <Component {...pageProps} />
             </AppShell>
           </CountProvider>
+=======
+          <AppShell
+            padding="md"
+            navbar={
+              <Navbar width={{ base: 320 }} height="90vh" p="xs">
+                <Navbar.Section>
+                  <Box
+                    sx={(theme) => ({
+                      backgroundColor: "white",
+                      textAlign: "center",
+                      paddingTop: "8px",
+                      paddingBottom: "12px",
+                      borderRadius: theme.radius.xs,
+                      cursor: "pointer",
+                    })}
+                  >
+                    <Text size="xl" weight={700} color={textGray}>
+                      Resources
+                    </Text>
+                  </Box>
+                </Navbar.Section>
+                <Divider my="sm" style={{ paddingBottom: "15px" }} />
+                <Navbar.Section grow component={ScrollArea} mt="-xs" mb="-xs" ml="-xl" mr="-xs">
+                  <ResourceCounts />
+                </Navbar.Section>
+              </Navbar>
+            }
+            header={
+              <Header height={80} style={{ backgroundColor: "#BDEBF0", color: textGray }}>
+                <Center>
+                  <Link href={"/"}>
+                    <h1 style={{ marginTop: "12px", cursor: "pointer" }}>
+                      DEQM Test Server Frontend
+                    </h1>
+                  </Link>
+                </Center>
+              </Header>
+            }
+            styles={(theme) => ({
+              main: {
+                backgroundColor: theme.colors.gray[0],
+              },
+            })}
+          >
+            <Component {...pageProps} />
+          </AppShell>
+>>>>>>> b2a0bbbb (UI updates)
         </NotificationsProvider>
       </MantineProvider>
     </>
