@@ -154,7 +154,7 @@ const EvaluateMeasurePage = () => {
                   <Text
                     size="md"
                     style={{ color: textGray, textAlign: "left" }}
-                  >{`${createRequestPreview()}`}</Text>{" "}
+                  >{`${createRequestPreview()}`}</Text>
                 </div>
               </Grid.Col>
               <Grid.Col span={3} style={{ minHeight: 100, margin: 5 }}>
@@ -171,7 +171,6 @@ const EvaluateMeasurePage = () => {
                       textAlign: "center",
                     }}
                   >
-                    {" "}
                     Sample Submit Button
                   </Button>
                 </div>
