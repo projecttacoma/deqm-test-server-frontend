@@ -1,4 +1,4 @@
-import { Center, Divider, RadioGroup, Radio } from "@mantine/core";
+import { Center, Divider, RadioGroup, Radio, Text, MantineProvider, Button } from "@mantine/core";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { DateTime } from "luxon";
@@ -6,15 +6,23 @@ import { textGray } from "../../../styles/appColors";
 import BackButton from "../../../components/BackButton";
 import SelectComponent from "../../../components/SelectComponent";
 import MeasureDatePickers from "../../../components/MeasureDatePickers";
+import { Grid } from "@mantine/core";
+import {
+  replaceBackground,
+  replaceOutline,
+  replaceSecondRed,
+} from "../../../styles/codeColorScheme";
 
 const DEFAULT_PERIOD_START = new Date(`${DateTime.now().year}-01-01T00:00:00`);
 const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
 
 /**
- * EvaluateMeasurePage is a page that renders a back button and DatePickers that are pre-filled with
- * a Measure's effective period dates or default dates.
+ * EvaluateMeasurePage is a page that renders a back button pre-filled DatePickers, radio buttons,
+ * auto-complete boxes, and a text preview of the measure request.
+ * The DatePickers are pre-filled with a Measure's effective period dates or default dates.
+ * The Patient SelectComponent only appears if the reportType selected is "Subject".
  * If the url resourceType is not a Measure, an error message is displayed.
- * @returns React node with a back button and MeasureDatePickers if on a valid Measure url
+ * @returns React node with a back button, MeasureDatePickers, SelectComponents, a RadioGroup, and Text for the request preview
  */
 const EvaluateMeasurePage = () => {
   const router = useRouter();
@@ -25,6 +33,28 @@ const EvaluateMeasurePage = () => {
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
   const [periodEnd, setPeriodEnd] = useState<Date>(DEFAULT_PERIOD_END);
 
+  /**
+   * createRequestPreview builds the request preview with the evaluate measure state variables
+   * @returns the request preview as a string
+   */
+  const createRequestPreview = () => {
+    //dates are formatted to be in the form "YYYY-MM-DD", with no timezone info
+    let requestPreview = `/Measure/${id}/$evaluate-measure?periodStart=${DateTime.fromISO(
+      periodStart.toISOString(),
+    ).toISODate()}&periodEnd=${DateTime.fromISO(periodEnd.toISOString()).toISODate()}`;
+    if (radioValue) {
+      requestPreview += `&reportType=${radioValue.toLowerCase()}`;
+      if (radioValue.toLowerCase() === "subject" && patientValue) {
+        requestPreview += `&subject=${patientValue}`;
+      }
+    }
+    if (practitionerValue) {
+      requestPreview += `&practitioner=${practitionerValue}`;
+    }
+    return requestPreview;
+  };
+
+  //only appears on the measure page
   if (resourceType === "Measure" && id) {
     //for resourceType Measure, evaluate measure components are rendered
     return (
@@ -35,37 +65,119 @@ const EvaluateMeasurePage = () => {
             Evaluate Measure: {id}
           </h2>
         </Center>
+
         <Divider my="md" />
-        <MeasureDatePickers
-          measureID={id as string}
-          periodStart={periodStart}
-          periodEnd={periodEnd}
-          startOnUpdate={setPeriodStart}
-          endOnUpdate={setPeriodEnd}
-        />
-        <RadioGroup
-          value={radioValue}
-          onChange={setRadioValue}
-          label="Select a reportType"
-          required
-        >
-          <Radio value="Subject" label="Subject" />
-          <Radio value="Population" label="Population" />
-        </RadioGroup>
-        {/* only displays autocomplete component if radio value is Patient */}
-        {radioValue === "Subject" ? (
-          <SelectComponent
-            resourceType="Patient"
-            setValue={setPatientValue}
-            value={patientValue}
-            required={true}
-          />
-        ) : null}
-        <SelectComponent
-          resourceType="Practitioner"
-          setValue={setPractitionerValue}
-          value={practitionerValue}
-        />
+        <div>
+          <Grid columns={3} style={{ margin: 15 }}>
+            <MantineProvider
+              // changes hex values associated with each Mantine color name to improve UI
+              theme={{
+                colors: {
+                  gray: replaceBackground,
+                  blue: replaceOutline,
+                  red: replaceSecondRed,
+                },
+              }}
+            >
+              <Grid.Col span={3}>
+                <Grid.Col span={3} style={{ minHeight: 100, margin: 5 }}>
+                  <MeasureDatePickers
+                    measureID={id as string}
+                    periodStart={periodStart}
+                    periodEnd={periodEnd}
+                    startOnUpdate={setPeriodStart}
+                    endOnUpdate={setPeriodEnd}
+                  />
+                </Grid.Col>
+                <Grid.Col span={3} style={{ margin: 5 }}>
+                  <RadioGroup
+                    value={radioValue}
+                    onChange={setRadioValue}
+                    label={<Text size="lg">Select a reportType</Text>}
+                    style={{ marginBottom: "25px" }}
+                  >
+                    <Radio value="Subject" label="Subject" />
+                    <Radio value="Population" label="Population" />
+                  </RadioGroup>
+
+                  {/* only displays autocomplete component if radio value is Patient */}
+                  {radioValue === "Subject" ? (
+                    <SelectComponent
+                      resourceType="Patient"
+                      setValue={setPatientValue}
+                      value={patientValue}
+                      required={true}
+                    />
+                  ) : (
+                    <SelectComponent
+                      resourceType="Patient"
+                      setValue={setPatientValue}
+                      value={patientValue}
+                      disabled={true}
+                      placeholder="Patient selection disabled when 'Population' is selected"
+                    />
+                  )}
+                </Grid.Col>
+
+                <Grid.Col span={3} style={{ margin: 5 }}>
+                  <SelectComponent
+                    resourceType="Practitioner"
+                    setValue={setPractitionerValue}
+                    value={practitionerValue}
+                  />
+                </Grid.Col>
+              </Grid.Col>
+              <Grid.Col span={3} style={{ margin: 5 }}>
+                <h3
+                  style={{
+                    color: textGray,
+                    marginTop: "20px",
+                    marginBottom: "2px",
+                    textAlign: "center",
+                  }}
+                >
+                  Request Preview:{" "}
+                </h3>
+                <div
+                  style={{
+                    textAlign: "center",
+                    overflowWrap: "break-word",
+                    padding: "10px",
+                    backgroundColor: "#F1F3F5",
+                    border: "1px solid",
+                    borderColor: "#4a4f4f",
+                    borderRadius: "20px",
+                    marginLeft: "30px",
+                    marginRight: "30px",
+                  }}
+                >
+                  <Text
+                    size="md"
+                    style={{ color: textGray, textAlign: "left" }}
+                  >{`${createRequestPreview()}`}</Text>
+                </div>
+              </Grid.Col>
+              <Grid.Col span={3} style={{ minHeight: 100, margin: 5 }}>
+                <div
+                  style={{
+                    textAlign: "center",
+                  }}
+                >
+                  <Button
+                    color="cyan"
+                    radius="lg"
+                    size="md"
+                    style={{
+                      textAlign: "center",
+                    }}
+                  >
+                    Sample Submit Button
+                  </Button>
+                </div>
+              </Grid.Col>
+            </MantineProvider>
+          </Grid>
+        </div>
       </>
     );
   } else {

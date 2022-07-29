@@ -6,6 +6,14 @@ import { cleanNotifications, showNotification } from "@mantine/notifications";
 import { DateTime } from "luxon";
 import { fhirJson } from "@fhir-typescript/r4-core";
 
+/**
+ * MeasureDatePickerProps specifies the props that a MeasureDatePickers component takes in.
+ * @measureID is optional, specifies the Measure ID to be used to fetch an effective period from to fill the DatePickers
+ * @periodStart should be a state variable for setting the periodStart in a page/component that renders a MeasureDatePickers
+ * @periodEnd should be a state variable for setting the periodEnd in a page/component that renders a MeasureDatePickers
+ * @startOnUpdate is a set state variable function that gets called when the periodStart DatePickers value is changed
+ * @endOnUpdate is a set state variable function that gets called when the periodEnd DatePickers value is changed
+ */
 export interface MeasureDatePickerProps {
   measureID?: string;
   periodStart: Date;
@@ -86,19 +94,25 @@ const MeasureDatePickers = ({
 
   if (!fetchingError) {
     return (
-      <Grid gutter="lg" min-width="15px" style={{ margin: 10 }}>
-        <Grid.Col md={4} lg={3} xl={2}>
+      <Grid gutter="lg" min-width="15px">
+        <Grid.Col md={6} lg={6} xl={6}>
           <DatePicker
-            label={<Text>Period Start</Text>}
+            label={<Text size="lg">Period Start</Text>}
             icon={<Calendar size={16} color={"#40a5bf"} />}
+            variant="filled"
+            radius="xl"
+            size="lg"
             value={periodStart}
             onChange={(v) => startOnUpdate(v ? v : new Date())}
             allowFreeInput
           ></DatePicker>
         </Grid.Col>
-        <Grid.Col md={4} lg={3} xl={2}>
+        <Grid.Col md={6} lg={6} xl={6}>
           <DatePicker
-            label={<Text>Period End</Text>}
+            label={<Text size="lg">Period End</Text>}
+            variant="filled"
+            radius="xl"
+            size="lg"
             icon={<Calendar size={16} color={"#40a5bf"} />}
             value={periodEnd}
             onChange={(v) => endOnUpdate(v ? v : new Date())}

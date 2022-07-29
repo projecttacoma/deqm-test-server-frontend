@@ -77,3 +77,42 @@ export const replaceDelete: stringArray = [
   "#A61E4D",
   "#A61E4D",
 ];
+
+export const replaceBackground: stringArray = [
+  "#868E96",
+  "#F1F3F5",
+  "#4a4f4f",
+  "#4a4f4f;",
+  "#4a4f4f",
+  "#4a4f4f",
+  "#4a4f4f",
+  "#4a4f4f",
+  "#4a4f4f",
+  "#4a4f4f",
+];
+
+export const replaceOutline: stringArray = [
+  "#E3FAFC",
+  "#C5F6FA",
+  "#99E9F2",
+  "#66D9E8;",
+  "#3BC9DB",
+  "#22B8CF",
+  "#15AABF",
+  "#1098AD",
+  "#0C8599",
+  "#0B7285",
+];
+
+export const replaceSecondRed: stringArray = [
+  "#EB5262",
+  "#EB5262",
+  "#EB5262",
+  "#EB5262;",
+  "#EB5262",
+  "#EB5262",
+  "#EB5262",
+  "#EB5262",
+  "#EB5262",
+  "#EB5262",
+];

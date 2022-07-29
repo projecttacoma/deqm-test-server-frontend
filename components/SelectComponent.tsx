@@ -14,6 +14,8 @@ export interface SelectComponentProps {
   value: string;
   jsonBody?: fhirJson.Bundle;
   required?: boolean;
+  placeholder?: string;
+  disabled?: boolean;
 }
 
 /**
@@ -25,6 +27,8 @@ export default function SelectComponent({
   setValue,
   value,
   required,
+  placeholder,
+  disabled,
 }: SelectComponentProps) {
   const [responseBody, setResponseBody] = useState<fhirJson.Bundle>();
   const [fetchingError, setFetchingError] = useState(false);
@@ -58,6 +62,8 @@ export default function SelectComponent({
       setValue={setValue}
       value={value}
       required={required}
+      placeholder={placeholder}
+      disabled={disabled}
     />
   ) : (
     <div>Problem connecting to server</div>
@@ -70,6 +76,8 @@ function PopulateIDHelper({
   value,
   jsonBody,
   required,
+  placeholder,
+  disabled,
 }: SelectComponentProps) {
   const entryArray = jsonBody?.entry;
 
@@ -83,10 +91,14 @@ function PopulateIDHelper({
         value={value}
         onChange={setValue}
         label={`Select ${resourceType}`}
-        placeholder="Start typing to see options"
+        placeholder={placeholder ? placeholder : "Start typing to see options"}
         data={myArray}
+        variant="filled"
+        radius="xl"
+        size="lg"
         limit={10}
         required={required ? required : false}
+        disabled={disabled ? disabled : false}
       />
     );
   } else {

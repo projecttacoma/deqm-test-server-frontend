@@ -39,7 +39,7 @@ export default function App(props: AppProps) {
             <AppShell
               padding="md"
               navbar={
-                <Navbar width={{ base: 320 }} height="90vh" p="xs">
+                <Navbar width={{ base: "18vw" }} height="90vh" p="xs">
                   <Navbar.Section>
                     <Box
                       sx={(theme) => ({
@@ -63,7 +63,7 @@ export default function App(props: AppProps) {
                 </Navbar>
               }
               header={
-                <Header height={80} style={{ backgroundColor: "#D0F1F4", color: textGray }}>
+                <Header height={80} style={{ backgroundColor: "#bdebf0", color: textGray }}>
                   <Center>
                     <Link href={"/"}>
                       <h1 style={{ marginTop: "12px", cursor: "pointer" }}>
