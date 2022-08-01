@@ -57,7 +57,7 @@ const CareGapsPage = () => {
           <BackButton />
           <Center>
             <h2 style={{ color: textGray, marginTop: "0px", marginBottom: "4px" }}>
-              Calculate Care Gaps: {id}
+              Gaps in Care: {id}
             </h2>
           </Center>
           <Divider my="md" />
@@ -88,12 +88,12 @@ const CareGapsPage = () => {
                       value={radioValue}
                       onChange={setRadioValue}
                       size="lg"
-                      style={{ marginBottom: "25px" }}
+                      style={{ marginTop: "20px", marginBottom: "30px" }}
                     >
                       <Radio
                         value="Subject"
                         label={
-                          <Text size="lg" color={textGray} weight={500}>
+                          <Text size="xl" color={textGray} weight={500}>
                             Subject
                           </Text>
                         }
@@ -101,7 +101,7 @@ const CareGapsPage = () => {
                       <Radio
                         value="Organization"
                         label={
-                          <Text size="lg" color={textGray} weight={500}>
+                          <Text size="xl" color={textGray} weight={500}>
                             Organization
                           </Text>
                         }
@@ -178,7 +178,7 @@ const CareGapsPage = () => {
                       textAlign: "center",
                     }}
                   >
-                    Request Preview:
+                    Placeholder:
                   </h3>
                   <div
                     style={{
@@ -220,7 +220,7 @@ const CareGapsPage = () => {
                         variant="filled"
                         onClick={() => console.log("calculate button clicked")}
                       >
-                        Calculate
+                        Placeholder
                       </Button>
                     </MantineProvider>
                   </div>

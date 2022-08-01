@@ -1,10 +1,8 @@
 import { render, screen, act, fireEvent, within } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import {
-  mantineRecoilWrap,
   createMockRouter,
   getMockFetchImplementation,
-  getMockFetchImplementationError,
   mockResizeObserver,
 } from "../../../helpers/testHelpers";
 import { RouterContext } from "next/dist/shared/lib/router-context";
@@ -64,7 +62,7 @@ describe("Test evaluate page render for measure", () => {
     global.fetch = getMockFetchImplementation(MEASURE_BODY_WITH_DATES);
   });
 
-  it("should display back button, expected title, two pre-filled DatePickers, and disabled calculate button", async () => {
+  it("should display back button, expected title, and two pre-filled DatePickers", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -77,14 +75,14 @@ describe("Test evaluate page render for measure", () => {
       );
     });
     expect(screen.getByTestId("back-button")).toBeInTheDocument();
-    expect(screen.getByText("Calculate Care Gaps: measure-EXM104-8.2.000")).toBeInTheDocument();
+    expect(screen.getByText("Gaps in Care: measure-EXM104-8.2.000")).toBeInTheDocument();
 
     //DatePickers should pre-fill with the effective period dates from the Measure
     expect(screen.getByDisplayValue("January 1, 2019")).toBeInTheDocument();
     expect(screen.getByDisplayValue("December 31, 2019")).toBeInTheDocument();
   });
 
-  it("DatePickers and request preview display value should changed when dates are updated", async () => {
+  it("DatePickers and request preview display value should change when dates are updated", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -136,13 +134,13 @@ describe("Test evaluate page render for non-measure", () => {
   });
 });
 
-describe("Input/Select components, Radio buttons", () => {
+describe("Input/Select components and Radio buttons render", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
   });
   window.ResizeObserver = mockResizeObserver;
 
-  it("tests for expected enabled/disabled state of input/select components", async () => {
+  it("tests for expected enabled/disabled state of select components when Subject is selected", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -165,7 +163,7 @@ describe("Input/Select components, Radio buttons", () => {
     expect(screen.getByRole("textbox", { name: "Program" })).not.toBeDisabled();
   });
 
-  it("tests for expected enabled/disabled state of input/select components", async () => {
+  it("tests for expected enabled/disabled state of input components when Organization is selected", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -177,17 +175,17 @@ describe("Input/Select components, Radio buttons", () => {
         </RouterContext.Provider>,
       );
     });
-    //click the organization radio button to ensure the Patient autocomplete component doesn't appear
+
     const organizationRadio = screen.getByLabelText("Organization");
     //Organization radio button should not be pre-selected
     expect(organizationRadio).not.toBeChecked();
+    //click the organization radio button
     await act(async () => {
       fireEvent.click(organizationRadio);
     });
 
+    //Patient select should be disabled, other AutoComplete components and Program text input should be enabled
     expect(screen.getByRole("searchbox", { name: "Select Patient" })).toBeDisabled();
-
-    //other AutoComplete components and Program text input should all be enabled
     expect(screen.getByRole("searchbox", { name: "Select Organization" })).not.toBeDisabled();
     expect(screen.getByRole("searchbox", { name: "Select Practitioner" })).not.toBeDisabled();
     expect(screen.getByRole("textbox", { name: "Program" })).not.toBeDisabled();
