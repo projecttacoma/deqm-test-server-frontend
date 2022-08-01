@@ -70,22 +70,40 @@ function ResourceIDPage() {
         </ModalsProvider>
       </MantineProvider>
       {resourceType === "Measure" && (
-        <Link href={`/${resourceType}/${id}/evaluate`} key={`evaluate-measure-${id}`} passHref>
-          <Button
-            component="a"
-            color="cyan"
-            radius="md"
-            size="sm"
-            variant="filled"
-            style={{
-              float: "right",
-              marginRight: "8px",
-              marginLeft: "8px",
-            }}
-          >
-            <div>Evaluate Measure</div>
-          </Button>
-        </Link>
+        <div>
+          <Link href={`/${resourceType}/${id}/careGaps`} key={`care-gaps-${id}`} passHref>
+            <Button
+              component="a"
+              color="cyan"
+              radius="md"
+              size="sm"
+              variant="filled"
+              style={{
+                float: "right",
+                marginRight: "8px",
+                marginLeft: "8px",
+              }}
+            >
+              <div>Calculate Care Gaps</div>
+            </Button>
+          </Link>
+          <Link href={`/${resourceType}/${id}/evaluate`} key={`evaluate-measure-${id}`} passHref>
+            <Button
+              component="a"
+              color="cyan"
+              radius="md"
+              size="sm"
+              variant="filled"
+              style={{
+                float: "right",
+                marginRight: "8px",
+                marginLeft: "8px",
+              }}
+            >
+              <div>Evaluate Measure</div>
+            </Button>
+          </Link>
+        </div>
       )}
       <Link href={`/${resourceType}/${id}/update`} key={`update-${id}`} passHref>
         <Button
