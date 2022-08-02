@@ -11,7 +11,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import { textGray } from "../../../styles/appColors";
 import BackButton from "../../../components/BackButton";
@@ -48,6 +48,14 @@ const CareGapsPage = () => {
   const [organizationValue, setOrganizationValue] = useState("");
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
   const [periodEnd, setPeriodEnd] = useState<Date>(DEFAULT_PERIOD_END);
+  useEffect(() => {
+    if (radioValue === "Subject") {
+      setOrganizationValue("");
+      setPractitionerValue("");
+    } else if (radioValue === "Organization") {
+      setPatientValue("");
+    }
+  }, [radioValue]);
 
   if (resourceType === "Measure" && id) {
     if (!fetchingError) {
@@ -135,8 +143,8 @@ const CareGapsPage = () => {
                     ) : (
                       <SelectComponent
                         resourceType="Organization"
-                        setValue={setPatientValue}
-                        value={patientValue}
+                        setValue={setOrganizationValue}
+                        value={organizationValue}
                         disabled
                         placeholder="Organization selection disabled when 'Subject' is selected"
                       />

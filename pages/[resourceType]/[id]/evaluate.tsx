@@ -97,6 +97,80 @@ const EvaluateMeasurePage = () => {
     } else return false;
   };
 
+  //called when calculate button is clicked. Handles evaluate measure request and response
+  const calculateHandler = () => {
+    let customMessage = <Text weight={500}>Problem connecting to server:&nbsp;</Text>;
+    let notifProps: NotificationProps = {
+      message: customMessage,
+      color: "red",
+      icon: <X size={18} />,
+      autoClose: false,
+    };
+    let fetchStatus = { status: 500, statusText: "Failed fetch request" };
+    setLoadingRequest(true);
+
+    fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}${createRequestPreview()}`)
+      .then((response) => {
+        fetchStatus = { status: response.status, statusText: response.statusText };
+        return response.json();
+      })
+      .then((responseBody) => {
+        if (fetchStatus.status === 201 || fetchStatus.status === 200) {
+          customMessage = (
+            <>
+              <Text>Evaluate Measure successful!&nbsp;</Text>
+            </>
+          );
+          notifProps = {
+            ...notifProps,
+            color: "green",
+            icon: <Check size={18} />,
+          };
+          setMeasureReportBody(JSON.stringify(responseBody, null, 2));
+          setGridColSpans([8, 3, 5]);
+          setFetchingError(false);
+          setLoadingRequest(false);
+        } else if (fetchStatus.status > 299) {
+          customMessage = (
+            <>
+              <Text weight={500}>
+                {fetchStatus.status} {fetchStatus.statusText}&nbsp;
+              </Text>
+              <Text color="red">
+                {responseBody.issue
+                  ? responseBody.issue[0]?.details?.text
+                  : "Fetch Issue undefined."}
+              </Text>
+            </>
+          );
+          setMeasureReportBody("");
+          setGridColSpans([3, 3, 0]);
+          setFetchingError(false);
+          setLoadingRequest(false);
+        } else {
+          throw {
+            name: "FetchingError",
+            message: "Bad status returned",
+          };
+        }
+      })
+      .catch((error) => {
+        setMeasureReportBody("");
+        setGridColSpans([3, 3, 0]);
+        setFetchingError(true);
+        customMessage = (
+          <>
+            {customMessage}
+            <Text color="red">{error.message}</Text>
+          </>
+        );
+      })
+      .finally(() => {
+        cleanNotifications();
+        showNotification({ ...notifProps, message: customMessage });
+      });
+  };
+
   if (resourceType === "Measure" && id) {
     if (!fetchingError) {
       //for resourceType Measure, evaluate measure components are rendered
@@ -210,7 +284,7 @@ const EvaluateMeasurePage = () => {
                       radius="md"
                       size="sm"
                       variant="filled"
-                      onClick={calculateHandler}
+                      onClick={() => calculateHandler()}
                     >
                       Calculate
                     </Button>
@@ -270,80 +344,6 @@ const EvaluateMeasurePage = () => {
         </Center>
       </>
     );
-  }
-
-  //called when calculate button is clicked. Handles evaluate measure request and response
-  function calculateHandler() {
-    let customMessage = <Text weight={500}>Problem connecting to server:&nbsp;</Text>;
-    let notifProps: NotificationProps = {
-      message: customMessage,
-      color: "red",
-      icon: <X size={18} />,
-      autoClose: false,
-    };
-    let fetchStatus = { status: 500, statusText: "Failed fetch request" };
-    setLoadingRequest(true);
-
-    fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}${createRequestPreview()}`)
-      .then((response) => {
-        fetchStatus = { status: response.status, statusText: response.statusText };
-        return response.json();
-      })
-      .then((responseBody) => {
-        if (fetchStatus.status === 201 || fetchStatus.status === 200) {
-          customMessage = (
-            <>
-              <Text>Evaluate Measure successful!&nbsp;</Text>
-            </>
-          );
-          notifProps = {
-            ...notifProps,
-            color: "green",
-            icon: <Check size={18} />,
-          };
-          setMeasureReportBody(JSON.stringify(responseBody, null, 2));
-          setGridColSpans([8, 3, 5]);
-          setFetchingError(false);
-          setLoadingRequest(false);
-        } else if (fetchStatus.status > 299) {
-          customMessage = (
-            <>
-              <Text weight={500}>
-                {fetchStatus.status} {fetchStatus.statusText}&nbsp;
-              </Text>
-              <Text color="red">
-                {responseBody.issue
-                  ? responseBody.issue[0]?.details?.text
-                  : "Fetch Issue undefined."}
-              </Text>
-            </>
-          );
-          setMeasureReportBody("");
-          setGridColSpans([3, 3, 0]);
-          setFetchingError(false);
-          setLoadingRequest(false);
-        } else {
-          throw {
-            name: "FetchingError",
-            message: "Bad status returned",
-          };
-        }
-      })
-      .catch((error) => {
-        setMeasureReportBody("");
-        setGridColSpans([3, 3, 0]);
-        setFetchingError(true);
-        customMessage = (
-          <>
-            {customMessage}
-            <Text color="red">{error.message}</Text>
-          </>
-        );
-      })
-      .finally(() => {
-        cleanNotifications();
-        showNotification({ ...notifProps, message: customMessage });
-      });
   }
 };
 
