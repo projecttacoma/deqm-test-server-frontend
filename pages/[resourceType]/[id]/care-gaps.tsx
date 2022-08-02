@@ -24,6 +24,8 @@ import {
   replaceSecondRed,
 } from "../../../styles/codeColorScheme";
 import { Prism } from "@mantine/prism";
+import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
+import { Check, X } from "tabler-icons-react";
 import {
   replaceDark,
   replaceGray,
@@ -56,6 +58,40 @@ const CareGapsPage = () => {
       setPatientValue("");
     }
   }, [radioValue]);
+
+  /**
+   * createRequestPreview builds the request preview with the evaluate measure state variables
+   * @returns the request preview as a string
+   */
+  const createRequestPreview = () => {
+    //dates are formatted to be in the form "YYYY-MM-DD", with no timezone info
+    let requestPreview = `/Measure/$care-gaps?periodStart=${DateTime.fromISO(
+      periodStart.toISOString(),
+    ).toISODate()}&periodEnd=${DateTime.fromISO(
+      periodEnd.toISOString(),
+    ).toISODate()}&status=open-gap`;
+    if (radioValue) {
+      requestPreview += `&reportType=${radioValue.toLowerCase()}`;
+      if (radioValue.toLowerCase() === "subject" && patientValue) {
+        requestPreview += `&subject=${patientValue}`;
+      }
+    }
+    if (practitionerValue) {
+      requestPreview += `&practitioner=${practitionerValue}`;
+    }
+    requestPreview += `&measureId=${id}`;
+    return requestPreview;
+  };
+
+  //only appears on the measure page
+  const validSelections = () => {
+    if (
+      (periodStart && periodEnd && radioValue === "Population") ||
+      (periodStart && periodEnd && radioValue === "Subject" && patientValue)
+    ) {
+      return true;
+    } else return false;
+  };
 
   if (resourceType === "Measure" && id) {
     if (!fetchingError) {
@@ -186,7 +222,7 @@ const CareGapsPage = () => {
                       textAlign: "center",
                     }}
                   >
-                    Placeholder:
+                    Request Preview:
                   </h3>
                   <div
                     style={{
@@ -201,10 +237,9 @@ const CareGapsPage = () => {
                       marginRight: "30px",
                     }}
                   >
-                    <Text
-                      size="md"
-                      style={{ color: textGray, textAlign: "left" }}
-                    >{`Placeholder`}</Text>
+                    <Text size="md" style={{ color: textGray, textAlign: "left" }}>
+                      {createRequestPreview()}
+                    </Text>
                   </div>
                 </Grid.Col>
                 <Grid.Col style={{ minHeight: 100 }}>
@@ -221,14 +256,14 @@ const CareGapsPage = () => {
                       }}
                     >
                       <Button
-                        disabled
+                        disabled={!validSelections()}
                         color="cyan"
                         radius="md"
                         size="sm"
                         variant="filled"
-                        onClick={() => console.log("calculate button clicked")}
+                        onClick={calculateHandler}
                       >
-                        Placeholder
+                        Calculate
                       </Button>
                     </MantineProvider>
                   </div>
@@ -262,7 +297,7 @@ const CareGapsPage = () => {
                           colorScheme="dark"
                           style={{ maxWidth: "77vw", height: "80vh", backgroundColor: "#FFFFFF" }}
                         >
-                          Placeholder
+                          {measureReportBody}
                         </Prism>
                       </MantineProvider>
                     </ScrollArea>
@@ -288,6 +323,79 @@ const CareGapsPage = () => {
         </Center>
       </>
     );
+  }
+
+  function calculateHandler() {
+    let customMessage = <Text weight={500}>Problem connecting to server:&nbsp;</Text>;
+    let notifProps: NotificationProps = {
+      message: customMessage,
+      color: "red",
+      icon: <X size={18} />,
+      autoClose: false,
+    };
+    let fetchStatus = { status: 500, statusText: "Failed fetch request" };
+    setLoadingRequest(true);
+
+    fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}${createRequestPreview()}`)
+      .then((response) => {
+        fetchStatus = { status: response.status, statusText: response.statusText };
+        return response.json();
+      })
+      .then((responseBody) => {
+        if (fetchStatus.status === 201 || fetchStatus.status === 200) {
+          customMessage = (
+            <>
+              <Text>Gaps in care Calculation successful!&nbsp;</Text>
+            </>
+          );
+          notifProps = {
+            ...notifProps,
+            color: "green",
+            icon: <Check size={18} />,
+          };
+          setMeasureReportBody(JSON.stringify(responseBody, null, 2));
+          setGridColSpans([8, 3, 5]);
+          setFetchingError(false);
+          setLoadingRequest(false);
+        } else if (fetchStatus.status > 299) {
+          customMessage = (
+            <>
+              <Text weight={500}>
+                {fetchStatus.status} {fetchStatus.statusText}&nbsp;
+              </Text>
+              <Text color="red">
+                {responseBody.issue
+                  ? responseBody.issue[0]?.details?.text
+                  : "Fetch Issue undefined."}
+              </Text>
+            </>
+          );
+          setMeasureReportBody("");
+          setGridColSpans([3, 3, 0]);
+          setFetchingError(false);
+          setLoadingRequest(false);
+        } else {
+          throw {
+            name: "FetchingError",
+            message: "Bad status returned",
+          };
+        }
+      })
+      .catch((error) => {
+        setMeasureReportBody("");
+        setGridColSpans([3, 3, 0]);
+        setFetchingError(true);
+        customMessage = (
+          <>
+            {customMessage}
+            <Text color="red">{error.message}</Text>
+          </>
+        );
+      })
+      .finally(() => {
+        cleanNotifications();
+        showNotification({ ...notifProps, message: customMessage });
+      });
   }
 };
 
