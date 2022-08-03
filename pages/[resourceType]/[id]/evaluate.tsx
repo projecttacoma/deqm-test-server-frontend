@@ -204,10 +204,6 @@ const EvaluateMeasurePage = () => {
                       radius="md"
                       size="sm"
                       variant="filled"
-                      // style={{
-                      //   marginRight: "8px",
-                      //   marginLeft: "8px",
-                      // }}
                       onClick={calculateHandler}
                     >
                       Calculate
@@ -224,7 +220,6 @@ const EvaluateMeasurePage = () => {
                 )}
                 {measureReportBody && !loadingRequest && (
                   <>
-                    {/* <Divider my="sm" /> */}
                     <ScrollArea>
                       <MantineProvider
                         //changes hex values associated with each Mantine color name to improve UI

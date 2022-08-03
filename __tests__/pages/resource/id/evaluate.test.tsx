@@ -328,14 +328,15 @@ describe("Select component, Radio button, and request preview render", () => {
         </RouterContext.Provider>,
       );
     });
-    //click the population radio button to ensure the Patient autocomplete component doesn't appear
+    //click the population radio button to disable Patient autocomplete component
     const populationRadio = screen.getByLabelText("Population");
+
     //Population radio button should not be pre-selected
     expect(populationRadio).not.toBeChecked();
     await act(async () => {
       fireEvent.click(populationRadio);
     });
-    expect(screen.queryByText("Select Patient")).not.toBeInTheDocument;
+    expect(screen.getByRole("searchbox", { name: "Select Patient" })).toBeDisabled();
 
     //expect the request preview to include reportType=population
     expect(
