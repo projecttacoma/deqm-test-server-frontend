@@ -1,6 +1,6 @@
 import { fhirJson } from "@fhir-typescript/r4-core";
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
-import { Autocomplete } from "@mantine/core";
+import { MultiSelect, Text } from "@mantine/core";
 
 /**
  * interface for the props that a ResourceCodeEditor component takes in.
@@ -8,28 +8,26 @@ import { Autocomplete } from "@mantine/core";
  * @setValue is a state variable function that is used to pass the code editor's current contents to a parent component
  * @value is a state variable string that is used to update the value of the select component textbox
  */
-export interface SelectComponentProps {
+export interface MultiSelectProps {
   resourceType: string;
-  setValue: Dispatch<SetStateAction<string>>;
-  value: string;
+  setValue: Dispatch<SetStateAction<string[]>>;
+  value: string[];
   jsonBody?: fhirJson.Bundle;
   required?: boolean;
-  placeholder?: string;
-  disabled?: boolean;
+  label?: string;
 }
 
 /**
- * @param props include the type interface SelectComponentProps
- * @returns a component with a loading component, server error, or autocomplete select component populated with resource IDs
+ * @param props include the type interface MultiSelectComponentProps
+ * @returns a component with a loading component, server error, or MultiSelect component populated with resource IDs
  */
-export default function SelectComponent({
+export default function MultiSelectComponent({
   resourceType,
   setValue,
   value,
   required,
-  placeholder,
-  disabled,
-}: SelectComponentProps) {
+  label,
+}: MultiSelectProps) {
   const [responseBody, setResponseBody] = useState<fhirJson.Bundle>();
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
@@ -56,61 +54,62 @@ export default function SelectComponent({
   return loadingRequest ? (
     <div>Loading content...</div>
   ) : !fetchingError && responseBody ? (
-    <PopulateIDHelper
-      jsonBody={responseBody}
-      resourceType={resourceType}
-      setValue={setValue}
-      value={value}
-      required={required}
-      placeholder={placeholder}
-      disabled={disabled}
-    />
+    <div>
+      <PopulateIDHelper
+        jsonBody={responseBody}
+        resourceType={resourceType}
+        setValue={setValue}
+        value={value}
+        label={label}
+        required={required}
+      />
+    </div>
   ) : (
     <div>Problem connecting to server</div>
   );
 }
 
-function PopulateIDHelper({
-  resourceType,
-  setValue,
-  value,
-  jsonBody,
-  required,
-  placeholder,
-  disabled,
-}: SelectComponentProps) {
+function PopulateIDHelper({ resourceType, setValue, value, jsonBody, required }: MultiSelectProps) {
   const entryArray = jsonBody?.entry;
 
   //makes sure there are resources to display in the dropdown
   if (jsonBody?.total && jsonBody?.total > 0 && entryArray != undefined) {
+    //populate the multiSelect component with patient data
     const myArray = entryArray.map((el) => {
-      return el?.resource ? `${el.resource.resourceType}/${el.resource.id}` : "";
+      return el?.resource ? `${resourceType}/${el.resource.id}` : "";
     });
     return (
-      <Autocomplete
+      <MultiSelect
         value={value}
         onChange={setValue}
-        label={`Select ${resourceType}`}
-        placeholder={placeholder ? placeholder : "Start typing to see options"}
-        data={myArray}
-        variant="filled"
-        radius="xl"
+        label={
+          <Text weight={400} size="md">
+            {" "}
+            Select {resourceType}{" "}
+          </Text>
+        }
+        placeholder="Start typing to see options"
         size="lg"
+        data={myArray}
         limit={10}
         required={required ? required : false}
-        disabled={disabled ? disabled : false}
       />
     );
+    //select component is disabled if no resources are available
   } else {
     return (
-      <Autocomplete
+      <MultiSelect
         value={value}
         onChange={setValue}
-        label={`Select ${resourceType}`}
+        label={
+          <Text weight={400} size="md">
+            {" "}
+            Select {resourceType}{" "}
+          </Text>
+        }
         placeholder={`No resources of type ${resourceType} found`}
         data={[]}
         variant="filled"
-        radius="xl"
         size="lg"
         disabled={true}
       />

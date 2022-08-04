@@ -78,16 +78,6 @@ const RESOURCE_ID_BODY: fhirJson.Bundle = {
   ],
 };
 
-const NO_RESOURCE_ID: fhirJson.Bundle = {
-  resourceType: "Bundle",
-  meta: {
-    lastUpdated: "2022-06-23T19:52:58.721Z",
-  },
-  type: "searchset",
-  total: 0,
-  entry: [],
-};
-
 describe("Test evaluate page render for measure", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(MEASURE_BODY_WITH_DATES);
@@ -238,27 +228,6 @@ describe("Test evaluate page render for non-measure", () => {
         /Cannot evaluate on resourceType: DiagnosticReport, only on resourceType: Measure/,
       ),
     ).toBeInTheDocument();
-  });
-});
-
-describe("Select component no practitioners", () => {
-  beforeAll(() => {
-    global.fetch = getMockFetchImplementation(NO_RESOURCE_ID);
-  });
-
-  it("should display no practioners", async () => {
-    await act(async () => {
-      render(
-        <RouterContext.Provider
-          value={createMockRouter({
-            query: { resourceType: "Measure", id: "Measure-12" },
-          })}
-        >
-          <EvaluateMeasurePage />
-        </RouterContext.Provider>,
-      );
-    });
-    expect(screen.findByText("No resources of type Practitioner found")).toBeInTheDocument;
   });
 });
 
@@ -442,6 +411,12 @@ describe("Evaluate measure successful request", () => {
           </RouterContext.Provider>,
         ),
       );
+    });
+  });
+
+  describe("Select component render", async () => {
+    beforeAll(() => {
+      global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
     });
 
     //click the population radio button to ensure Calculate button is enbled
