@@ -84,7 +84,7 @@ export const replaceBackground: stringArray = [
   "#4a4f4f",
   "#4a4f4f;",
   "#4a4f4f",
-  "#4a4f4f",
+  "#B2B5B5",
   "#4a4f4f",
   "#4a4f4f",
   "#4a4f4f",
