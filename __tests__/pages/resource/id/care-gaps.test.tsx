@@ -1,6 +1,7 @@
 import { render, screen, act, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import {
+  mantineRecoilWrap,
   createMockRouter,
   getMockFetchImplementation,
   mockResizeObserver,
@@ -57,12 +58,20 @@ const RESOURCE_ID_BODY: fhirJson.Bundle = {
   ],
 };
 
+const MEASURE_BODY_NO_EFFECTIVE_PERIOD = {
+  resourceType: "Measure",
+  id: "measure-EXM104-8.4.000",
+  meta: {
+    lastUpdated: "2022-07-21T18:12:25.008Z",
+  },
+};
+
 describe("Test evaluate page render for measure", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(MEASURE_BODY_WITH_DATES);
   });
 
-  it("should display back button, expected title, and two pre-filled DatePickers", async () => {
+  it("should display back button, expected title, two pre-filled DatePickers, and disabled Calculate button", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -80,6 +89,8 @@ describe("Test evaluate page render for measure", () => {
     //DatePickers should pre-fill with the effective period dates from the Measure
     expect(screen.getByDisplayValue("January 1, 2019")).toBeInTheDocument();
     expect(screen.getByDisplayValue("December 31, 2019")).toBeInTheDocument();
+
+    expect(screen.getByRole("button", { name: "Calculate" })).toBeDisabled();
   });
 
   it("DatePickers and request preview display value should change when dates are updated", async () => {
@@ -189,5 +200,68 @@ describe("Input/Select components and Radio buttons render", () => {
     expect(screen.getByRole("searchbox", { name: "Select Organization" })).not.toBeDisabled();
     expect(screen.getByRole("searchbox", { name: "Select Practitioner" })).not.toBeDisabled();
     expect(screen.getByRole("textbox", { name: "Program" })).not.toBeDisabled();
+
+    //Request preview should include the dates from the Measure's effective period
+    expect(
+      screen.getByText(
+        "/Measure/measure-EXM104-8.2.000/$care-gaps?measureId=Measure-12&periodStart=2019-01-01&periodEnd=2019-12-31&reportType=subject",
+      ),
+    ).toBeInTheDocument();
+  });
+});
+
+describe.skip("Evaluate measure successful request", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(MEASURE_BODY_NO_EFFECTIVE_PERIOD);
+  });
+
+  window.ResizeObserver = mockResizeObserver;
+
+  it("should display success notif and Prism component with fetch response json body", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: { resourceType: "Measure", id: "Measure-12" },
+            })}
+          >
+            <CareGapsPage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    //click the population radio button to ensure Calculate button is enbled
+    const subjectRadio = screen.getByLabelText("Subject");
+    await act(async () => {
+      fireEvent.click(subjectRadio);
+    });
+
+    const calculateButton = screen.getByRole("button", { name: "Calculate" }) as HTMLButtonElement;
+    await act(async () => {
+      fireEvent.click(calculateButton);
+    });
+
+    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
+    expect(errorNotif).toBeInTheDocument();
+
+    expect(within(errorNotif).getByText(/Evaluate Measure successful!/)).toBeInTheDocument();
+
+    //parses out relevant information from the Prism HTML block and stores it in an array
+    const spanText = [""];
+    const spanElems = screen.getByTestId("prism-measure-report").querySelectorAll("span");
+    spanElems.forEach((el) => {
+      spanText.push(el.textContent || "");
+    });
+
+    //verifies that each piece of the JSON content is contained in the array
+    expect(spanText.includes('"resourceType"')).toBe(true);
+    expect(spanText.includes('"Measure"')).toBe(true);
+    expect(spanText.includes('"id"')).toBe(true);
+    expect(spanText.includes('"measure-EXM104-8.4.000"')).toBe(true);
+    expect(spanText.includes('"meta"')).toBe(true);
+    expect(spanText.includes('"lastUpdated"')).toBe(true);
+    expect(spanText.includes('"2022-07-21T18:12:25.008Z"')).toBe(true);
   });
 });
