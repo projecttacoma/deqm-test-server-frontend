@@ -90,6 +90,7 @@ describe("Test evaluate page render for measure", () => {
     expect(screen.getByDisplayValue("January 1, 2019")).toBeInTheDocument();
     expect(screen.getByDisplayValue("December 31, 2019")).toBeInTheDocument();
 
+    expect(screen.getByText("Request Preview:")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Calculate" })).toBeDisabled();
   });
 
@@ -119,6 +120,13 @@ describe("Test evaluate page render for measure", () => {
     });
     expect(screen.getByDisplayValue("February 2, 2018")).toBeInTheDocument();
     expect(screen.getByDisplayValue("November 13, 2020")).toBeInTheDocument();
+
+    //request preview should include the updated dates
+    expect(
+      screen.getByText(
+        "/Measure/$care-gaps?measureId=measure-EXM104-8.2.000&periodStart=2018-02-02&periodEnd=2020-11-13&status=open-gap",
+      ),
+    ).toBeInTheDocument();
   });
 });
 
@@ -201,10 +209,88 @@ describe("Input/Select components and Radio buttons render", () => {
     expect(screen.getByRole("searchbox", { name: "Select Practitioner" })).not.toBeDisabled();
     expect(screen.getByRole("textbox", { name: "Program" })).not.toBeDisabled();
 
-    //Request preview should include the dates from the Measure's effective period
+    //Request preview should include default dates (curr year Jan 1, Dec 31)
     expect(
       screen.getByText(
-        "/Measure/measure-EXM104-8.2.000/$care-gaps?measureId=Measure-12&periodStart=2019-01-01&periodEnd=2019-12-31&reportType=subject",
+        `/Measure/$care-gaps?measureId=Measure-12&periodStart=${
+          DateTime.now().year
+        }-01-01&periodEnd=${DateTime.now().year}-12-31&status=open-gap`,
+      ),
+    ).toBeInTheDocument();
+  });
+});
+
+describe("Calculate button behavior and request preview", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
+  });
+  window.ResizeObserver = mockResizeObserver;
+
+  it("tests for expected calculate button and request preview behavior when subject is selected", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "Measure-12" },
+          })}
+        >
+          <CareGapsPage />
+        </RouterContext.Provider>,
+      );
+    });
+    // Subject radio button should be pre-selected, so Select Patient component should be enabled
+
+    const patientSelectComponent = screen.getByRole("searchbox", { name: "Select Patient" });
+    await act(async () => {
+      fireEvent.change(patientSelectComponent, { target: { value: "P" } });
+    });
+
+    //Calculate button enables once Patient is inputed
+    expect(
+      screen.getByRole("button", { name: "Calculate" }) as HTMLButtonElement,
+    ).not.toBeDisabled();
+
+    //request preview should include a Patient value
+    expect(
+      screen.getByText(
+        "/Measure/$care-gaps?measureId=Measure-12&periodStart=2022-01-01&periodEnd=2022-12-31&status=open-gap&subject=P",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("tests for expected enabled/disabled state of input components when Organization is selected", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "Measure-12" },
+          })}
+        >
+          <CareGapsPage />
+        </RouterContext.Provider>,
+      );
+    });
+
+    const organizationRadio = screen.getByLabelText("Organization");
+    //Organization radio button should not be pre-selected
+    expect(organizationRadio).not.toBeChecked();
+    //click the organization radio button
+    await act(async () => {
+      fireEvent.click(organizationRadio);
+    });
+
+    //Patient select should be disabled, other AutoComplete components and Program text input should be enabled
+    expect(screen.getByRole("searchbox", { name: "Select Patient" })).toBeDisabled();
+    expect(screen.getByRole("searchbox", { name: "Select Organization" })).not.toBeDisabled();
+    expect(screen.getByRole("searchbox", { name: "Select Practitioner" })).not.toBeDisabled();
+    expect(screen.getByRole("textbox", { name: "Program" })).not.toBeDisabled();
+
+    //Request preview should include default dates (curr year Jan 1, Dec 31)
+    expect(
+      screen.getByText(
+        `/Measure/$care-gaps?measureId=Measure-12&periodStart=${
+          DateTime.now().year
+        }-01-01&periodEnd=${DateTime.now().year}-12-31&status=open-gap`,
       ),
     ).toBeInTheDocument();
   });

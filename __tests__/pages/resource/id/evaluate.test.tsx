@@ -181,8 +181,9 @@ describe("Test evaluate page render for measure without dates in effective perio
         </RouterContext.Provider>,
       );
     });
-    expect(await screen.findByDisplayValue("January 1, 2022")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("December 31, 2022")).toBeInTheDocument();
+
+    expect(screen.getByDisplayValue(`January 1, ${DateTime.now().year}`)).toBeInTheDocument();
+    expect(screen.getByDisplayValue(`December 31, ${DateTime.now().year}`)).toBeInTheDocument();
   });
 });
 
@@ -203,8 +204,10 @@ describe("Test evaluate page render for measure without effective period", () =>
         </RouterContext.Provider>,
       );
     });
-    expect(await screen.findByDisplayValue("January 1, 2022")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("December 31, 2022")).toBeInTheDocument();
+    expect(
+      await screen.findByDisplayValue(`January 1, ${DateTime.now().year}`),
+    ).toBeInTheDocument();
+    expect(screen.getByDisplayValue(`December 31, ${DateTime.now().year}`)).toBeInTheDocument();
   });
 });
 
@@ -292,7 +295,9 @@ describe("Select component, Radio button, and request preview render", () => {
     });
     expect(
       screen.getByText(
-        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01&periodEnd=2022-12-31&reportType=subject&subject=P&practitioner=P",
+        `/Measure/Measure-12/$evaluate-measure?periodStart=${DateTime.now().year}-01-01&periodEnd=${
+          DateTime.now().year
+        }-12-31&reportType=subject&subject=P&practitioner=P`,
       ),
     ).toBeInTheDocument();
   });
@@ -322,7 +327,9 @@ describe("Select component, Radio button, and request preview render", () => {
     //expect the request preview to include reportType=population
     expect(
       screen.getByText(
-        "/Measure/Measure-12/$evaluate-measure?periodStart=2022-01-01&periodEnd=2022-12-31&reportType=population",
+        `/Measure/Measure-12/$evaluate-measure?periodStart=${DateTime.now().year}-01-01&periodEnd=${
+          DateTime.now().year
+        }-12-31&reportType=population`,
       ),
     ).toBeInTheDocument();
 

@@ -95,7 +95,7 @@ const CareGapsPage = () => {
     return requestPreview;
   };
 
-  //only appears on the measure page
+  //true if user has selected/entered a correct combination of inputs
   const validSelections = () => {
     if (
       (periodStart && periodEnd && radioValue === "Subject" && patientValue) ||
@@ -106,7 +106,7 @@ const CareGapsPage = () => {
   };
 
   //handles sending the care-gaps request and processes the response
-  function calculateHandler() {
+  function calculateCareGapsHandler() {
     let customMessage = <Text weight={500}>Problem connecting to server:&nbsp;</Text>;
     let notifProps: NotificationProps = {
       message: customMessage,
@@ -348,7 +348,7 @@ const CareGapsPage = () => {
                         radius="md"
                         size="sm"
                         variant="filled"
-                        onClick={calculateHandler}
+                        onClick={calculateCareGapsHandler}
                       >
                         Calculate
                       </Button>
