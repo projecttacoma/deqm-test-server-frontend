@@ -1,4 +1,4 @@
-import { render, screen, act, fireEvent, within } from "@testing-library/react";
+import { render, screen, act, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import {
   createMockRouter,
@@ -6,7 +6,7 @@ import {
   mockResizeObserver,
 } from "../../../helpers/testHelpers";
 import { RouterContext } from "next/dist/shared/lib/router-context";
-import CareGapsPage from "../../../../pages/[resourceType]/[id]/careGaps";
+import CareGapsPage from "../../../../pages/[resourceType]/[id]/care-gaps";
 import { DateTime } from "luxon";
 import { fhirJson } from "@fhir-typescript/r4-core";
 

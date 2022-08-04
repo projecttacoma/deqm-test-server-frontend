@@ -71,7 +71,7 @@ function ResourceIDPage() {
       </MantineProvider>
       {resourceType === "Measure" && (
         <div>
-          <Link href={`/${resourceType}/${id}/careGaps`} key={`care-gaps-${id}`} passHref>
+          <Link href={`/${resourceType}/${id}/care-gaps`} key={`care-gaps-${id}`} passHref>
             <Button
               component="a"
               color="cyan"
