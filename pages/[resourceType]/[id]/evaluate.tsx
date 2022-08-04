@@ -10,7 +10,7 @@ import {
   MantineProvider,
 } from "@mantine/core";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import { textGray } from "../../../styles/appColors";
 import BackButton from "../../../components/BackButton";
@@ -59,6 +59,12 @@ const EvaluateMeasurePage = () => {
   const [patientValue, setPatientValue] = useState("");
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
   const [periodEnd, setPeriodEnd] = useState<Date>(DEFAULT_PERIOD_END);
+
+  useEffect(() => {
+    if (radioValue === "Population") {
+      setPatientValue("");
+    }
+  }, [radioValue]);
 
   /**
    * createRequestPreview builds the request preview with the evaluate measure state variables
