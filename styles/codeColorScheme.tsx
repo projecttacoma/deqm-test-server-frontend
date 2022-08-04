@@ -81,13 +81,13 @@ export const replaceDelete: stringArray = [
 export const replaceBackground: stringArray = [
   "#868E96",
   "#F1F3F5",
-  "#4a4f4f",
-  "#4a4f4f;",
-  "#4a4f4f",
-  "#B2B5B5",
-  "#4a4f4f",
-  "#4a4f4f",
-  "#4a4f4f",
+  "#E9ECEF",
+  "#E9ECEF;",
+  "#ADB5BD",
+  "#ADB5BD",
+  "#868E96",
+  "#495057",
+  "#CED4DA",
   "#4a4f4f",
 ];
 
