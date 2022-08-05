@@ -237,7 +237,7 @@ describe("Select component, Radio button, and request preview render", () => {
   });
   window.ResizeObserver = mockResizeObserver;
 
-  it("tests for expected request preview, both Select Components, and calculate button that becomes enabled", async () => {
+  it("tests for expected Select Components render and disabled calculate button", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -257,6 +257,20 @@ describe("Select component, Radio button, and request preview render", () => {
 
     //Calculate button should be disabled if Subject radio button is selected with no Patient selected
     expect(screen.getByRole("button", { name: "Calculate" }) as HTMLButtonElement).toBeDisabled();
+  });
+
+  it("tests for expected request preview and calculate button behavior when user types into Select Components", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "Measure-12" },
+          })}
+        >
+          <EvaluateMeasurePage />
+        </RouterContext.Provider>,
+      );
+    });
 
     //mocks user typing into Patient SelectComponent to check for updating request preview
     const patientSelectComponent = screen.getByRole("searchbox", { name: "Select Patient" });
