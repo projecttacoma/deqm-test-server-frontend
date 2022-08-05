@@ -5,6 +5,7 @@ import {
   createMockRouter,
   getMockFetchImplementation,
   mockResizeObserver,
+  getMockFetchImplementationError,
 } from "../../../helpers/testHelpers";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import CareGapsPage from "../../../../pages/[resourceType]/[id]/care-gaps";
@@ -58,6 +59,23 @@ const RESOURCE_ID_BODY: fhirJson.Bundle = {
   ],
 };
 
+const SHORT_RESOURCE_ID_BODY: fhirJson.Bundle = {
+  resourceType: "Bundle",
+  meta: {
+    lastUpdated: "2022-06-23T19:52:58.721Z",
+  },
+  type: "searchset",
+  total: 1,
+  entry: [
+    {
+      resource: {
+        resourceType: "Practitioner",
+        id: "denom-EXM125-3",
+      },
+    },
+  ],
+};
+
 const MEASURE_BODY_NO_EFFECTIVE_PERIOD = {
   resourceType: "Measure",
   id: "measure-EXM104-8.4.000",
@@ -65,6 +83,8 @@ const MEASURE_BODY_NO_EFFECTIVE_PERIOD = {
     lastUpdated: "2022-07-21T18:12:25.008Z",
   },
 };
+
+const ERROR_400_RESPONSE_BODY = { issue: [{ details: { text: "Invalid resource ID" } }] };
 
 describe("Test evaluate page render for measure", () => {
   beforeAll(() => {
@@ -209,6 +229,9 @@ describe("Input/Select components and Radio buttons render", () => {
     expect(screen.getByRole("searchbox", { name: "Select Practitioner" })).not.toBeDisabled();
     expect(screen.getByRole("textbox", { name: "Program" })).not.toBeDisabled();
 
+    //Calculate button is disabled when no inputs are entered
+    expect(screen.getByRole("button", { name: "Calculate" }) as HTMLButtonElement).toBeDisabled();
+
     //Request preview should include default dates (curr year Jan 1, Dec 31)
     expect(
       screen.getByText(
@@ -238,7 +261,6 @@ describe("Calculate button behavior and request preview", () => {
         </RouterContext.Provider>,
       );
     });
-    // Subject radio button should be pre-selected, so Select Patient component should be enabled
 
     const patientSelectComponent = screen.getByRole("searchbox", { name: "Select Patient" });
     await act(async () => {
@@ -253,7 +275,9 @@ describe("Calculate button behavior and request preview", () => {
     //request preview should include a Patient value
     expect(
       screen.getByText(
-        "/Measure/$care-gaps?measureId=Measure-12&periodStart=2022-01-01&periodEnd=2022-12-31&status=open-gap&subject=P",
+        `/Measure/$care-gaps?measureId=Measure-12&periodStart=${
+          DateTime.now().year
+        }-01-01&periodEnd=${DateTime.now().year}-12-31&status=open-gap&subject=P`,
       ),
     ).toBeInTheDocument();
   });
@@ -271,34 +295,77 @@ describe("Calculate button behavior and request preview", () => {
       );
     });
 
-    const organizationRadio = screen.getByLabelText("Organization");
-    //Organization radio button should not be pre-selected
-    expect(organizationRadio).not.toBeChecked();
     //click the organization radio button
     await act(async () => {
-      fireEvent.click(organizationRadio);
+      fireEvent.click(screen.getByLabelText("Organization"));
     });
 
-    //Patient select should be disabled, other AutoComplete components and Program text input should be enabled
-    expect(screen.getByRole("searchbox", { name: "Select Patient" })).toBeDisabled();
-    expect(screen.getByRole("searchbox", { name: "Select Organization" })).not.toBeDisabled();
-    expect(screen.getByRole("searchbox", { name: "Select Practitioner" })).not.toBeDisabled();
-    expect(screen.getByRole("textbox", { name: "Program" })).not.toBeDisabled();
+    const organizationSelectComponent = screen.getByRole("searchbox", {
+      name: "Select Organization",
+    });
+    await act(async () => {
+      fireEvent.change(organizationSelectComponent, { target: { value: "O" } });
+    });
+
+    //Calculate button enables once Organization is inputed
+    expect(
+      screen.getByRole("button", { name: "Calculate" }) as HTMLButtonElement,
+    ).not.toBeDisabled();
+
+    const practitionerSelectComponent = screen.getByRole("searchbox", {
+      name: "Select Practitioner",
+    });
+    await act(async () => {
+      fireEvent.change(practitionerSelectComponent, { target: { value: "P" } });
+    });
 
     //Request preview should include default dates (curr year Jan 1, Dec 31)
     expect(
       screen.getByText(
         `/Measure/$care-gaps?measureId=Measure-12&periodStart=${
           DateTime.now().year
-        }-01-01&periodEnd=${DateTime.now().year}-12-31&status=open-gap`,
+        }-01-01&periodEnd=${
+          DateTime.now().year
+        }-12-31&status=open-gap&organization=O&practitioner=P`,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("tests for expected calculate button and request preview behavior when Program is inputted", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Measure", id: "Measure-12" },
+          })}
+        >
+          <CareGapsPage />
+        </RouterContext.Provider>,
+      );
+    });
+
+    const programInput = screen.getByRole("textbox", { name: "Program" });
+    await act(async () => {
+      fireEvent.change(programInput, { target: { value: "P" } });
+    });
+
+    //Calculate button is still disabled
+    expect(screen.getByRole("button", { name: "Calculate" }) as HTMLButtonElement).toBeDisabled();
+
+    //request preview should include a Program value
+    expect(
+      screen.getByText(
+        `/Measure/$care-gaps?measureId=Measure-12&periodStart=${
+          DateTime.now().year
+        }-01-01&periodEnd=${DateTime.now().year}-12-31&status=open-gap&program=P`,
       ),
     ).toBeInTheDocument();
   });
 });
 
-describe.skip("Evaluate measure successful request", () => {
+describe("Evaluate measure successful request", () => {
   beforeAll(() => {
-    global.fetch = getMockFetchImplementation(MEASURE_BODY_NO_EFFECTIVE_PERIOD);
+    global.fetch = getMockFetchImplementation(SHORT_RESOURCE_ID_BODY);
   });
 
   window.ResizeObserver = mockResizeObserver;
@@ -318,10 +385,10 @@ describe.skip("Evaluate measure successful request", () => {
       );
     });
 
-    //click the population radio button to ensure Calculate button is enbled
-    const subjectRadio = screen.getByLabelText("Subject");
+    //enable calculate button by typing into Select Patient
+    const patientSelectComponent = screen.getByRole("searchbox", { name: "Select Patient" });
     await act(async () => {
-      fireEvent.click(subjectRadio);
+      fireEvent.change(patientSelectComponent, { target: { value: "P" } });
     });
 
     const calculateButton = screen.getByRole("button", { name: "Calculate" }) as HTMLButtonElement;
@@ -329,10 +396,12 @@ describe.skip("Evaluate measure successful request", () => {
       fireEvent.click(calculateButton);
     });
 
-    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
-    expect(errorNotif).toBeInTheDocument();
+    const successNotif = (await screen.findByRole("alert")) as HTMLDivElement;
+    expect(successNotif).toBeInTheDocument();
 
-    expect(within(errorNotif).getByText(/Evaluate Measure successful!/)).toBeInTheDocument();
+    expect(
+      within(successNotif).getByText(/Gaps in care calculation successful!/),
+    ).toBeInTheDocument();
 
     //parses out relevant information from the Prism HTML block and stores it in an array
     const spanText = [""];
@@ -343,11 +412,70 @@ describe.skip("Evaluate measure successful request", () => {
 
     //verifies that each piece of the JSON content is contained in the array
     expect(spanText.includes('"resourceType"')).toBe(true);
-    expect(spanText.includes('"Measure"')).toBe(true);
+    expect(spanText.includes('"Bundle"')).toBe(true);
+    expect(spanText.includes('"total"')).toBe(true);
+    expect(spanText.includes("1")).toBe(true);
+    expect(spanText.includes('"resource"')).toBe(true);
+    expect(spanText.includes('"Practitioner"')).toBe(true);
     expect(spanText.includes('"id"')).toBe(true);
-    expect(spanText.includes('"measure-EXM104-8.4.000"')).toBe(true);
-    expect(spanText.includes('"meta"')).toBe(true);
-    expect(spanText.includes('"lastUpdated"')).toBe(true);
-    expect(spanText.includes('"2022-07-21T18:12:25.008Z"')).toBe(true);
+    expect(spanText.includes('"denom-EXM125-3"')).toBe(true);
+  });
+});
+
+describe("non 20x response in evaluate measure page", () => {
+  beforeEach(() => {
+    global.fetch = getMockFetchImplementation(ERROR_400_RESPONSE_BODY, 400, "BadRequest");
+  });
+
+  it("error notification should appear with expected messages", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
+            })}
+          >
+            <CareGapsPage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
+    expect(errorNotif).toBeInTheDocument();
+
+    expect(screen.queryByTestId("prism-measure-report")).not.toBeInTheDocument();
+    expect(within(errorNotif).getByText(/400 BadRequest/)).toBeInTheDocument();
+    expect(within(errorNotif).getByText(/Invalid resource ID/)).toBeInTheDocument();
+  });
+});
+
+describe("Evaluate measure page fetch throws error", () => {
+  beforeEach(() => {
+    global.fetch = getMockFetchImplementationError("Problem connecting to server");
+  });
+
+  it("Server error notification should appear with expected messages", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
+            })}
+          >
+            <CareGapsPage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
+    expect(errorNotif).toBeInTheDocument();
+
+    expect(screen.queryByTestId("prism-measure-report")).not.toBeInTheDocument();
+    expect(within(errorNotif).getByText(/Not connected to server!/)).toBeInTheDocument();
+    expect(screen.getByText("Something went wrong.")).toBeInTheDocument();
   });
 });
