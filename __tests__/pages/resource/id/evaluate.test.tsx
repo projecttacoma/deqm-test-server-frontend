@@ -231,7 +231,6 @@ describe("Test evaluate page render for non-measure", () => {
   });
 });
 
-
 describe("Select component, Radio button, and request preview render", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
@@ -399,13 +398,6 @@ describe("Evaluate measure successful request", () => {
         ),
       );
     });
-  });
-  
-describe("Select component render", async () => {
-  beforeAll(() => {
-    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
-  });
-
     //click the population radio button to ensure Calculate button is enbled
     const populationRadio = screen.getByLabelText("Population");
     await act(async () => {
