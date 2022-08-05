@@ -56,6 +56,7 @@ const EvaluateMeasurePage = () => {
   const [gridColSpans, setGridColSpans] = useState([3, 3, 0]);
   const [practitionerValue, setPractitionerValue] = useState("");
   const [patientValue, setPatientValue] = useState("");
+  const [groupValue, setGroupValue] = useState("");
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
   const [periodEnd, setPeriodEnd] = useState<Date>(DEFAULT_PERIOD_END);
 
@@ -215,7 +216,8 @@ const EvaluateMeasurePage = () => {
                       <Radio value="Population" label="Population" />
                     </RadioGroup>
 
-                    {/* only displays autocomplete component if radio value is Patient */}
+                    {/* diplays mandatory autocomplete component for patients if radio 
+                        value is Subject, or optional group autocomplete component if radio value is Population */}
                     {radioValue === "Subject" ? (
                       <SelectComponent
                         resourceType="Patient"
@@ -225,11 +227,10 @@ const EvaluateMeasurePage = () => {
                       />
                     ) : (
                       <SelectComponent
-                        resourceType="Patient"
-                        setValue={setPatientValue}
-                        value={patientValue}
-                        disabled={true}
-                        placeholder="Patient selection disabled when 'Population' is selected"
+                        resourceType="Group"
+                        setValue={setGroupValue}
+                        value={groupValue}
+                        placeholder="Select a group or leave this field empty to run evaluate measure on entire population"
                       />
                     )}
                   </Grid.Col>

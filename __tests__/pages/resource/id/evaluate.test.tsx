@@ -322,7 +322,9 @@ describe("Select component, Radio button, and request preview render", () => {
     await act(async () => {
       fireEvent.click(populationRadio);
     });
-    expect(screen.getByRole("searchbox", { name: "Select Patient" })).toBeDisabled();
+
+    //expects a group autoselect component to be in the document
+    expect(screen.getByRole("searchbox", { name: "Select Group" })).toBeInTheDocument;
 
     //expect the request preview to include reportType=population
     expect(
