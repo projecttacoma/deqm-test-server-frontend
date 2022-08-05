@@ -51,14 +51,6 @@ const CareGapsPage = () => {
   const [programValue, setProgramValue] = useState("");
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
   const [periodEnd, setPeriodEnd] = useState<Date>(DEFAULT_PERIOD_END);
-  useEffect(() => {
-    if (radioValue === "Subject") {
-      setOrganizationValue("");
-      setPractitionerValue("");
-    } else if (radioValue === "Organization") {
-      setPatientValue("");
-    }
-  }, [radioValue]);
 
   useEffect(() => {
     if (radioValue === "Subject") {

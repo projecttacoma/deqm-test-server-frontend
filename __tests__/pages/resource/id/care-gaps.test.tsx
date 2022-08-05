@@ -1,4 +1,4 @@
-import { render, screen, act, fireEvent } from "@testing-library/react";
+import { render, screen, act, within, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import {
   mantineRecoilWrap,
@@ -74,14 +74,6 @@ const SHORT_RESOURCE_ID_BODY: fhirJson.Bundle = {
       },
     },
   ],
-};
-
-const MEASURE_BODY_NO_EFFECTIVE_PERIOD = {
-  resourceType: "Measure",
-  id: "measure-EXM104-8.4.000",
-  meta: {
-    lastUpdated: "2022-07-21T18:12:25.008Z",
-  },
 };
 
 const ERROR_400_RESPONSE_BODY = { issue: [{ details: { text: "Invalid resource ID" } }] };
