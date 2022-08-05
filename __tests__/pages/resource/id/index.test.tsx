@@ -22,7 +22,7 @@ describe("measure resource ID render", () => {
     global.fetch = getMockFetchImplementation("");
   });
 
-  it("should display an evaluate measure button", async () => {
+  it("should display button for evaluate measure and for care gaps", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -35,9 +35,9 @@ describe("measure resource ID render", () => {
       );
     });
 
-    //for Measure resources, an additional button named "Evaluate Measure" will be in the document
-    // expect(await screen.findByRole("button", { name: "Evaluate Measure" })).toBeInTheDocument();
+    //for Measure resources, "Evaluate Measure" and "Calculate Care Gaps" buttons will be in the document
     expect(await screen.findByRole("link", { name: "Evaluate Measure" })).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: "Calculate Care Gaps" })).toBeInTheDocument();
   });
 });
 
@@ -63,8 +63,9 @@ describe("resource ID render", () => {
     //check for the expected buttons on the page
     expect(await screen.findByTestId("back-button")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Update" })).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Evaluate Measure" })).toBeNull();
     expect(screen.getByRole("button", { name: "Delete" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Evaluate Measure" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Calculate Care Gaps" })).toBeNull();
   });
 
   it("should display the JSON content of a single resource", async () => {
