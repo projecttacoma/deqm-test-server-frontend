@@ -27,6 +27,25 @@ const CreateResourcePage = () => {
   const NEW_ID_IN_HEADER_REGEX = new RegExp(`${resourceType}/[A-Za-z0-9\-\.]{1,64}`);
   const context = useContext(CountContext);
 
+  //called when the create group button is clicked. Converts patient list into a group resource, then
+  //calls editorSubmitHandler to handle the POST request
+  const convertToJSON = () => {
+    const groupMember: fhirJson.GroupMember[] = patientValue.map((el) => {
+      return { entity: { reference: el } };
+    });
+
+    //if groupMember array is empty, the group resource should not contain a member field
+    const group: fhirJson.Group = { resourceType: "Group", type: "person", actual: true };
+
+    //if groupMembers have been selected, populates the member field
+    //if groupMembers have been selected, populates the member field
+    if (groupMember.length > 0) {
+      group.member = groupMember;
+    }
+
+    editorSubmitHandler(JSON.stringify(group));
+  };
+
   return (
     <div style={{ paddingLeft: "15px", paddingRight: "15px" }}>
       <BackButton />
@@ -66,11 +85,9 @@ const CreateResourcePage = () => {
         <div style={{ textAlign: "center", marginTop: "30px", marginBottom: "20px" }}>
           <Divider my="md" />
           <div>
-            {" "}
             <Text weight={600} size="xl" color={textGray} style={{ marginBottom: "20px" }}>
-              {" "}
-              OR{" "}
-            </Text>{" "}
+              OR
+            </Text>
           </div>
 
           <div style={{ margin: "auto", width: "85vh" }}>
@@ -103,29 +120,6 @@ const CreateResourcePage = () => {
       )}
     </div>
   );
-
-  //called when the create group button is clicked. Converts patient list into a group resource, then
-  //calls editorSubmitHandler to handle the POST request
-  function convertToJSON() {
-    const groupMember = patientValue.map((el) => {
-      return { entity: { reference: el } };
-    });
-
-    //if groupMember array is empty, the group resource should not contain a member field
-    let group: fhirJson.Group = { resourceType: "Group", type: "person", actual: true };
-
-    //if groupMembers have been selected, populates the member field
-    if (groupMember.length > 0) {
-      group = {
-        resourceType: "Group",
-        type: "person",
-        actual: true,
-        member: groupMember,
-      };
-    }
-
-    editorSubmitHandler(JSON.stringify(group));
-  }
 
   //called when the submit button is clicked. Handles POST request and response
   async function editorSubmitHandler(submitContent: string) {

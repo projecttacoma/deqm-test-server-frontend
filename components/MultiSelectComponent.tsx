@@ -12,9 +12,9 @@ export interface MultiSelectProps {
   resourceType: string;
   setValue: Dispatch<SetStateAction<string[]>>;
   value: string[];
+  disabled?: boolean;
   jsonBody?: fhirJson.Bundle;
   required?: boolean;
-  label?: string;
 }
 
 /**
@@ -25,8 +25,8 @@ export default function MultiSelectComponent({
   resourceType,
   setValue,
   value,
+  disabled,
   required,
-  label,
 }: MultiSelectProps) {
   const [responseBody, setResponseBody] = useState<fhirJson.Bundle>();
   const [fetchingError, setFetchingError] = useState(false);
@@ -60,7 +60,7 @@ export default function MultiSelectComponent({
         resourceType={resourceType}
         setValue={setValue}
         value={value}
-        label={label}
+        disabled={disabled}
         required={required}
       />
     </div>
@@ -69,50 +69,41 @@ export default function MultiSelectComponent({
   );
 }
 
-function PopulateIDHelper({ resourceType, setValue, value, jsonBody, required }: MultiSelectProps) {
+function PopulateIDHelper({
+  resourceType,
+  setValue,
+  value,
+  jsonBody,
+  required = false,
+  disabled = true,
+}: MultiSelectProps) {
   const entryArray = jsonBody?.entry;
+  let placeholder = `No resources of type ${resourceType} found`;
+  let myArray: string[] = [];
 
-  //makes sure there are resources to display in the dropdown
   if (jsonBody?.total && jsonBody?.total > 0 && entryArray != undefined) {
-    //populate the multiSelect component with patient data
-    const myArray = entryArray.map((el) => {
-      return el?.resource ? `${resourceType}/${el.resource.id}` : "";
+    placeholder = `Click to see ${resourceType} options`;
+    disabled = false;
+    myArray = entryArray.map((el) => {
+      return `${el?.resource?.resourceType}/${el?.resource?.id}` || "";
     });
-    return (
-      <MultiSelect
-        value={value}
-        onChange={setValue}
-        label={
-          <Text weight={400} size="md">
-            {" "}
-            Select {resourceType}{" "}
-          </Text>
-        }
-        placeholder="Start typing to see options"
-        size="lg"
-        data={myArray}
-        limit={10}
-        required={required ? required : false}
-      />
-    );
-    //select component is disabled if no resources are available
-  } else {
-    return (
-      <MultiSelect
-        value={value}
-        onChange={setValue}
-        label={
-          <Text weight={400} size="md">
-            {" "}
-            Select {resourceType}{" "}
-          </Text>
-        }
-        placeholder={`No resources of type ${resourceType} found`}
-        data={[]}
-        variant="filled"
-        size="lg"
-        disabled={true}
-      />
-    );
   }
+  //makes sure there are resources to display in the dropdown and populate the multiSelect component
+  // with patient data if availavle
+  return (
+    <MultiSelect
+      value={value}
+      onChange={setValue}
+      label={
+        <Text weight={400} size="md">
+          Select {resourceType}(s)
+        </Text>
+      }
+      placeholder={placeholder}
+      data={myArray}
+      limit={10}
+      required={required}
+      disabled={disabled}
+    />
+  );
 }
