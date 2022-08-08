@@ -323,15 +323,18 @@ describe("Select component, Radio button, and request preview render", () => {
       fireEvent.click(populationRadio);
     });
 
-    //expects a group autoselect component to be in the document
-    expect(screen.getByRole("searchbox", { name: "Select Group" })).toBeInTheDocument;
+    const groupSelectComponent = screen.getByRole("searchbox", {
+      name: "Select Group",
+    });
+    await act(async () => {
+      fireEvent.change(groupSelectComponent, { target: { value: "G" } });
+    });
 
-    //expect the request preview to include reportType=population
     expect(
       screen.getByText(
         `/Measure/Measure-12/$evaluate-measure?periodStart=${DateTime.now().year}-01-01&periodEnd=${
           DateTime.now().year
-        }-12-31&reportType=population`,
+        }-12-31&reportType=population&subject=G`,
       ),
     ).toBeInTheDocument();
 
