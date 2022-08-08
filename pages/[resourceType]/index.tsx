@@ -20,19 +20,19 @@ function ResourceTypeIDs() {
   const { resourceType } = router.query;
 
   const [pageBody, setPageBody] = useState<fhirJson.Bundle>();
-  const [activePageNum, setActivePageNum] = useState(0);
+  const [activePageNum, setActivePageNum] = useState(1);
   //const [resourceIDList, setResourceIDList] = useState();
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
   useEffect(() => {
-    getResourcePage(activePageNum);
+    getResourcePage();
     console.log("ran useEffect");
   }, [activePageNum]);
 
-  const getResourcePage = (pageNum: number) => {
-    console.log("pageNum in getResourcePage: ", pageNum);
+  const getResourcePage = () => {
+    //console.log("pageNum in getResourcePage: ", pageNum);
     const getUrl =
-      activePageNum === 0
+      activePageNum === 1
         ? `${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`
         : `${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}?page=${activePageNum}`;
     if (resourceType) {
@@ -43,9 +43,11 @@ function ResourceTypeIDs() {
         })
         .then((resourcePageBody) => {
           setPageBody(resourcePageBody);
-
           setFetchingError(false);
           setLoadingRequest(false);
+          router.push(`/${resourceType}`, `/${resourceType}?page=${activePageNum}`, {
+            shallow: true,
+          });
         })
         .catch((error) => {
           console.log(error.message);
@@ -92,7 +94,18 @@ function ResourceTypeIDs() {
     );
   }; */
 
-  //console.log("pageBody:", pageBody);
+  /*
+if (pageBody) {
+  let renderIdPage = <div></div>
+  if (loadingRequest && !fetchingError) {
+    renderIdPage = (<Center>
+    <div>Loading content...</div>
+    <Loader color="cyan"></Loader>
+  </Center>)
+  }
+  
+} */
+
   return loadingRequest ? ( //if loading, Loader object is returned
     <Center>
       <div>Loading content...</div>
@@ -128,24 +141,26 @@ function ResourceTypeIDs() {
       </div>
       <ResourceIDs jsonBody={pageBody}></ResourceIDs>
       {/* <div>{allPageButtons}</div> */}
-      <Pagination
-        total={pageBody.total ? Math.ceil(pageBody.total / 10) : 1}
-        onChange={(num) => {
-          setActivePageNum(num);
-        }}
-        color="cyan"
-        page={activePageNum}
-        // styles={(theme) => ({
-        //   item: {
-        //     '.mantine-Pagination-item': {color: {textGray}}
-        //   },
-        // })}
-      ></Pagination>
+      <Center>
+        <Pagination
+          total={pageBody.total ? Math.ceil(pageBody.total / 10) : 1}
+          onChange={(num) => {
+            setActivePageNum(num);
+          }}
+          color="cyan"
+          page={activePageNum}
+          // styles={(theme) => ({
+          //   item: {
+          //     '.mantine-Pagination-item': {color: {textGray}}
+          //   },
+          // })}
+        ></Pagination>
+      </Center>
     </div>
   ) : (
     //if error occurs in http request, error message is returned
     <div>Problem connecting to server</div>
   );
 }
-//ceiling of pageBody?.total
+
 export default ResourceTypeIDs;
