@@ -23,14 +23,24 @@ function ResourceTypeIDs() {
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
   useEffect(() => {
+    getResourcePage(0);
+    console.log("ran useEffect");
+  });
+
+  const getResourcePage = (pageNum: number) => {
+    const getUrl =
+      pageNum === 0
+        ? `${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`
+        : `${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}?page=${pageNum}`;
     if (resourceType) {
       setLoadingRequest(true);
-      fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`)
+      fetch(getUrl)
         .then((data) => {
           return data.json() as Promise<fhirJson.Bundle>;
         })
         .then((resourcePageBody) => {
           setPageBody(resourcePageBody);
+
           setFetchingError(false);
           setLoadingRequest(false);
         })
@@ -40,8 +50,46 @@ function ResourceTypeIDs() {
           setLoadingRequest(false);
         });
     }
-  }, [resourceType]);
+  };
 
+  const allPageButtons = () => {
+    return pageBody?.link?.map((x, i) => {
+      return (
+        <Button
+          key={`page-${i}-link`}
+          color="cyan"
+          onClick={() => getResourcePage(i)}
+          radius="md"
+          size="md"
+          variant="filled"
+          style={{
+            float: "right",
+          }}
+        >
+          <div>`${x?.relation}`</div>
+        </Button>
+      );
+    });
+  };
+
+  /* const pageButton = (whichPage: string, pageNum: number) => {
+    return (
+      <Button
+        color="cyan"
+        onClick={() => getResourcePage(pageNum)}
+        radius="md"
+        size="md"
+        variant="filled"
+        style={{
+          float: "right",
+        }}
+      >
+        {whichPage}
+      </Button>
+    );
+  }; */
+
+  //console.log("pageBody:", pageBody);
   return loadingRequest ? ( //if loading, Loader object is returned
     <Center>
       <div>Loading content...</div>
@@ -76,6 +124,7 @@ function ResourceTypeIDs() {
         </Stack>
       </div>
       <ResourceIDs jsonBody={pageBody}></ResourceIDs>
+      <div>{allPageButtons}</div>
     </div>
   ) : (
     //if error occurs in http request, error message is returned
