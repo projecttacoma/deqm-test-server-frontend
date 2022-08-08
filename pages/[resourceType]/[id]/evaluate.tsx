@@ -37,15 +37,15 @@ const DEFAULT_PERIOD_START = new Date(`${DateTime.now().year}-01-01T00:00:00`);
 const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
 
 /**
- * EvaluateMeasurePage is a page that renders a back button pre-filled DatePickers, radio buttons,
- * auto-complete boxes, a text preview of the measure request, and a display of the measure report response.
+ * EvaluateMeasurePage is a page that renders a back button, pre-filled DatePickers, radio buttons,
+ * auto-complete boxes, a text preview of the measure request, a calculate button, and a display of the measure report response.
  * The DatePickers are pre-filled with a Measure's effective period dates or default dates.
  * The Patient SelectComponent only appears if the reportType selected is "Subject".
  * The Group SelectComponent only appears if the reportType selected is "Population".
  * If the url resourceType is not a Measure, an error message is displayed.
  * If the Evaluate Measure request succeeds, a Prism component with the MeasureReport is rendered.
  * If the Evaluate Measure request fails, an error notification appears instead.
- * @returns React node with a back button, MeasureDatePickers, SelectComponents, a RadioGroup, and Text for the request preview
+ * @returns React node with a back button, MeasureDatePickers, SelectComponents, a RadioGroup, a Request Preview as Text, and a Calculate button
  */
 const EvaluateMeasurePage = () => {
   const router = useRouter();
