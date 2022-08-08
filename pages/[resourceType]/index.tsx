@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import ResourceIDs from "../../components/ResourceIDs";
-import { Center, Loader, Stack } from "@mantine/core";
+import { Center, Loader, Pagination, Stack } from "@mantine/core";
 import { fhirJson } from "@fhir-typescript/r4-core";
 import { Button } from "@mantine/core";
 import Link from "next/link";
@@ -20,18 +20,21 @@ function ResourceTypeIDs() {
   const { resourceType } = router.query;
 
   const [pageBody, setPageBody] = useState<fhirJson.Bundle>();
+  const [activePageNum, setActivePageNum] = useState(0);
+  //const [resourceIDList, setResourceIDList] = useState();
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
   useEffect(() => {
-    getResourcePage(0);
+    getResourcePage(activePageNum);
     console.log("ran useEffect");
-  });
+  }, [activePageNum]);
 
   const getResourcePage = (pageNum: number) => {
+    console.log("pageNum in getResourcePage: ", pageNum);
     const getUrl =
-      pageNum === 0
+      activePageNum === 0
         ? `${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}`
-        : `${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}?page=${pageNum}`;
+        : `${process.env.NEXT_PUBLIC_DEQM_SERVER}/${resourceType}?page=${activePageNum}`;
     if (resourceType) {
       setLoadingRequest(true);
       fetch(getUrl)
@@ -52,7 +55,7 @@ function ResourceTypeIDs() {
     }
   };
 
-  const allPageButtons = () => {
+  /* const allPageButtons = (pageNum: number) => {
     return pageBody?.link?.map((x, i) => {
       return (
         <Button
@@ -72,7 +75,7 @@ function ResourceTypeIDs() {
     });
   };
 
-  /* const pageButton = (whichPage: string, pageNum: number) => {
+   const pageButton = (whichPage: string, pageNum: number) => {
     return (
       <Button
         color="cyan"
@@ -124,11 +127,25 @@ function ResourceTypeIDs() {
         </Stack>
       </div>
       <ResourceIDs jsonBody={pageBody}></ResourceIDs>
-      <div>{allPageButtons}</div>
+      {/* <div>{allPageButtons}</div> */}
+      <Pagination
+        total={pageBody.total ? Math.ceil(pageBody.total / 10) : 1}
+        onChange={(num) => {
+          setActivePageNum(num);
+        }}
+        color="cyan"
+        page={activePageNum}
+        // styles={(theme) => ({
+        //   item: {
+        //     '.mantine-Pagination-item': {color: {textGray}}
+        //   },
+        // })}
+      ></Pagination>
     </div>
   ) : (
     //if error occurs in http request, error message is returned
     <div>Problem connecting to server</div>
   );
 }
+//ceiling of pageBody?.total
 export default ResourceTypeIDs;
