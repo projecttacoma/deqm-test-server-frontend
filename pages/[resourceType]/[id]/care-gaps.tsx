@@ -33,6 +33,7 @@ import {
   replaceRed,
   replaceBlue,
 } from "../../../styles/codeColorScheme";
+import { fhirJson } from "@fhir-typescript/r4-core";
 
 const DEFAULT_PERIOD_START = new Date(`${DateTime.now().year}-01-01T00:00:00`);
 const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
@@ -98,7 +99,7 @@ const CareGapsPage = () => {
   };
 
   //handles sending the care-gaps request and processes the response
-  function calculateCareGapsHandler() {
+  const calculateCareGapsHandler = () => {
     let customMessage = <Text weight={500}>Problem connecting to server:&nbsp;</Text>;
     let notifProps: NotificationProps = {
       message: customMessage,
@@ -112,7 +113,7 @@ const CareGapsPage = () => {
     fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}${createRequestPreview()}`)
       .then((response) => {
         fetchStatus = { status: response.status, statusText: response.statusText };
-        return response.json();
+        return response.json() as Promise<fhirJson.Measure | fhirJson.OperationOutcome>;
       })
       .then((responseBody) => {
         if (fetchStatus.status === 201 || fetchStatus.status === 200) {
@@ -131,14 +132,15 @@ const CareGapsPage = () => {
           setFetchingError(false);
           setLoadingRequest(false);
         } else if (fetchStatus.status > 299) {
+          const operationOutcomeBody = responseBody as fhirJson.OperationOutcome;
           customMessage = (
             <>
               <Text weight={500}>
                 {fetchStatus.status} {fetchStatus.statusText}&nbsp;
               </Text>
               <Text color="red">
-                {responseBody.issue
-                  ? responseBody.issue[0]?.details?.text
+                {operationOutcomeBody.issue
+                  ? operationOutcomeBody.issue[0]?.details?.text
                   : "Fetch Issue undefined."}
               </Text>
             </>
@@ -169,7 +171,7 @@ const CareGapsPage = () => {
         cleanNotifications();
         showNotification({ ...notifProps, message: customMessage });
       });
-  }
+  };
 
   if (resourceType === "Measure" && id) {
     if (!fetchingError) {
@@ -196,7 +198,7 @@ const CareGapsPage = () => {
             >
               <Grid.Col span={gridColSpans[1]}>
                 <Grid.Col>
-                  <Grid.Col style={{ minHeight: 100 }}>
+                  <Grid.Col style={{ minHeight: 90 }}>
                     <MeasureDatePickers
                       measureID={id as string}
                       periodStart={periodStart}
@@ -210,7 +212,7 @@ const CareGapsPage = () => {
                       value={radioValue}
                       onChange={setRadioValue}
                       size="lg"
-                      style={{ marginTop: "20px", marginBottom: "30px" }}
+                      style={{ marginTop: "10px", marginBottom: "20px" }}
                     >
                       <Radio
                         value="Subject"
@@ -296,7 +298,7 @@ const CareGapsPage = () => {
                   <h3
                     style={{
                       color: textGray,
-                      marginTop: "20px",
+                      marginTop: "5px",
                       marginBottom: "2px",
                       textAlign: "center",
                     }}
@@ -307,13 +309,14 @@ const CareGapsPage = () => {
                     style={{
                       textAlign: "center",
                       overflowWrap: "break-word",
-                      padding: "10px",
+                      padding: "8px",
+                      paddingLeft: "20px",
                       backgroundColor: "#F1F3F5",
                       border: "1px solid",
                       borderColor: "#4a4f4f",
                       borderRadius: "20px",
-                      marginLeft: "30px",
-                      marginRight: "30px",
+                      marginLeft: "10px",
+                      marginRight: "10px",
                     }}
                   >
                     <Text size="md" style={{ color: textGray, textAlign: "left" }}>

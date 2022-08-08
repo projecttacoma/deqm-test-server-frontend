@@ -95,7 +95,7 @@ const MeasureDatePickers = ({
   if (!fetchingError) {
     return (
       <Grid columns={4}>
-        <Grid.Col span={2}>
+        <Grid.Col span={2} style={{ padding: "2px" }}>
           <DatePicker
             label={<Text size="lg">Period Start</Text>}
             icon={<Calendar size={16} color={"#40a5bf"} />}
@@ -107,7 +107,7 @@ const MeasureDatePickers = ({
             allowFreeInput
           ></DatePicker>
         </Grid.Col>
-        <Grid.Col span={2}>
+        <Grid.Col span={2} style={{ padding: "2px" }}>
           <DatePicker
             label={<Text size="lg">Period End</Text>}
             variant="filled"
