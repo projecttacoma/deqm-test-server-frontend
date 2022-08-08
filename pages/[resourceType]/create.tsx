@@ -38,7 +38,6 @@ const CreateResourcePage = () => {
     const group: fhirJson.Group = { resourceType: "Group", type: "person", actual: true };
 
     //if groupMembers have been selected, populates the member field
-    //if groupMembers have been selected, populates the member field
     if (groupMember.length > 0) {
       group.member = groupMember;
     }
