@@ -355,6 +355,64 @@ describe("Calculate button behavior and request preview", () => {
   });
 });
 
+describe("non 20x response in evaluate measure page", () => {
+  beforeEach(() => {
+    global.fetch = getMockFetchImplementation(ERROR_400_RESPONSE_BODY, 400, "BadRequest");
+  });
+
+  it("error notification should appear with expected messages", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
+            })}
+          >
+            <CareGapsPage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
+    expect(errorNotif).toBeInTheDocument();
+
+    expect(screen.queryByTestId("prism-measure-report")).not.toBeInTheDocument();
+    expect(within(errorNotif).getByText(/400 BadRequest/)).toBeInTheDocument();
+    expect(within(errorNotif).getByText(/Invalid resource ID/)).toBeInTheDocument();
+  });
+});
+
+describe("Evaluate measure page fetch throws error", () => {
+  beforeEach(() => {
+    global.fetch = getMockFetchImplementationError("Problem connecting to server");
+  });
+
+  it("Server error notification should appear with expected messages", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
+            })}
+          >
+            <CareGapsPage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
+    expect(errorNotif).toBeInTheDocument();
+
+    expect(screen.queryByTestId("prism-measure-report")).not.toBeInTheDocument();
+    expect(within(errorNotif).getByText(/Not connected to server!/)).toBeInTheDocument();
+    expect(screen.getByText("Something went wrong.")).toBeInTheDocument();
+  });
+});
+
 describe("Evaluate measure successful request", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(SHORT_RESOURCE_ID_BODY);
@@ -411,63 +469,5 @@ describe("Evaluate measure successful request", () => {
     expect(spanText.includes('"Practitioner"')).toBe(true);
     expect(spanText.includes('"id"')).toBe(true);
     expect(spanText.includes('"denom-EXM125-3"')).toBe(true);
-  });
-});
-
-describe("non 20x response in evaluate measure page", () => {
-  beforeEach(() => {
-    global.fetch = getMockFetchImplementation(ERROR_400_RESPONSE_BODY, 400, "BadRequest");
-  });
-
-  it("error notification should appear with expected messages", async () => {
-    await act(async () => {
-      render(
-        mantineRecoilWrap(
-          <RouterContext.Provider
-            value={createMockRouter({
-              query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
-            })}
-          >
-            <CareGapsPage />
-          </RouterContext.Provider>,
-        ),
-      );
-    });
-
-    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
-    expect(errorNotif).toBeInTheDocument();
-
-    expect(screen.queryByTestId("prism-measure-report")).not.toBeInTheDocument();
-    expect(within(errorNotif).getByText(/400 BadRequest/)).toBeInTheDocument();
-    expect(within(errorNotif).getByText(/Invalid resource ID/)).toBeInTheDocument();
-  });
-});
-
-describe("Evaluate measure page fetch throws error", () => {
-  beforeEach(() => {
-    global.fetch = getMockFetchImplementationError("Problem connecting to server");
-  });
-
-  it("Server error notification should appear with expected messages", async () => {
-    await act(async () => {
-      render(
-        mantineRecoilWrap(
-          <RouterContext.Provider
-            value={createMockRouter({
-              query: { resourceType: "Measure", id: "measure-EXM104-8.4.000" },
-            })}
-          >
-            <CareGapsPage />
-          </RouterContext.Provider>,
-        ),
-      );
-    });
-
-    const errorNotif = (await screen.findByRole("alert")) as HTMLDivElement;
-    expect(errorNotif).toBeInTheDocument();
-
-    expect(screen.queryByTestId("prism-measure-report")).not.toBeInTheDocument();
-    expect(within(errorNotif).getByText(/Not connected to server!/)).toBeInTheDocument();
-    expect(screen.getByText("Something went wrong.")).toBeInTheDocument();
   });
 });
