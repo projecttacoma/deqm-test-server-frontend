@@ -76,19 +76,19 @@ const EvaluateMeasurePage = () => {
     let requestPreview = `/Measure/${id}/$evaluate-measure?periodStart=${DateTime.fromISO(
       periodStart.toISOString(),
     ).toISODate()}&periodEnd=${DateTime.fromISO(periodEnd.toISOString()).toISODate()}`;
-      if (radioValue){
-        requestPreview += `&reportType=${radioValue.toLowerCase()}`;
-        if (radioValue.toLowerCase() === "subject" && patientValue) {
-          requestPreview += `&subject=${patientValue}`;
-        }
-        if (radioValue.toLowerCase() === "population" && groupValue){
-          requestPreview += `&subject=${groupValue}`;
-        }
+    if (radioValue) {
+      requestPreview += `&reportType=${radioValue.toLowerCase()}`;
+      if (radioValue.toLowerCase() === "subject" && patientValue) {
+        requestPreview += `&subject=${patientValue}`;
       }
-      if (practitionerValue) {
-        requestPreview += `&practitioner=${practitionerValue}`;
+      if (radioValue.toLowerCase() === "population" && groupValue) {
+        requestPreview += `&subject=${groupValue}`;
       }
-      return requestPreview;
+    }
+    if (practitionerValue) {
+      requestPreview += `&practitioner=${practitionerValue}`;
+    }
+    return requestPreview;
   };
 
   //only appears on the measure page
