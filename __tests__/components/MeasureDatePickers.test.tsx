@@ -45,8 +45,8 @@ describe("Test evaluate page render for measure without dates in effective perio
         />,
       );
     });
-    expect(await screen.findByDisplayValue("January 1, 2022")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("December 31, 2022")).toBeInTheDocument();
+    expect(screen.getByDisplayValue(`January 1, ${DateTime.now().year}`)).toBeInTheDocument();
+    expect(screen.getByDisplayValue(`December 31, ${DateTime.now().year}`)).toBeInTheDocument();
   });
 });
 
@@ -66,8 +66,8 @@ describe("Test evaluate page render for measure without effective period", () =>
         />,
       );
     });
-    expect(await screen.findByDisplayValue("January 1, 2022")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("December 31, 2022")).toBeInTheDocument();
+    expect(screen.getByDisplayValue(`January 1, ${DateTime.now().year}`)).toBeInTheDocument();
+    expect(screen.getByDisplayValue(`December 31, ${DateTime.now().year}`)).toBeInTheDocument();
   });
 });
 

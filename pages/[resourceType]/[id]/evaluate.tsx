@@ -54,7 +54,6 @@ const EvaluateMeasurePage = () => {
   const [loadingRequest, setLoadingRequest] = useState(false);
   const [measureReportBody, setMeasureReportBody] = useState("");
   const [gridColSpans, setGridColSpans] = useState([3, 3, 0]);
-
   const [practitionerValue, setPractitionerValue] = useState("");
   const [patientValue, setPatientValue] = useState("");
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
@@ -272,7 +271,7 @@ const EvaluateMeasurePage = () => {
                     >{`${createRequestPreview()}`}</Text>
                   </div>
                 </Grid.Col>
-                <Grid.Col style={{ minHeight: 100 }}>
+                <Grid.Col>
                   <div
                     style={{
                       textAlign: "center",
