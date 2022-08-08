@@ -324,7 +324,7 @@ const CareGapsPage = () => {
                     </Text>
                   </div>
                 </Grid.Col>
-                <Grid.Col style={{ minHeight: 100 }}>
+                <Grid.Col>
                   <div
                     style={{
                       textAlign: "center",
