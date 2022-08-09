@@ -16,12 +16,7 @@ function ResourceIDs(props: { jsonBody: fhirJson.Bundle }) {
   if (props.jsonBody.total === 0) {
     return <div>No resources found</div>;
   } else if (props.jsonBody.total && props.jsonBody.total > 0) {
-    return (
-      <div style={{ height: 500 }}>
-        <h2 style={{ color: textGray, marginTop: "0px" }}>Resource IDs:</h2>
-        {entryArray != null ? getAllIDs(entryArray) : <div>No resources</div>}
-      </div>
-    );
+    return <div>{entryArray != null ? getAllIDs(entryArray) : <div>No resources</div>}</div>;
   } else {
     return <div>Invalid JSON Body</div>;
   }
