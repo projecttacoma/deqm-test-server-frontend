@@ -41,6 +41,7 @@ const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
  * auto-complete boxes, a text preview of the measure request, and a display of the measure report response.
  * The DatePickers are pre-filled with a Measure's effective period dates or default dates.
  * The Patient SelectComponent only appears if the reportType selected is "Subject".
+ * The Group SelectComponent only appears if the reportType selected is "Population".
  * If the url resourceType is not a Measure, an error message is displayed.
  * If the Evaluate Measure request succeeds, a Prism component with the MeasureReport is rendered.
  * If the Evaluate Measure request fails, an error notification appears instead.
@@ -56,6 +57,7 @@ const EvaluateMeasurePage = () => {
   const [gridColSpans, setGridColSpans] = useState([3, 3, 0]);
   const [practitionerValue, setPractitionerValue] = useState("");
   const [patientValue, setPatientValue] = useState("");
+  const [groupValue, setGroupValue] = useState("");
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
   const [periodEnd, setPeriodEnd] = useState<Date>(DEFAULT_PERIOD_END);
 
@@ -78,6 +80,9 @@ const EvaluateMeasurePage = () => {
       requestPreview += `&reportType=${radioValue.toLowerCase()}`;
       if (radioValue.toLowerCase() === "subject" && patientValue) {
         requestPreview += `&subject=${patientValue}`;
+      }
+      if (radioValue.toLowerCase() === "population" && groupValue) {
+        requestPreview += `&subject=${groupValue}`;
       }
     }
     if (practitionerValue) {
@@ -215,7 +220,8 @@ const EvaluateMeasurePage = () => {
                       <Radio value="Population" label="Population" />
                     </RadioGroup>
 
-                    {/* only displays autocomplete component if radio value is Patient */}
+                    {/* displays mandatory autocomplete component for patients if radio 
+                        value is Subject, or optional group autocomplete component if radio value is Population */}
                     {radioValue === "Subject" ? (
                       <SelectComponent
                         resourceType="Patient"
@@ -225,11 +231,9 @@ const EvaluateMeasurePage = () => {
                       />
                     ) : (
                       <SelectComponent
-                        resourceType="Patient"
-                        setValue={setPatientValue}
-                        value={patientValue}
-                        disabled={true}
-                        placeholder="Patient selection disabled when 'Population' is selected"
+                        resourceType="Group"
+                        setValue={setGroupValue}
+                        value={groupValue}
                       />
                     )}
                   </Grid.Col>

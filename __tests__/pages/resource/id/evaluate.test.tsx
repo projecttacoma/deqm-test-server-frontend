@@ -322,14 +322,19 @@ describe("Select component, Radio button, and request preview render", () => {
     await act(async () => {
       fireEvent.click(populationRadio);
     });
-    expect(screen.getByRole("searchbox", { name: "Select Patient" })).toBeDisabled();
 
-    //expect the request preview to include reportType=population
+    const groupSelectComponent = screen.getByRole("searchbox", {
+      name: "Select Group",
+    });
+    await act(async () => {
+      fireEvent.change(groupSelectComponent, { target: { value: "G" } });
+    });
+
     expect(
       screen.getByText(
         `/Measure/Measure-12/$evaluate-measure?periodStart=${DateTime.now().year}-01-01&periodEnd=${
           DateTime.now().year
-        }-12-31&reportType=population`,
+        }-12-31&reportType=population&subject=G`,
       ),
     ).toBeInTheDocument();
 
