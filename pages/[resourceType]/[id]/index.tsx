@@ -15,6 +15,7 @@ import {
   replaceBlue,
   replaceDelete,
 } from "../../../styles/codeColorScheme";
+import { textGray } from "../../../styles/appColors";
 /**
  * Component which displays the JSON body of an individual resource and a back button.
  * If the resource is a Measure, an evaluate measure button is also displayed.
@@ -122,6 +123,11 @@ function ResourceIDPage() {
           <div> Update </div>
         </Button>
       </Link>
+      <Center>
+        <h2
+          style={{ color: textGray, marginTop: "0px", marginBottom: "8px" }}
+        >{`${resourceType}/${id}`}</h2>
+      </Center>
     </div>
   );
 

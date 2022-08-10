@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import ResourceIDs from "../../components/ResourceIDs";
-import { Center, Divider, Loader, Pagination, Stack } from "@mantine/core";
+import { Center, Divider, Loader, Pagination } from "@mantine/core";
 import { fhirJson } from "@fhir-typescript/r4-core";
 import { Button } from "@mantine/core";
 import Link from "next/link";
@@ -19,117 +19,52 @@ const NUMBER_IDS_RENDERED_AT_A_TIME = 10;
  * @returns Loader, ResourceIDs and Pagination components, or error message depending on the status of the http request made.
  */
 function ResourceTypeIDs() {
-  //get resourceType from the current url with useRouter
   const router = useRouter();
-  const { resourceType } = router.query;
-  const fullPath = router.asPath;
+  const { resourceType, page } = router.query;
   const [pageBody, setPageBody] = useState<fhirJson.Bundle>();
-  const [activePageNum, setActivePageNum] = useState(0);
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
 
-  const PAGE_IN_URL_REGEX = new RegExp(`${resourceType}\\?page=[0-9]{1,5}`);
-  const UP_TO_5_DIGITS_REGEX = new RegExp(`[0-9]{1,5}`);
-  //const PAGE_IN_URL_REGEX = new RegExp(`[0-9]{1,5}`);
-  //${resourceType}\\?page=
-  //?page=\d{1,5}
-  //const NEW_ID_IN_HEADER_REGEX = new RegExp(`${resourceType}/[A-Za-z0-9\-\.]{1,64}`);
+  const [activePageNum, setActivePageNum] = useState<number>(1);
 
   useEffect(() => {
-    console.log("activePageNum useEffect");
-    getResourcePage();
-  }, [activePageNum]);
-
-  useEffect(() => {
-    test();
-    async function test() {
-      console.log("resourceType useEffect");
-      getResourcePage();
-      if (await urlValidation()) {
-        console.log("resourceType useEffect IF urlValidation");
-        //getResourcePage();
-      } else {
-        setActivePageNum(0);
-      }
+    let pageUrl = `${resourceType}`;
+    if (page != null) {
+      setActivePageNum(parseInt(page as string));
+      pageUrl = `${resourceType}?page=${page}`;
     }
-  }, [resourceType]);
+    setLoadingRequest(true);
+    fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${pageUrl}`)
+      .then((data) => {
+        return data.json() as Promise<fhirJson.Bundle>;
+      })
+      .then((resourcePageBody) => {
+        setPageBody(resourcePageBody);
+        setFetchingError(false);
+        setLoadingRequest(false);
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setFetchingError(true);
+        setLoadingRequest(false);
+      });
+  }, [page, resourceType]);
 
-  // useEffect(() => {
-  //   //setActivePageNum(0);
-  //   urlValidation();
-  //   //getResourcePage();
-  // }, [fullPath]);
-
-  const getResourcePage = async () => {
-    console.log("getReosurcePage");
-    let successfulRequest = false;
-    //urlValidation();
-    const pageUrl =
-      activePageNum === 1 || activePageNum === 0
-        ? `${resourceType}`
-        : `${resourceType}?page=${activePageNum}`;
-
-    if (resourceType) {
-      setLoadingRequest(true);
-      fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/${pageUrl}`)
-        .then((data) => {
-          return data.json() as Promise<fhirJson.Bundle>;
-        })
-        .then((resourcePageBody) => {
-          setPageBody(resourcePageBody);
-
-          setFetchingError(false);
-          setLoadingRequest(false);
-          successfulRequest = true;
-          router.push(`/${resourceType}`, `/${pageUrl}`, {
-            shallow: true,
-          });
-          //console.log("setting pageBody: ", pageBody);
-        })
-        .catch((error) => {
-          console.log(error.message);
-          setFetchingError(true);
-          setLoadingRequest(false);
-          successfulRequest = false;
-        });
-      console.log("setting pageBody: ", pageBody);
-      return successfulRequest;
-    }
+  const updatePageRoute = (pageNum: number) => {
+    router.push(
+      {
+        pathname: `/[resourceType]`,
+        query: {
+          resourceType,
+          page: pageNum,
+        },
+      },
+      `/${resourceType}?page=${pageNum}`,
+      {
+        shallow: true,
+      },
+    );
   };
-
-  async function urlValidation() {
-    //console.log("pageBody.total: ", pageBody?.total);
-    console.log("in url validation: ", pageBody);
-    let validUrl = false;
-    await getResourcePage(); //.finally(() => {
-    if (pageBody?.total) {
-      const currUrl = fullPath;
-      console.log("currUrl: ", currUrl);
-      const regexResponse = PAGE_IN_URL_REGEX.exec(currUrl);
-      console.log("regexResponse: ", regexResponse);
-
-      if (regexResponse && regexResponse[0]) {
-        console.log("regexResponse[0]: ", regexResponse[0]);
-        const pageNumRegexResponse = UP_TO_5_DIGITS_REGEX.exec(regexResponse[0]);
-        const pageNumFromUrl = pageNumRegexResponse
-          ? (pageNumRegexResponse[0] as unknown as number)
-          : null;
-        if (
-          pageNumFromUrl &&
-          pageNumFromUrl <= Math.ceil(pageBody.total / NUMBER_IDS_RENDERED_AT_A_TIME)
-        ) {
-          console.log("pageNumFromUrl: ", pageNumFromUrl);
-          setActivePageNum(pageNumFromUrl);
-        }
-        //return true;
-        validUrl = true;
-      } else validUrl = false;
-    } else validUrl = false;
-    //});
-    return validUrl;
-  }
-
-  console.log("activePageNum line 108: ", activePageNum);
 
   return (
     <div
@@ -151,12 +86,11 @@ function ResourceTypeIDs() {
           <div> Create New {`${resourceType}`} </div>
         </Button>
       </Link>
-      <Center>
-        <h2
-          style={{ color: textGray, marginTop: "0px", marginBottom: "4px" }}
-        >{`${resourceType} IDs`}</h2>
-      </Center>
-      <Divider my="md" />
+      <h2 style={{ marginTop: "2px", marginBottom: "5px" }}>&nbsp;</h2>
+      {/* <Center> */}
+
+      {/* </Center> */}
+      <Divider my="md" style={{ marginTop: "20px" }} />
       {loadingRequest ? ( //if loading, Loader object is returned
         <Center>
           <div>Loading content...</div>
@@ -166,32 +100,35 @@ function ResourceTypeIDs() {
         <div>
           <div
             style={{
-              textAlign: "left",
+              textAlign: "center",
               overflowWrap: "break-word",
-              height: "450px",
+              height: "500px",
               padding: "10px",
-              paddingLeft: "20px",
+              //paddingLeft: "20px",
               backgroundColor: "#FFFFFF",
               border: "1px solid",
               borderColor: "#DEE2E6",
               borderRadius: "20px",
+              marginTop: "50px",
+              marginBottom: "20px",
               marginLeft: "150px",
               marginRight: "150px",
             }}
           >
+            <h2
+              style={{ color: textGray, marginTop: "0px", marginBottom: "8px" }}
+            >{`${resourceType} IDs`}</h2>
             <ResourceIDs jsonBody={pageBody}></ResourceIDs>
           </div>
-          {pageBody.total && pageBody.link
+          {pageBody && pageBody.total
             ? pageBody.total > NUMBER_IDS_RENDERED_AT_A_TIME && (
                 <Center>
                   <Pagination
                     total={
                       pageBody.total ? Math.ceil(pageBody.total / NUMBER_IDS_RENDERED_AT_A_TIME) : 1
                     }
-                    onChange={(num) => {
-                      setActivePageNum(num);
-                    }}
-                    page={activePageNum === 0 ? 1 : activePageNum}
+                    onChange={(num) => updatePageRoute(num)}
+                    page={activePageNum}
                     color="cyan"
                     style={{ marginTop: "10px" }}
                   ></Pagination>

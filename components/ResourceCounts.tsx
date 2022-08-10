@@ -69,7 +69,7 @@ const ResourceCounts = () => {
    */
   const ResourceButtonsGroup = () => {
     const buttonArray = sortResourceArray(resources).map((resourceType) => (
-      <Link href={`/${resourceType}`} key={resourceType} passHref>
+      <Link href={`/${resourceType}?page=1`} key={resourceType} passHref>
         <Button
           fullWidth
           compact
