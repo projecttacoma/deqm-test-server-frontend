@@ -26,6 +26,7 @@ import {
 } from "../../../styles/codeColorScheme";
 import { fhirJson } from "@fhir-typescript/r4-core";
 import ResourceMenu from "../../../components/ResourceMenu";
+import { textGray } from "../../../styles/appColors";
 /**
  * Component which displays the JSON body of an individual resource and a back button.
  * If the resource is a Measure, an evaluate measure button is also displayed.
@@ -169,9 +170,12 @@ function ResourceIDPage() {
       <ResourceMenu resourceType={resourceType} id={id} measureArray={measureArray} url="evaluate" label="Evaluate Measure"/> 
     </div>
   )}
-  
-  
 
+      <Center>
+        <h2
+          style={{ color: textGray, marginTop: "0px", marginBottom: "8px" }}
+        >{`${resourceType}/${id}`}</h2>
+      </Center>
     </div>
   );
 

@@ -38,6 +38,17 @@ import { fhirJson } from "@fhir-typescript/r4-core";
 const DEFAULT_PERIOD_START = new Date(`${DateTime.now().year}-01-01T00:00:00`);
 const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
 
+/**
+ * CareGapsPage is a page that renders a back button, pre-filled DatePickers, radio buttons,
+ * auto-complete boxes, a text preview of the request, a calculate button, and a display of the gaps in care evaluation.
+ * The DatePickers are pre-filled with a Measure's effective period dates or default dates.
+ * The Patient SelectComponent is enabled if the selected radio button is "Subject".
+ * The Organization and Practitioner SelectComponents are enabled if the selected radio button is "Organization".
+ * If the url resourceType is not a Measure, an error message is displayed.
+ * If the Gaps in Care request succeeds, a Prism component with the evaluation is rendered. Otherwise,
+ * an error notification appears.
+ * @returns React node with a back button, MeasureDatePickers, SelectComponents, a RadioGroup, a request preview as Text, and a calculate Button
+ */
 const CareGapsPage = () => {
   const router = useRouter();
   const { resourceType, id, patient, practitioner, organization } = router.query;
