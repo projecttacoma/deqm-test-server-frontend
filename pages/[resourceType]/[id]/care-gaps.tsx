@@ -40,7 +40,7 @@ const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
 
 const CareGapsPage = () => {
   const router = useRouter();
-  const { resourceType, id } = router.query;
+  const { resourceType, id, patient, practitioner, organization } = router.query;
   const [radioValue, setRadioValue] = useState("Subject");
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
@@ -61,6 +61,21 @@ const CareGapsPage = () => {
       setPatientValue("");
     }
   }, [radioValue]);
+
+  useEffect(() => {
+    setPatientValue(patient ? patient.toString() : "");
+    setRadioValue(patient ? "Subject" : radioValue);
+  }, [patient]);
+
+  useEffect(() => {
+    setPractitionerValue(practitioner ? practitioner.toString() : "");
+    setRadioValue(practitioner ? "Organization" : radioValue);
+  }, [practitioner]);
+
+  useEffect(() => {
+    setRadioValue(organization ? "Organization" : radioValue);
+    setOrganizationValue(organization ? organization.toString() : "");
+  }, [organization]);
 
   /**
    * createRequestPreview builds the request preview with the care-gaps state variables

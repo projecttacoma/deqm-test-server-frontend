@@ -41,6 +41,104 @@ describe("measure resource ID render", () => {
   });
 });
 
+describe("patient resource ID render", () => {
+  window.ResizeObserver = mockResizeObserver;
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation("");
+  });
+
+  it("should display button for evaluate measure and for care gaps", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Patient", id: "Patient/123" },
+          })}
+        >
+          <ResourceIDPage />
+        </RouterContext.Provider>,
+      );
+    });
+
+    //for Measure resources, "Evaluate Measure" and "Calculate Care Gaps" buttons will be in the document
+    expect(await screen.findByRole("button", { name: "Evaluate Measure" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Care Gaps" })).toBeInTheDocument();
+  });
+});
+
+describe("practitioner resource ID render", () => {
+  window.ResizeObserver = mockResizeObserver;
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation("");
+  });
+
+  it("should display button for evaluate measure and for care gaps", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Practitioner", id: "Practitioner/123" },
+          })}
+        >
+          <ResourceIDPage />
+        </RouterContext.Provider>,
+      );
+    });
+
+    //for Measure resources, "Evaluate Measure" and "Calculate Care Gaps" buttons will be in the document
+    expect(await screen.findByRole("button", { name: "Evaluate Measure" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Care Gaps" })).toBeInTheDocument();
+  });
+});
+
+describe("group resource ID render", () => {
+  window.ResizeObserver = mockResizeObserver;
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation("");
+  });
+
+  it("should display button for evaluate measure and for care gaps", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Group", id: "Group/123" },
+          })}
+        >
+          <ResourceIDPage />
+        </RouterContext.Provider>,
+      );
+    });
+
+    //for Measure resources, "Evaluate Measure" and "Calculate Care Gaps" buttons will be in the document
+    expect(await screen.findByRole("button", { name: "Evaluate Measure" })).toBeInTheDocument();
+  });
+});
+
+describe("observation resource ID render", () => {
+  window.ResizeObserver = mockResizeObserver;
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation("");
+  });
+
+  it("should display button for evaluate measure and for care gaps", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Organization", id: "Organization/123" },
+          })}
+        >
+          <ResourceIDPage />
+        </RouterContext.Provider>,
+      );
+    });
+
+    //for Measure resources, "Evaluate Measure" and "Calculate Care Gaps" buttons will be in the document
+    expect(await screen.findByRole("button", { name: "Care Gaps" })).toBeInTheDocument();
+  });
+});
+
 describe("resource ID render", () => {
   window.ResizeObserver = mockResizeObserver;
   beforeAll(() => {

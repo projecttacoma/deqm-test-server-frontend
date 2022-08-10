@@ -49,23 +49,37 @@ const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
  */
 const EvaluateMeasurePage = () => {
   const router = useRouter();
-  const { resourceType, id } = router.query;
+  const { resourceType, id, patient, group, practitioner } = router.query;
   const [radioValue, setRadioValue] = useState("Subject");
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
   const [measureReportBody, setMeasureReportBody] = useState("");
   const [gridColSpans, setGridColSpans] = useState([3, 3, 0]);
   const [practitionerValue, setPractitionerValue] = useState("");
-  const [patientValue, setPatientValue] = useState("");
+  const [patientValue, setPatientValue] = useState(patient ? patient.toString() : "");
   const [groupValue, setGroupValue] = useState("");
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
   const [periodEnd, setPeriodEnd] = useState<Date>(DEFAULT_PERIOD_END);
 
   useEffect(() => {
+    setPatientValue(patient ? patient.toString() : "");
+    setGroupValue(group ? group.toString() : "");
+    setRadioValue(group ? "Population" : "Subject");
+  }, [patient, group]);
+
+  useEffect(() => {
     if (radioValue === "Population") {
       setPatientValue("");
     }
+    // if (radioValue === "Subject") {
+    //   setGroupValue("");
+    // }
   }, [radioValue]);
+
+  useEffect(() => {
+    setPractitionerValue(practitioner ? practitioner.toString() : "");
+  }, [practitioner]);
+
 
   /**
    * createRequestPreview builds the request preview with the evaluate measure state variables
