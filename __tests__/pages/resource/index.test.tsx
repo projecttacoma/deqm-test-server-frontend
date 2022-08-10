@@ -1,4 +1,4 @@
-import { render, screen, act, fireEvent } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import {
   getMockFetchImplementation,
@@ -8,41 +8,6 @@ import {
 import ResourceTypeIDs from "../../../pages/[resourceType]";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import { fhirJson } from "@fhir-typescript/r4-core";
-
-const ID_BODY_NO_LINKS: fhirJson.Bundle = {
-  resourceType: "Bundle",
-  meta: {
-    lastUpdated: "2022-06-23T19:52:58.721Z",
-  },
-  type: "searchset",
-  total: 2,
-  entry: [
-    {
-      fullUrl: "http://localhost:3000/4_0_1/DiagnosticReport/denom-EXM125-3",
-      resource: {
-        resourceType: "DiagnosticReport",
-        id: "denom-EXM125-3",
-        meta: {
-          profile: [
-            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-diagnosticreport-note",
-          ],
-        },
-      },
-    },
-    {
-      fullUrl: "http://localhost:3000/4_0_1/DiagnosticReport/numer-EXM125-3",
-      resource: {
-        resourceType: "DiagnosticReport",
-        id: "numer-EXM125-3",
-        meta: {
-          profile: [
-            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-diagnosticreport-note",
-          ],
-        },
-      },
-    },
-  ],
-};
 
 const ID_BODY_ONE_PAGE: fhirJson.Bundle = {
   resourceType: "Bundle",
@@ -136,7 +101,7 @@ const ID_BODY_2_PAGES: fhirJson.Bundle = {
   ],
 };
 
-const RESOURCE_ID_ZERO_COUNT = {
+const RESOURCE_BODY_ZERO_COUNT = {
   resourceType: "Bundle",
   meta: {
     lastUpdated: "2022-06-27T15:18:52.234Z",
@@ -145,43 +110,17 @@ const RESOURCE_ID_ZERO_COUNT = {
   total: 0,
 };
 
-describe("resource ID button render", () => {
-  beforeAll(() => {
-    global.fetch = getMockFetchImplementation(ID_BODY_NO_LINKS);
-  });
+const RESOURCE_BODY_EMPTY_ENTRY = {
+  resourceType: "Bundle",
+  meta: {
+    lastUpdated: "2022-06-27T15:18:52.234Z",
+  },
+  type: "searchset",
+  total: 8,
+  entry: [],
+};
 
-  it("should display both id's as buttons and a create new resource button", async () => {
-    await act(async () => {
-      render(
-        <RouterContext.Provider
-          value={createMockRouter({
-            query: { resourceType: "DiagnosticReport" },
-          })}
-        >
-          <ResourceTypeIDs />
-        </RouterContext.Provider>,
-      );
-    });
-
-    expect(
-      await screen.findByRole("button", { name: "DiagnosticReport/denom-EXM125-3" }),
-    ).toBeInTheDocument();
-    expect(
-      await screen.findByRole("button", { name: "DiagnosticReport/numer-EXM125-3" }),
-    ).toBeInTheDocument();
-    expect(
-      await screen.findByRole("link", { name: "Create New DiagnosticReport" }),
-    ).toBeInTheDocument();
-
-    //resource ID navigation should not be rendered
-    expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
-  });
-  afterAll(() => {
-    jest.clearAllMocks();
-  });
-});
-
-describe("resource ID button no pagination", () => {
+describe("resource ID button render, no pagination", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(ID_BODY_ONE_PAGE);
   });
@@ -202,6 +141,10 @@ describe("resource ID button no pagination", () => {
     expect(
       await screen.findByRole("button", { name: "Library/denom-EXM125-3" }),
     ).toBeInTheDocument();
+    expect(
+      await screen.findByRole("button", { name: "Library/numer-EXM125-3" }),
+    ).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: "Create New Library" })).toBeInTheDocument();
 
     //resource ID navigation should not be rendered
     expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
@@ -211,12 +154,12 @@ describe("resource ID button no pagination", () => {
   });
 });
 
-describe("resource ID search pagination render", () => {
+describe("resource ID valid search pagination render", () => {
   beforeAll(() => {
     global.fetch = getMockFetchImplementation(ID_BODY_2_PAGES);
   });
 
-  it("should display search pagination buttons", async () => {
+  it("when no page is specified in router, page 1 is active by default", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -229,16 +172,53 @@ describe("resource ID search pagination render", () => {
       );
     });
 
-    //navigation buttons should be rendered
-    expect(screen.getByRole("navigation")).toBeInTheDocument();
+    //page 1 button should be "current" because no page was specified by the router
+    expect(screen.getByRole("button", { name: "1", current: "page" })).toBeInTheDocument();
 
-    //page 2 button should not be "current" until it is clicked on
-    const page2Button = screen.getByRole("button", { name: "2", current: false });
-    expect(page2Button).toBeInTheDocument();
+    //resource ID buttons should be rendered based on the fetch response
+    expect(
+      await screen.findByRole("button", { name: "Library/denom-EXM125-3" }),
+    ).toBeInTheDocument();
+  });
+
+  it("when page 1 is specified in router, page 1 is active", async () => {
     await act(async () => {
-      fireEvent.click(page2Button);
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Library", page: "1" },
+          })}
+        >
+          <ResourceTypeIDs />
+        </RouterContext.Provider>,
+      );
     });
-    expect(screen.getByRole("button", { name: "2", current: "page" })).toBeInTheDocument();
+
+    //page 1 button should be "current" because page=1 was specified by the router
+    expect(screen.getByRole("button", { name: "1", current: "page" })).toBeInTheDocument();
+
+    //resource ID buttons should be rendered based on the fetch response
+    expect(
+      await screen.findByRole("button", { name: "Library/denom-EXM125-3" }),
+    ).toBeInTheDocument();
+  });
+
+  it("when page >1 is specified in router, that page is active", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Library", page: "2" },
+          })}
+        >
+          <ResourceTypeIDs />
+        </RouterContext.Provider>,
+      );
+    });
+
+    //page 2 button should be "current"
+    const page2Button = screen.getByRole("button", { name: "2", current: "page" });
+    expect(page2Button).toBeInTheDocument();
 
     //resource ID buttons should be rendered based on the fetch response
     expect(
@@ -251,9 +231,39 @@ describe("resource ID search pagination render", () => {
   });
 });
 
+describe("Resource ID render when page number is invalid", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(RESOURCE_BODY_EMPTY_ENTRY);
+  });
+
+  it("should render No resources found message", async () => {
+    await act(async () => {
+      render(
+        <RouterContext.Provider
+          value={createMockRouter({
+            query: { resourceType: "Library", page: "3" },
+          })}
+        >
+          <ResourceTypeIDs />
+        </RouterContext.Provider>,
+      );
+    });
+
+    //when ResourceIDs is given a json body with an empty entry array, a no resources found message is rendered
+    expect(await screen.findByText("No resources found")).toBeInTheDocument();
+
+    //resource ID navigation should not be rendered
+    expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
+  });
+
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
+});
+
 describe("Tests for when the 'No resource found message' should display", () => {
   beforeAll(() => {
-    global.fetch = getMockFetchImplementation(RESOURCE_ID_ZERO_COUNT);
+    global.fetch = getMockFetchImplementation(RESOURCE_BODY_ZERO_COUNT);
   });
 
   it("should display 'No resources found' on the screen because the resource's count is zero", async () => {

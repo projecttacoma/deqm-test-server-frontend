@@ -45,7 +45,7 @@ const ResourceCounts = () => {
    */
   const getResourceCountsNodes = () => {
     return sortResourceArray(resources).map((resourceType) => (
-      <Link href={`/${resourceType}`} key={resourceType} passHref>
+      <Link href={`/${resourceType}?page=1`} key={resourceType} passHref>
         <Button
           fullWidth
           compact

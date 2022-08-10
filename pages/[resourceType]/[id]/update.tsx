@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import ResourceCodeEditor from "../../../components/ResourceCodeEditor";
-import { Button, Center, Stack, Text, Loader } from "@mantine/core";
+import { Button, Center, Stack, Text, Loader, Divider } from "@mantine/core";
 import { textGray } from "../../../styles/appColors";
 import BackButton from "../../../components/BackButton";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
@@ -60,8 +60,11 @@ const UpdateResourcePage = () => {
       <BackButton />
       <Stack spacing="xs">
         <Center>
-          <h2 style={{ color: textGray, marginTop: "2px" }}> Update Resource</h2>
+          <h2 style={{ color: textGray, marginTop: "2px", marginBottom: "0px" }}>
+            Update Resource
+          </h2>
         </Center>
+        <Divider my="sm" />
         <Center>
           <Text size="md" color={textGray}>
             Edit the FHIR resource body with valid JSON. Click Update Resource to update.
