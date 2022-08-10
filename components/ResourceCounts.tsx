@@ -1,8 +1,9 @@
-import { useEffect, useState, useContext } from "react";
-import { Badge, Button, Stack } from "@mantine/core";
+import { useEffect, useState, useContext, SetStateAction } from "react";
+import { Badge, Button, Grid, Input, Stack } from "@mantine/core";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
 import Link from "next/link";
 import { CountContext } from "./CountContext";
+import { Search } from "tabler-icons-react";
 
 /**
  * interface for object that is returned from a request to the resourceCunt endpoint.
@@ -19,6 +20,7 @@ export interface ResourceCountResponse {
  */
 const ResourceCounts = () => {
   const [resources, setResources] = useState<ResourceCountResponse>({});
+  const [searchValue, setSearchValue] = useState("");
   const context = useContext(CountContext);
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/resourceCount`)
@@ -40,11 +42,41 @@ const ResourceCounts = () => {
   }, [context.countChange]);
 
   /**
+   * sorts the keys in descending order based on their count, and filters out keys based on the value from the searchbar
+   * @params an object with a string: number key value pair
+   * @returns array of sorted and filtered keys and values
+   */
+  const sortResourceArray = (toSort: { [x: string]: number }): string[] => {
+    if (searchValue) {
+      //filters the array based on searchValue
+      const filteredArray = Object.keys(toSort).filter((el) =>
+        el.toLowerCase().includes(searchValue),
+      );
+      return filteredArray.sort((a, b) => {
+        return toSort[b] - toSort[a];
+      });
+    }
+
+    //sorts keys in descending order based on their value
+    return Object.keys(toSort).sort((a, b) => {
+      return toSort[b] - toSort[a];
+    });
+  };
+
+  /**
    * Sorts the resource counts key:value pairs object, then returns them as an array of buttons
    * @returns array of JSX Buttons that are the sorted resources and their counts
    */
-  const getResourceCountsNodes = () => {
-    return sortResourceArray(resources).map((resourceType) => (
+  const GetResourceCountsNodes = () => {
+    let keyCount: string[] = sortResourceArray(resources);
+
+    //filters the resource array when searchValue updates
+    useEffect(() => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      keyCount = sortResourceArray(resources);
+    }, [searchValue]);
+
+    const myarray = keyCount.map((resourceType) => (
       <Link href={`/${resourceType}`} key={resourceType} passHref>
         <Button
           fullWidth
@@ -67,24 +99,30 @@ const ResourceCounts = () => {
         </Button>
       </Link>
     ));
+    return <div> {myarray} </div>;
   };
 
   return (
     <Stack align="flex-start" spacing="xs" style={{ marginBottom: 30 }}>
-      {getResourceCountsNodes()}
+      <Grid>
+        <Grid.Col xs={10} sm={10}>
+          <Input
+            value={searchValue}
+            onChange={(event: { currentTarget: { value: SetStateAction<string> } }) =>
+              setSearchValue(event.currentTarget.value)
+            }
+            icon={<Search size={18} />}
+            placeholder="Search"
+            size="sm"
+            width="fullWidth"
+            style={{ marginLeft: "1.5vw", width: "16vw" }}
+          />
+        </Grid.Col>
+        <Grid.Col xs={2} sm={2}></Grid.Col>
+      </Grid>
+      <GetResourceCountsNodes />
     </Stack>
   );
 };
 
-/**
- * Sorts an object of string:number key:value pairs by the value of number
- * @param toSort is the object that is to be sorted
- * @returns string[] a sorted array of the string keys
- */
-function sortResourceArray(toSort: { [x: string]: number }): string[] {
-  return Object.keys(toSort).sort((a, b) => {
-    return toSort[b] - toSort[a];
-  });
-}
-
-export { ResourceCounts, sortResourceArray };
+export { ResourceCounts };
