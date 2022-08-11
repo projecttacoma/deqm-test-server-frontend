@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import ResourceIDs from "../../components/ResourceIDs";
-import { Center, Divider, Loader, Pagination } from "@mantine/core";
+import { Center, Divider, Grid, Loader, Pagination } from "@mantine/core";
 import { fhirJson } from "@fhir-typescript/r4-core";
 import { Button } from "@mantine/core";
 import Link from "next/link";
@@ -29,7 +29,7 @@ function ResourceTypeIDs() {
 
   useEffect(() => {
     let pageUrl = `${resourceType}`;
-    if (page != null) {
+    if (page) {
       setActivePageNum(parseInt(page as string));
       pageUrl = `${resourceType}?page=${page}`;
     }
@@ -72,25 +72,25 @@ function ResourceTypeIDs() {
         paddingRight: "20px",
       }}
     >
-      <Link href={`${resourceType}/create`} key={`create-${resourceType}`} passHref>
-        <Button
-          component="a"
-          color="cyan"
-          radius="md"
-          size="md"
-          variant="filled"
-          style={{
-            float: "right",
-          }}
-        >
-          <div> Create New {`${resourceType}`} </div>
-        </Button>
-      </Link>
-      <h2 style={{ marginTop: "2px", marginBottom: "5px" }}>&nbsp;</h2>
-      {/* <Center> */}
-
-      {/* </Center> */}
-      <Divider my="md" style={{ marginTop: "20px" }} />
+      <Grid>
+        <Grid.Col span={3} offset={9}>
+          <Link href={`${resourceType}/create`} key={`create-${resourceType}`} passHref>
+            <Button
+              component="a"
+              color="cyan"
+              radius="md"
+              size="md"
+              variant="filled"
+              style={{
+                float: "right",
+              }}
+            >
+              <div> Create New {`${resourceType}`} </div>
+            </Button>
+          </Link>
+        </Grid.Col>
+      </Grid>
+      <Divider my="md" style={{ marginTop: "15px" }} />
       {loadingRequest ? ( //if loading, Loader object is returned
         <Center>
           <div>Loading content...</div>
@@ -104,7 +104,6 @@ function ResourceTypeIDs() {
               overflowWrap: "break-word",
               height: "500px",
               padding: "10px",
-              //paddingLeft: "20px",
               backgroundColor: "#FFFFFF",
               border: "1px solid",
               borderColor: "#DEE2E6",
