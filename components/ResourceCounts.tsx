@@ -44,13 +44,13 @@ const ResourceCounts = () => {
   /**
    * sorts the keys in descending order based on their count, and filters out keys based on the value from the searchbar
    * @params an object with a string: number key value pair
-   * @returns array of sorted and filtered keys and values
+   * @returns array of sorted and filtered keys
    */
   const sortResourceArray = (toSort: { [x: string]: number }): string[] => {
     if (searchValue) {
       //filters the array based on searchValue
       const filteredArray = Object.keys(toSort).filter((el) =>
-        el.toLowerCase().includes(searchValue),
+        el.toLowerCase().includes(searchValue.toLowerCase()),
       );
       return filteredArray.sort((a, b) => {
         return toSort[b] - toSort[a];
@@ -67,16 +67,8 @@ const ResourceCounts = () => {
    * Sorts the resource counts key:value pairs object, then returns them as an array of buttons
    * @returns array of JSX Buttons that are the sorted resources and their counts
    */
-  const GetResourceCountsNodes = () => {
-    let keyCount: string[] = sortResourceArray(resources);
-
-    //filters the resource array when searchValue updates
-    useEffect(() => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      keyCount = sortResourceArray(resources);
-    }, [searchValue]);
-
-    const myarray = keyCount.map((resourceType) => (
+  const ResourceButtonsGroup = () => {
+    const buttonArray = sortResourceArray(resources).map((resourceType) => (
       <Link href={`/${resourceType}`} key={resourceType} passHref>
         <Button
           fullWidth
@@ -99,7 +91,7 @@ const ResourceCounts = () => {
         </Button>
       </Link>
     ));
-    return <div> {myarray} </div>;
+    return <div> {buttonArray} </div>;
   };
 
   return (
@@ -120,7 +112,7 @@ const ResourceCounts = () => {
         </Grid.Col>
         <Grid.Col xs={2} sm={2}></Grid.Col>
       </Grid>
-      <GetResourceCountsNodes />
+      <ResourceButtonsGroup />
     </Stack>
   );
 };
