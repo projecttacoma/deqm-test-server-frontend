@@ -145,29 +145,8 @@ function ResourceIDPage() {
           </Link>
         </div>
       )}
-      <Link href={`/${resourceType}/${id}/update`} key={`update-${id}`} passHref>
-        <Button
-          component="a"
-          color="cyan"
-          radius="md"
-          size="sm"
-          variant="filled"
-          style={{
-            float: "right",
-            marginRight: "8px",
-            marginLeft: "8px",
-          }}
-          key={`update-${id}`}
-        >
-          <div> Update </div>
-        </Button>
-      </Link>
-      <Center>
-        <h2
-          style={{ color: textGray, marginTop: "0px", marginBottom: "8px" }}
-        >{`${resourceType}/${id}`}</h2>
-      </Center>
-      {/** limits which pages display evaluate measure and care gap buttons based on functionality */}
+      {/** limits which pages display evaluate measure and care gap buttons */}
+      {/** both buttons display a drop down menu with measure resource options */}
       {(resourceType === "Patient" || resourceType === "Practitioner") && (
         <div>
           <ResourceMenu
