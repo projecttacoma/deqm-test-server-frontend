@@ -1,15 +1,11 @@
-import { render, screen, act, within } from "@testing-library/react";
+import { render, screen, act, within, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import {
   mantineRecoilWrap,
   getMockFetchImplementation,
   getMockFetchImplementationError,
 } from "../helpers/testHelpers";
-import {
-  ResourceCountResponse,
-  ResourceCounts,
-  sortResourceArray,
-} from "../../components/ResourceCounts";
+import { ResourceCountResponse, ResourceCounts } from "../../components/ResourceCounts";
 
 const RESOURCE_COUNTS_BODY: ResourceCountResponse = {
   Account: 0,
@@ -34,12 +30,20 @@ describe("resource Counts render", () => {
     expect(screen.getByRole("link", { name: "Appointment 0" })).toBeInTheDocument();
   });
 
-  it("the retrieved resources should be sorted by count, then alphabetically", async () => {
-    let sortedArray;
+  it("should display the search bar and searched resources", async () => {
     await act(async () => {
-      sortedArray = sortResourceArray(RESOURCE_COUNTS_BODY);
+      render(mantineRecoilWrap(<ResourceCounts />));
     });
-    expect(sortedArray).toEqual(["Measure", "Patient", "Account", "Appointment"]);
+
+    const searchbar = screen.getByRole("textbox");
+
+    //mocks user input to test filtering of resources
+    await act(async () => {
+      fireEvent.change(searchbar, { target: { value: "patient" } });
+
+      expect(screen.getByRole("link", { name: "Patient 2" })).toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: "Account 0" })).not.toBeInTheDocument();
+    });
   });
 });
 
