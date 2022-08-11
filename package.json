@@ -18,7 +18,7 @@
     "@codemirror/lang-javascript": "^6.0.1",
     "@codemirror/lang-json": "^6.0.0",
     "@fhir-typescript/r4-core": "0.0.12-beta.11",
-    "@mantine/core": "^4.2.4",
+    "@mantine/core": "^4.2.12",
     "@mantine/dates": "^4.2.12",
     "@mantine/hooks": "^4.2.4",
     "@mantine/modals": "^4.2.12",

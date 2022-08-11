@@ -471,3 +471,83 @@ describe("Evaluate measure successful request", () => {
     expect(spanText.includes('"denom-EXM125-3"')).toBe(true);
   });
 });
+
+describe("Prepopulated Fields on the Evaluate Measure Page", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
+  });
+  window.ResizeObserver = mockResizeObserver;
+
+  it("should display a patient value in the select patient component when a patient is provided in the router query", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: {
+                resourceType: "Measure",
+                id: "measure-EXM104-8.4.000",
+                patient: "Patient/denomexcl-EXM124",
+              },
+            })}
+          >
+            <CareGapsPage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const autocomplete = screen.getByRole("searchbox", { name: "Select Patient" }) as HTMLElement;
+    expect(autocomplete).toHaveValue("Patient/denomexcl-EXM124");
+    const subjectRadio = screen.getByLabelText("Subject");
+    expect(subjectRadio).toBeChecked();
+  });
+
+  it("should display a practitioner value in the select practitioner component when a practitioner is provided in the router query", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: {
+                resourceType: "Measure",
+                id: "measure-EXM104-8.4.000",
+                practitioner: "Practitioner/123",
+              },
+            })}
+          >
+            <CareGapsPage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const autocomplete = screen.getByRole("searchbox", {
+      name: "Select Practitioner",
+    }) as HTMLElement;
+    expect(autocomplete).toHaveValue("Practitioner/123");
+  });
+
+  it("should display a group value in the select group component when a group is provided in the router query", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: {
+                resourceType: "Measure",
+                id: "measure-EXM104-8.4.000",
+                organization: "Organization/123",
+              },
+            })}
+          >
+            <CareGapsPage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const populationRadio = screen.getByLabelText("Organization");
+    expect(populationRadio).toBeChecked();
+  });
+});

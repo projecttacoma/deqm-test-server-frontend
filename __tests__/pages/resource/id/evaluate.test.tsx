@@ -457,3 +457,81 @@ describe("Evaluate measure successful request", () => {
     expect(spanText.includes('"2022-07-21T18:12:25.008Z"')).toBe(true);
   });
 });
+
+describe("Select component, Radio button, and request preview render", () => {
+  beforeAll(() => {
+    global.fetch = getMockFetchImplementation(RESOURCE_ID_BODY);
+  });
+  window.ResizeObserver = mockResizeObserver;
+
+  it("should display a patient value in the select patient component when a patient is provided in the router query", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: {
+                resourceType: "Measure",
+                id: "measure-EXM104-8.4.000",
+                patient: "Patient/denomexcl-EXM124",
+              },
+            })}
+          >
+            <EvaluateMeasurePage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const autocomplete = screen.getByRole("searchbox", { name: "Select Patient" }) as HTMLElement;
+    expect(autocomplete).toHaveValue("Patient/denomexcl-EXM124");
+    const subjectRadio = screen.getByLabelText("Subject");
+    expect(subjectRadio).toBeChecked();
+  });
+
+  it("should display a practitioner value in the select practitioner component when a practitioner is provided in the router query", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: {
+                resourceType: "Measure",
+                id: "measure-EXM104-8.4.000",
+                practitioner: "Practitioner/123",
+              },
+            })}
+          >
+            <EvaluateMeasurePage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+
+    const autocomplete = screen.getByRole("searchbox", {
+      name: "Select Practitioner",
+    }) as HTMLElement;
+    expect(autocomplete).toHaveValue("Practitioner/123");
+  });
+
+  it("should display a group value in the select group component when a group is provided in the router query", async () => {
+    await act(async () => {
+      render(
+        mantineRecoilWrap(
+          <RouterContext.Provider
+            value={createMockRouter({
+              query: { resourceType: "Measure", id: "measure-EXM104-8.4.000", group: "Group/123" },
+            })}
+          >
+            <EvaluateMeasurePage />
+          </RouterContext.Provider>,
+        ),
+      );
+    });
+    const populationRadio = screen.getByLabelText("Population");
+    expect(populationRadio).toBeChecked();
+
+    const autocomplete = screen.getByRole("searchbox", { name: "Select Group" }) as HTMLElement;
+    expect(autocomplete).toHaveValue("Group/123");
+  });
+});

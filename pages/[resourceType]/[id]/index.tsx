@@ -16,6 +16,8 @@ import {
   replaceDelete,
 } from "../../../styles/codeColorScheme";
 import { textGray } from "../../../styles/appColors";
+import { fhirJson } from "@fhir-typescript/r4-core";
+import ResourceMenu from "../../../components/ResourceMenu";
 /**
  * Component which displays the JSON body of an individual resource and a back button.
  * If the resource is a Measure, an evaluate measure button is also displayed.
@@ -27,6 +29,7 @@ function ResourceIDPage() {
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
   const [pageBody, setPageBody] = useState("");
+  const [measureArray, setMeasureArray] = useState<(fhirJson.BundleEntry | null)[]>();
 
   useEffect(() => {
     if (resourceType && id) {
@@ -52,6 +55,24 @@ function ResourceIDPage() {
             autoClose: false,
           });
         });
+      //fetches measure resource list from the server
+      if (resourceType) {
+        setLoadingRequest(true);
+        fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure`)
+          .then((data) => {
+            return data.json() as Promise<fhirJson.Bundle>;
+          })
+          .then((resourcePageBody) => {
+            setMeasureArray(resourcePageBody.entry);
+            setFetchingError(false);
+            setLoadingRequest(false);
+          })
+          .catch((error) => {
+            console.log(error.message);
+            setFetchingError(true);
+            setLoadingRequest(false);
+          });
+      }
     }
   }, [resourceType, id]);
 
@@ -70,6 +91,24 @@ function ResourceIDPage() {
           <DeleteButton />
         </ModalsProvider>
       </MantineProvider>
+      <Link href={`/${resourceType}/${id}/update`} key={`update-${id}`} passHref>
+        <Button
+          component="a"
+          color="cyan"
+          radius="md"
+          size="sm"
+          variant="filled"
+          style={{
+            float: "right",
+            marginRight: "8px",
+            marginLeft: "8px",
+          }}
+          key={`update-${id}`}
+        >
+          <div> Update </div>
+        </Button>
+      </Link>
+
       {resourceType === "Measure" && (
         <div>
           <Link href={`/${resourceType}/${id}/care-gaps`} key={`care-gaps-${id}`} passHref>
@@ -128,6 +167,47 @@ function ResourceIDPage() {
           style={{ color: textGray, marginTop: "0px", marginBottom: "8px" }}
         >{`${resourceType}/${id}`}</h2>
       </Center>
+      {/** limits which pages display evaluate measure and care gap buttons based on functionality */}
+      {(resourceType === "Patient" || resourceType === "Practitioner") && (
+        <div>
+          <ResourceMenu
+            resourceType={resourceType}
+            id={id}
+            measureArray={measureArray}
+            url="evaluate"
+            label="Evaluate Measure"
+          />
+          <ResourceMenu
+            resourceType={resourceType}
+            id={id}
+            measureArray={measureArray}
+            url="care-gaps"
+            label="Care Gaps"
+          />
+        </div>
+      )}
+      {resourceType === "Organization" && (
+        <div>
+          <ResourceMenu
+            resourceType={resourceType}
+            id={id}
+            measureArray={measureArray}
+            url="care-gaps"
+            label="Care Gaps"
+          />
+        </div>
+      )}
+      {resourceType === "Group" && (
+        <div>
+          <ResourceMenu
+            resourceType={resourceType}
+            id={id}
+            measureArray={measureArray}
+            url="evaluate"
+            label="Evaluate Measure"
+          />
+        </div>
+      )}
     </div>
   );
 
