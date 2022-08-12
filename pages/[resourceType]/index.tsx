@@ -69,11 +69,21 @@ function ResourceTypeIDs() {
   return (
     <div
       style={{
-        paddingRight: "20px",
+        width: "78vw",
       }}
     >
-      <Grid>
-        <Grid.Col span={3} offset={9}>
+      <Grid columns={7}>
+        <Grid.Col offset={3} span={2} style={{ paddingTop: "5px" }}>
+          <h2
+            style={{ color: textGray, marginTop: "0px", marginBottom: "8px" }}
+          >{`${resourceType} IDs`}</h2>
+        </Grid.Col>
+        <Grid.Col
+          span={2}
+          style={{
+            paddingTop: "5px",
+          }}
+        >
           <Link href={`${resourceType}/create`} key={`create-${resourceType}`} passHref>
             <Button
               component="a"
@@ -90,7 +100,7 @@ function ResourceTypeIDs() {
           </Link>
         </Grid.Col>
       </Grid>
-      <Divider my="md" style={{ marginTop: "15px" }} />
+      <Divider my="md" style={{ marginTop: "14px" }} />
       {loadingRequest ? ( //if loading, Loader object is returned
         <Center>
           <div>Loading content...</div>
@@ -98,27 +108,26 @@ function ResourceTypeIDs() {
         </Center>
       ) : !fetchingError && pageBody ? ( //if http request was successful, ResourceID component is returned
         <div>
-          <div
-            style={{
-              textAlign: "center",
-              overflowWrap: "break-word",
-              height: "500px",
-              padding: "10px",
-              backgroundColor: "#FFFFFF",
-              border: "1px solid",
-              borderColor: "#DEE2E6",
-              borderRadius: "20px",
-              marginTop: "50px",
-              marginBottom: "20px",
-              marginLeft: "150px",
-              marginRight: "150px",
-            }}
-          >
-            <h2
-              style={{ color: textGray, marginTop: "0px", marginBottom: "8px" }}
-            >{`${resourceType} IDs`}</h2>
-            <ResourceIDs jsonBody={pageBody}></ResourceIDs>
-          </div>
+          <Center>
+            <div
+              style={{
+                textAlign: "center",
+                overflowWrap: "break-word",
+                height: "500px",
+                padding: "10px",
+                backgroundColor: "#FFFFFF",
+                border: "1px solid",
+                borderColor: "#DEE2E6",
+                borderRadius: "20px",
+                marginTop: "10px",
+                marginBottom: "20px",
+                marginLeft: "150px",
+                marginRight: "150px",
+              }}
+            >
+              <ResourceIDs jsonBody={pageBody}></ResourceIDs>
+            </div>
+          </Center>
           {pageBody && pageBody.total
             ? pageBody.total > NUMBER_IDS_RENDERED_AT_A_TIME && (
                 <Center>

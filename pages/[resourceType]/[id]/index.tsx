@@ -8,12 +8,11 @@ import { cleanNotifications, showNotification } from "@mantine/notifications";
 import DeleteButton from "../../../components/DeleteButton";
 import { ModalsProvider } from "@mantine/modals";
 import {
-  replaceDark,
-  replaceGray,
-  replaceTeal,
-  replaceRed,
-  replaceBlue,
-  replaceDelete,
+  allWhite,
+  AllDarkGray,
+  allGreen,
+  allCobalt,
+  shadesOfStrawberry,
 } from "../../../styles/codeColorScheme";
 import { fhirJson } from "@fhir-typescript/r4-core";
 import ResourceMenu from "../../../components/ResourceMenu";
@@ -82,7 +81,7 @@ function ResourceIDPage() {
         //changes hex values associated with each Mantine color name to improve UI
         theme={{
           colors: {
-            pink: replaceDelete,
+            pink: shadesOfStrawberry,
           },
         }}
       >
@@ -210,11 +209,11 @@ function ResourceIDPage() {
             //changes hex values associated with each Mantine color name to improve UI
             theme={{
               colors: {
-                gray: replaceGray,
-                dark: replaceDark,
-                teal: replaceTeal,
-                red: replaceRed,
-                blue: replaceBlue,
+                gray: AllDarkGray,
+                dark: allWhite,
+                teal: shadesOfStrawberry,
+                red: allGreen,
+                blue: allCobalt,
               },
             }}
           >

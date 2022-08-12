@@ -17,21 +17,11 @@ import BackButton from "../../../components/BackButton";
 import SelectComponent from "../../../components/SelectComponent";
 import MeasureDatePickers from "../../../components/MeasureDatePickers";
 import { Grid } from "@mantine/core";
-import {
-  replaceBackground,
-  replaceOutline,
-  replaceSecondRed,
-} from "../../../styles/codeColorScheme";
+import { shadesOfGray, shadesOfCyan, shadesOfStrawberry } from "../../../styles/codeColorScheme";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import { Check, X } from "tabler-icons-react";
 import { Prism } from "@mantine/prism";
-import {
-  replaceDark,
-  replaceGray,
-  replaceTeal,
-  replaceRed,
-  replaceBlue,
-} from "../../../styles/codeColorScheme";
+import { allWhite, AllDarkGray, allGreen, allCobalt } from "../../../styles/codeColorScheme";
 
 const DEFAULT_PERIOD_START = new Date(`${DateTime.now().year}-01-01T00:00:00`);
 const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
@@ -194,9 +184,9 @@ const EvaluateMeasurePage = () => {
               // changes hex values associated with each Mantine color name to improve UI
               theme={{
                 colors: {
-                  gray: replaceBackground,
-                  blue: replaceOutline,
-                  red: replaceSecondRed,
+                  gray: shadesOfGray,
+                  blue: shadesOfCyan,
+                  red: shadesOfStrawberry,
                 },
               }}
             >
@@ -310,11 +300,11 @@ const EvaluateMeasurePage = () => {
                         //changes hex values associated with each Mantine color name to improve UI
                         theme={{
                           colors: {
-                            gray: replaceGray,
-                            dark: replaceDark,
-                            teal: replaceTeal,
-                            red: replaceRed,
-                            blue: replaceBlue,
+                            gray: AllDarkGray,
+                            dark: allWhite,
+                            teal: shadesOfStrawberry,
+                            red: allGreen,
+                            blue: allCobalt,
                           },
                         }}
                       >

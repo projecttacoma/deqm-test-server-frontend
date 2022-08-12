@@ -10,7 +10,7 @@ import React, { useContext, useState } from "react";
 import { CountContext } from "../../components/CountContext";
 import MultiSelectComponent from "../../components/MultiSelectComponent";
 import { fhirJson } from "@fhir-typescript/r4-core";
-import { replaceBackground } from "../../styles/codeColorScheme";
+import { shadesOfGray } from "../../styles/codeColorScheme";
 
 /**
  * CreateResourcePage is a page that renders a code editor, a submit button for creating resources, and a back button.
@@ -94,7 +94,7 @@ const CreateResourcePage = () => {
               // changes hex values associated with each Mantine color name to improve UI
               theme={{
                 colors: {
-                  gray: replaceBackground,
+                  gray: shadesOfGray,
                 },
               }}
             >

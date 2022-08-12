@@ -18,21 +18,11 @@ import BackButton from "../../../components/BackButton";
 import SelectComponent from "../../../components/SelectComponent";
 import MeasureDatePickers from "../../../components/MeasureDatePickers";
 import { Grid } from "@mantine/core";
-import {
-  replaceBackground,
-  replaceOutline,
-  replaceSecondRed,
-} from "../../../styles/codeColorScheme";
+import { shadesOfGray, shadesOfCyan, shadesOfStrawberry } from "../../../styles/codeColorScheme";
 import { Prism } from "@mantine/prism";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import { Check, X } from "tabler-icons-react";
-import {
-  replaceDark,
-  replaceGray,
-  replaceTeal,
-  replaceRed,
-  replaceBlue,
-} from "../../../styles/codeColorScheme";
+import { allWhite, AllDarkGray, allGreen, allCobalt } from "../../../styles/codeColorScheme";
 import { fhirJson } from "@fhir-typescript/r4-core";
 
 const DEFAULT_PERIOD_START = new Date(`${DateTime.now().year}-01-01T00:00:00`);
@@ -206,9 +196,9 @@ const CareGapsPage = () => {
               // changes hex values associated with each Mantine color name to improve UI
               theme={{
                 colors: {
-                  gray: replaceBackground,
-                  blue: replaceOutline,
-                  red: replaceSecondRed,
+                  gray: shadesOfGray,
+                  blue: shadesOfCyan,
+                  red: shadesOfStrawberry,
                 },
               }}
             >
@@ -349,7 +339,7 @@ const CareGapsPage = () => {
                     <MantineProvider
                       theme={{
                         colors: {
-                          cyan: replaceOutline,
+                          cyan: shadesOfCyan,
                         },
                       }}
                     >
@@ -381,11 +371,11 @@ const CareGapsPage = () => {
                         //changes hex values associated with each Mantine color name to improve UI
                         theme={{
                           colors: {
-                            gray: replaceGray,
-                            dark: replaceDark,
-                            teal: replaceTeal,
-                            red: replaceRed,
-                            blue: replaceBlue,
+                            gray: AllDarkGray,
+                            dark: allWhite,
+                            teal: shadesOfStrawberry,
+                            red: allGreen,
+                            blue: allCobalt,
                           },
                         }}
                       >
