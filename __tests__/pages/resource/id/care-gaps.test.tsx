@@ -528,7 +528,7 @@ describe("Prepopulated Fields on the Evaluate Measure Page", () => {
     expect(autocomplete).toHaveValue("Practitioner/123");
   });
 
-  it("should display a group value in the select group component when a group is provided in the router query", async () => {
+  it("should display an organization value in the select organization component when an organization is provided in the router query", async () => {
     await act(async () => {
       render(
         mantineRecoilWrap(

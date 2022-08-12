@@ -66,17 +66,8 @@ const EvaluateMeasurePage = () => {
     setPatientValue(patient ? patient.toString() : "");
     setGroupValue(group ? group.toString() : "");
     setRadioValue(group ? "Population" : "Subject");
-  }, [patient, group]);
-
-  useEffect(() => {
-    if (radioValue === "Population") {
-      setPatientValue("");
-    }
-  }, [radioValue]);
-
-  useEffect(() => {
     setPractitionerValue(practitioner ? practitioner.toString() : "");
-  }, [practitioner]);
+  }, [patient, group, practitioner]);
 
   /**
    * createRequestPreview builds the request preview with the evaluate measure state variables

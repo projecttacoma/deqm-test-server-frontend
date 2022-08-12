@@ -64,30 +64,17 @@ const CareGapsPage = () => {
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
   const [periodEnd, setPeriodEnd] = useState<Date>(DEFAULT_PERIOD_END);
 
-  useEffect(() => {
-    if (radioValue === "Subject") {
-      setOrganizationValue("");
-      setPractitionerValue("");
-    } else if (radioValue === "Organization") {
-      setPatientValue("");
-    }
-  }, [radioValue]);
-
   //fetches patient, organization, and practitioner values from url and populates state variables accordingly
   useEffect(() => {
     setPatientValue(patient ? patient.toString() : "");
     setRadioValue(patient ? "Subject" : radioValue);
-  }, [patient]);
+  }, [patient, radioValue]);
 
   useEffect(() => {
-    setPractitionerValue(practitioner ? practitioner.toString() : "");
-    setRadioValue(practitioner ? "Organization" : radioValue);
-  }, [practitioner]);
-
-  useEffect(() => {
-    setRadioValue(organization ? "Organization" : radioValue);
+    setRadioValue(organization || practitioner ? "Organization" : radioValue);
     setOrganizationValue(organization ? organization.toString() : "");
-  }, [organization]);
+    setPractitionerValue(practitioner ? practitioner.toString() : "");
+  }, [organization, practitioner, radioValue]);
 
   /**
    * createRequestPreview builds the request preview with the care-gaps state variables

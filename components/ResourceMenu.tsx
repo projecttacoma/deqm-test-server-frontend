@@ -20,6 +20,7 @@ export interface MenuProps {
 export default function ResourceMenu({ resourceType, id, measureArray, label, url }: MenuProps) {
   return (
     <Menu
+      size={300}
       style={{
         float: "right",
         marginRight: "8px",
