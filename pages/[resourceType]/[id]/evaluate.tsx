@@ -17,21 +17,11 @@ import BackButton from "../../../components/BackButton";
 import SelectComponent from "../../../components/SelectComponent";
 import MeasureDatePickers from "../../../components/MeasureDatePickers";
 import { Grid } from "@mantine/core";
-import {
-  replaceBackground,
-  replaceOutline,
-  replaceSecondRed,
-} from "../../../styles/codeColorScheme";
+import { shadesOfGray, shadesOfCyan, shadesOfStrawberry } from "../../../styles/codeColorScheme";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import { Check, X } from "tabler-icons-react";
 import { Prism } from "@mantine/prism";
-import {
-  replaceDark,
-  replaceGray,
-  replaceTeal,
-  replaceRed,
-  replaceBlue,
-} from "../../../styles/codeColorScheme";
+import { allWhite, AllDarkGray, allGreen, allCobalt } from "../../../styles/codeColorScheme";
 
 const DEFAULT_PERIOD_START = new Date(`${DateTime.now().year}-01-01T00:00:00`);
 const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
@@ -49,23 +39,25 @@ const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
  */
 const EvaluateMeasurePage = () => {
   const router = useRouter();
-  const { resourceType, id } = router.query;
+  const { resourceType, id, patient, group, practitioner } = router.query;
   const [radioValue, setRadioValue] = useState("Subject");
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
   const [measureReportBody, setMeasureReportBody] = useState("");
   const [gridColSpans, setGridColSpans] = useState([3, 3, 0]);
   const [practitionerValue, setPractitionerValue] = useState("");
-  const [patientValue, setPatientValue] = useState("");
+  const [patientValue, setPatientValue] = useState(patient ? patient.toString() : "");
   const [groupValue, setGroupValue] = useState("");
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
   const [periodEnd, setPeriodEnd] = useState<Date>(DEFAULT_PERIOD_END);
 
+  //fetches patient, group, and practitioner values from url and populates state variables accordingly
   useEffect(() => {
-    if (radioValue === "Population") {
-      setPatientValue("");
-    }
-  }, [radioValue]);
+    setPatientValue(patient ? patient.toString() : "");
+    setGroupValue(group ? group.toString() : "");
+    setRadioValue(group ? "Population" : "Subject");
+    setPractitionerValue(practitioner ? practitioner.toString() : "");
+  }, [patient, group, practitioner]);
 
   /**
    * createRequestPreview builds the request preview with the evaluate measure state variables
@@ -192,9 +184,9 @@ const EvaluateMeasurePage = () => {
               // changes hex values associated with each Mantine color name to improve UI
               theme={{
                 colors: {
-                  gray: replaceBackground,
-                  blue: replaceOutline,
-                  red: replaceSecondRed,
+                  gray: shadesOfGray,
+                  blue: shadesOfCyan,
+                  red: shadesOfStrawberry,
                 },
               }}
             >
@@ -308,11 +300,11 @@ const EvaluateMeasurePage = () => {
                         //changes hex values associated with each Mantine color name to improve UI
                         theme={{
                           colors: {
-                            gray: replaceGray,
-                            dark: replaceDark,
-                            teal: replaceTeal,
-                            red: replaceRed,
-                            blue: replaceBlue,
+                            gray: AllDarkGray,
+                            dark: allWhite,
+                            teal: shadesOfStrawberry,
+                            red: allGreen,
+                            blue: allCobalt,
                           },
                         }}
                       >

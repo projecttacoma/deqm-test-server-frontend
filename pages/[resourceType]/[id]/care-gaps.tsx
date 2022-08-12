@@ -18,21 +18,11 @@ import BackButton from "../../../components/BackButton";
 import SelectComponent from "../../../components/SelectComponent";
 import MeasureDatePickers from "../../../components/MeasureDatePickers";
 import { Grid } from "@mantine/core";
-import {
-  replaceBackground,
-  replaceOutline,
-  replaceSecondRed,
-} from "../../../styles/codeColorScheme";
+import { shadesOfGray, shadesOfCyan, shadesOfStrawberry } from "../../../styles/codeColorScheme";
 import { Prism } from "@mantine/prism";
 import { cleanNotifications, showNotification, NotificationProps } from "@mantine/notifications";
 import { Check, X } from "tabler-icons-react";
-import {
-  replaceDark,
-  replaceGray,
-  replaceTeal,
-  replaceRed,
-  replaceBlue,
-} from "../../../styles/codeColorScheme";
+import { allWhite, AllDarkGray, allGreen, allCobalt } from "../../../styles/codeColorScheme";
 import { fhirJson } from "@fhir-typescript/r4-core";
 
 const DEFAULT_PERIOD_START = new Date(`${DateTime.now().year}-01-01T00:00:00`);
@@ -51,7 +41,7 @@ const DEFAULT_PERIOD_END = new Date(`${DateTime.now().year}-12-31T00:00:00`);
  */
 const CareGapsPage = () => {
   const router = useRouter();
-  const { resourceType, id } = router.query;
+  const { resourceType, id, patient, practitioner, organization } = router.query;
   const [radioValue, setRadioValue] = useState("Subject");
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
@@ -64,14 +54,19 @@ const CareGapsPage = () => {
   const [periodStart, setPeriodStart] = useState<Date>(DEFAULT_PERIOD_START);
   const [periodEnd, setPeriodEnd] = useState<Date>(DEFAULT_PERIOD_END);
 
+  //fetches patient, organization, and practitioner values from url and populates state variables accordingly
   useEffect(() => {
-    if (radioValue === "Subject") {
-      setOrganizationValue("");
-      setPractitionerValue("");
-    } else if (radioValue === "Organization") {
-      setPatientValue("");
+    setPatientValue(patient ? patient.toString() : "");
+    setRadioValue("Subject");
+  }, [patient]);
+
+  useEffect(() => {
+    if (organization || practitioner) {
+      setRadioValue("Organization");
     }
-  }, [radioValue]);
+    setOrganizationValue(organization ? organization.toString() : "");
+    setPractitionerValue(practitioner ? practitioner.toString() : "");
+  }, [organization, practitioner]);
 
   /**
    * createRequestPreview builds the request preview with the care-gaps state variables
@@ -201,9 +196,9 @@ const CareGapsPage = () => {
               // changes hex values associated with each Mantine color name to improve UI
               theme={{
                 colors: {
-                  gray: replaceBackground,
-                  blue: replaceOutline,
-                  red: replaceSecondRed,
+                  gray: shadesOfGray,
+                  blue: shadesOfCyan,
+                  red: shadesOfStrawberry,
                 },
               }}
             >
@@ -344,7 +339,7 @@ const CareGapsPage = () => {
                     <MantineProvider
                       theme={{
                         colors: {
-                          cyan: replaceOutline,
+                          cyan: shadesOfCyan,
                         },
                       }}
                     >
@@ -376,11 +371,11 @@ const CareGapsPage = () => {
                         //changes hex values associated with each Mantine color name to improve UI
                         theme={{
                           colors: {
-                            gray: replaceGray,
-                            dark: replaceDark,
-                            teal: replaceTeal,
-                            red: replaceRed,
-                            blue: replaceBlue,
+                            gray: AllDarkGray,
+                            dark: allWhite,
+                            teal: shadesOfStrawberry,
+                            red: allGreen,
+                            blue: allCobalt,
                           },
                         }}
                       >

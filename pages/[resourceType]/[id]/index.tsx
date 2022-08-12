@@ -8,14 +8,14 @@ import { cleanNotifications, showNotification } from "@mantine/notifications";
 import DeleteButton from "../../../components/DeleteButton";
 import { ModalsProvider } from "@mantine/modals";
 import {
-  replaceDark,
-  replaceGray,
-  replaceTeal,
-  replaceRed,
-  replaceBlue,
-  replaceDelete,
+  allWhite,
+  AllDarkGray,
+  allGreen,
+  allCobalt,
+  shadesOfStrawberry,
 } from "../../../styles/codeColorScheme";
-import { textGray } from "../../../styles/appColors";
+import { fhirJson } from "@fhir-typescript/r4-core";
+import ResourceMenu from "../../../components/ResourceMenu";
 /**
  * Component which displays the JSON body of an individual resource and a back button.
  * If the resource is a Measure, an evaluate measure button is also displayed.
@@ -27,6 +27,7 @@ function ResourceIDPage() {
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
   const [pageBody, setPageBody] = useState("");
+  const [bundleEntry, setBundleArray] = useState<(fhirJson.BundleEntry | null)[]>();
 
   useEffect(() => {
     if (resourceType && id) {
@@ -52,6 +53,24 @@ function ResourceIDPage() {
             autoClose: false,
           });
         });
+      //fetches measure resource list from the server
+      if (resourceType) {
+        setLoadingRequest(true);
+        fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure`)
+          .then((data) => {
+            return data.json() as Promise<fhirJson.Bundle>;
+          })
+          .then((resourcePageBody) => {
+            setBundleArray(resourcePageBody.entry);
+            setFetchingError(false);
+            setLoadingRequest(false);
+          })
+          .catch((error) => {
+            console.log(error.message);
+            setFetchingError(true);
+            setLoadingRequest(false);
+          });
+      }
     }
   }, [resourceType, id]);
 
@@ -62,7 +81,7 @@ function ResourceIDPage() {
         //changes hex values associated with each Mantine color name to improve UI
         theme={{
           colors: {
-            pink: replaceDelete,
+            pink: shadesOfStrawberry,
           },
         }}
       >
@@ -70,6 +89,24 @@ function ResourceIDPage() {
           <DeleteButton />
         </ModalsProvider>
       </MantineProvider>
+      <Link href={`/${resourceType}/${id}/update`} key={`update-${id}`} passHref>
+        <Button
+          component="a"
+          color="cyan"
+          radius="md"
+          size="sm"
+          variant="filled"
+          style={{
+            float: "right",
+            marginRight: "8px",
+            marginLeft: "8px",
+          }}
+          key={`update-${id}`}
+        >
+          <div> Update </div>
+        </Button>
+      </Link>
+
       {resourceType === "Measure" && (
         <div>
           <Link href={`/${resourceType}/${id}/care-gaps`} key={`care-gaps-${id}`} passHref>
@@ -106,28 +143,48 @@ function ResourceIDPage() {
           </Link>
         </div>
       )}
-      <Link href={`/${resourceType}/${id}/update`} key={`update-${id}`} passHref>
-        <Button
-          component="a"
-          color="cyan"
-          radius="md"
-          size="sm"
-          variant="filled"
-          style={{
-            float: "right",
-            marginRight: "8px",
-            marginLeft: "8px",
-          }}
-          key={`update-${id}`}
-        >
-          <div> Update </div>
-        </Button>
-      </Link>
-      <Center>
-        <h2
-          style={{ color: textGray, marginTop: "0px", marginBottom: "8px" }}
-        >{`${resourceType}/${id}`}</h2>
-      </Center>
+      {/** limits which pages display evaluate measure and care gap buttons */}
+      {/** both buttons display a drop down menu with measure resource options */}
+      {(resourceType === "Patient" || resourceType === "Practitioner") && (
+        <div>
+          <ResourceMenu
+            resourceType={resourceType}
+            id={id}
+            bundleEntry={bundleEntry}
+            url="evaluate"
+            label="Evaluate Measure"
+          />
+          <ResourceMenu
+            resourceType={resourceType}
+            id={id}
+            bundleEntry={bundleEntry}
+            url="care-gaps"
+            label="Care Gaps"
+          />
+        </div>
+      )}
+      {resourceType === "Organization" && (
+        <div>
+          <ResourceMenu
+            resourceType={resourceType}
+            id={id}
+            bundleEntry={bundleEntry}
+            url="care-gaps"
+            label="Care Gaps"
+          />
+        </div>
+      )}
+      {resourceType === "Group" && (
+        <div>
+          <ResourceMenu
+            resourceType={resourceType}
+            id={id}
+            bundleEntry={bundleEntry}
+            url="evaluate"
+            label="Evaluate Measure"
+          />
+        </div>
+      )}
     </div>
   );
 
@@ -152,11 +209,11 @@ function ResourceIDPage() {
             //changes hex values associated with each Mantine color name to improve UI
             theme={{
               colors: {
-                gray: replaceGray,
-                dark: replaceDark,
-                teal: replaceTeal,
-                red: replaceRed,
-                blue: replaceBlue,
+                gray: AllDarkGray,
+                dark: allWhite,
+                teal: shadesOfStrawberry,
+                red: allGreen,
+                blue: allCobalt,
               },
             }}
           >

@@ -1,6 +1,6 @@
 type stringArray = [string, string, string, string, string, string, string, string, string, string];
 
-export const replaceGray: stringArray = [
+export const AllDarkGray: stringArray = [
   "#ffffff",
   "#3b3f3f",
   "#3b3f3f",
@@ -13,7 +13,7 @@ export const replaceGray: stringArray = [
   "#3b3f3f",
 ];
 
-export const replaceDark: stringArray = [
+export const allWhite: stringArray = [
   "#FFFFFF",
   "#FFFFFF",
   "#FFFFFF",
@@ -26,20 +26,7 @@ export const replaceDark: stringArray = [
   "#FFFFFF",
 ];
 
-export const replaceTeal: stringArray = [
-  "#eb5262",
-  "#eb5262",
-  "#eb5262",
-  "#eb5262",
-  "#eb5262",
-  "#eb5262",
-  "#eb5262",
-  "#eb5262",
-  "#eb5262",
-  "#eb5262",
-];
-
-export const replaceRed: stringArray = [
+export const allGreen: stringArray = [
   "#00922A",
   "#00922A",
   "#00922A",
@@ -52,7 +39,7 @@ export const replaceRed: stringArray = [
   "#00922A",
 ];
 
-export const replaceBlue: stringArray = [
+export const allCobalt: stringArray = [
   "#1F44FF",
   "#1F44FF",
   "#1F44FF",
@@ -65,20 +52,20 @@ export const replaceBlue: stringArray = [
   "#1F44FF",
 ];
 
-export const replaceDelete: stringArray = [
-  "#A61E4D",
-  "#A61E4D",
-  "#A61E4D",
-  "#A61E4D",
-  "#A61E4D",
+export const shadesOfStrawberry: stringArray = [
+  "#eb5262",
+  "#eb5262",
+  "#eb5262",
+  "#eb5262",
+  "#eb5262",
   "#CE3D4C",
   "#EB5262",
-  "#CE3D4C",
-  "#A61E4D",
+  "#eb5262",
+  "#eb5262",
   "#A61E4D",
 ];
 
-export const replaceBackground: stringArray = [
+export const shadesOfGray: stringArray = [
   "#868E96",
   "#F1F3F5",
   "#E9ECEF",
@@ -91,7 +78,7 @@ export const replaceBackground: stringArray = [
   "#4a4f4f",
 ];
 
-export const replaceOutline: stringArray = [
+export const shadesOfCyan: stringArray = [
   "#E3FAFC",
   "#C5F6FA",
   "#99E9F2",
@@ -102,17 +89,4 @@ export const replaceOutline: stringArray = [
   "#1098AD",
   "#0C8599",
   "#0B7285",
-];
-
-export const replaceSecondRed: stringArray = [
-  "#EB5262",
-  "#EB5262",
-  "#EB5262",
-  "#EB5262;",
-  "#EB5262",
-  "#EB5262",
-  "#EB5262",
-  "#EB5262",
-  "#EB5262",
-  "#EB5262",
 ];
