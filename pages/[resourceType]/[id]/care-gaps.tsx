@@ -67,14 +67,16 @@ const CareGapsPage = () => {
   //fetches patient, organization, and practitioner values from url and populates state variables accordingly
   useEffect(() => {
     setPatientValue(patient ? patient.toString() : "");
-    setRadioValue(patient ? "Subject" : radioValue);
-  }, [patient, radioValue]);
+    setRadioValue("Subject");
+  }, [patient]);
 
   useEffect(() => {
-    setRadioValue(organization || practitioner ? "Organization" : radioValue);
+    if (organization || practitioner) {
+      setRadioValue("Organization");
+    }
     setOrganizationValue(organization ? organization.toString() : "");
     setPractitionerValue(practitioner ? practitioner.toString() : "");
-  }, [organization, practitioner, radioValue]);
+  }, [organization, practitioner]);
 
   /**
    * createRequestPreview builds the request preview with the care-gaps state variables

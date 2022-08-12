@@ -15,7 +15,6 @@ import {
   replaceBlue,
   replaceDelete,
 } from "../../../styles/codeColorScheme";
-import { textGray } from "../../../styles/appColors";
 import { fhirJson } from "@fhir-typescript/r4-core";
 import ResourceMenu from "../../../components/ResourceMenu";
 /**
