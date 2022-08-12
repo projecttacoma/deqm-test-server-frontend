@@ -54,10 +54,11 @@ const TransactionUploadPage = () => {
       <BackButton />
       <Stack spacing="xs">
         <Center key="Center-1">
-          <h2 style={{ color: textGray, marginTop: "0px", marginBottom: "8px" }}>
+          <h2 style={{ color: textGray, marginTop: "2px", marginBottom: "0px" }}>
             Upload Transaction Bundle
           </h2>
         </Center>
+        <Divider my="sm" />
         <Center key="Center-2">
           <Text size="md" color={textGray}>
             Enter valid transaction bundle body. Then click the Upload button.

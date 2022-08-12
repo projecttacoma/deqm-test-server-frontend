@@ -1,4 +1,4 @@
-import { Button, Center, Stack } from "@mantine/core";
+import { Button, Center, Divider, Stack } from "@mantine/core";
 import Link from "next/link";
 import { textGray } from "../styles/appColors";
 
@@ -6,9 +6,12 @@ export default function Home() {
   return (
     <div>
       <title> DEQM Test Server Frontend </title>
-      <Center>
-        <Stack align="center">
-          <h2 style={{ color: textGray }}>Actions:</h2>
+      <Stack spacing="xs">
+        <Center>
+          <h2 style={{ color: textGray, marginTop: "2px", marginBottom: "0px" }}>Actions:</h2>
+        </Center>
+        <Divider my="sm" />
+        <Center>
           <Link
             href={{
               pathname: "/transactionUpload",
@@ -20,8 +23,8 @@ export default function Home() {
               <div>Upload Transaction Bundle</div>
             </Button>
           </Link>
-        </Stack>
-      </Center>
+        </Center>
+      </Stack>
     </div>
   );
 }
