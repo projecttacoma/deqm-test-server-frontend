@@ -27,7 +27,7 @@ function ResourceIDPage() {
   const [fetchingError, setFetchingError] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
   const [pageBody, setPageBody] = useState("");
-  const [measureArray, setMeasureArray] = useState<(fhirJson.BundleEntry | null)[]>();
+  const [bundleEntry, setBundleArray] = useState<(fhirJson.BundleEntry | null)[]>();
 
   useEffect(() => {
     if (resourceType && id) {
@@ -61,7 +61,7 @@ function ResourceIDPage() {
             return data.json() as Promise<fhirJson.Bundle>;
           })
           .then((resourcePageBody) => {
-            setMeasureArray(resourcePageBody.entry);
+            setBundleArray(resourcePageBody.entry);
             setFetchingError(false);
             setLoadingRequest(false);
           })
@@ -150,14 +150,14 @@ function ResourceIDPage() {
           <ResourceMenu
             resourceType={resourceType}
             id={id}
-            measureArray={measureArray}
+            bundleEntry={bundleEntry}
             url="evaluate"
             label="Evaluate Measure"
           />
           <ResourceMenu
             resourceType={resourceType}
             id={id}
-            measureArray={measureArray}
+            bundleEntry={bundleEntry}
             url="care-gaps"
             label="Care Gaps"
           />
@@ -168,7 +168,7 @@ function ResourceIDPage() {
           <ResourceMenu
             resourceType={resourceType}
             id={id}
-            measureArray={measureArray}
+            bundleEntry={bundleEntry}
             url="care-gaps"
             label="Care Gaps"
           />
@@ -179,7 +179,7 @@ function ResourceIDPage() {
           <ResourceMenu
             resourceType={resourceType}
             id={id}
-            measureArray={measureArray}
+            bundleEntry={bundleEntry}
             url="evaluate"
             label="Evaluate Measure"
           />

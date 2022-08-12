@@ -5,7 +5,7 @@ import Link from "next/link";
 export interface MenuProps {
   resourceType: string;
   id: string | string[] | undefined;
-  measureArray: (fhirJson.BundleEntry | null)[] | undefined;
+  bundleEntry: (fhirJson.BundleEntry | null)[] | undefined;
   label: string;
   url: string;
 }
@@ -17,7 +17,7 @@ export interface MenuProps {
  * @params MenuProps
  * @returns a Menu component populated with measure resource IDs
  */
-export default function ResourceMenu({ resourceType, id, measureArray, label, url }: MenuProps) {
+export default function ResourceMenu({ resourceType, id, bundleEntry, label, url }: MenuProps) {
   return (
     <Menu
       size={300}
@@ -33,7 +33,7 @@ export default function ResourceMenu({ resourceType, id, measureArray, label, ur
       }
     >
       <div>
-        {measureArray?.map((el) => {
+        {bundleEntry?.map((el) => {
           return el?.resource ? (
             <Menu.Item>
               <Link
@@ -48,7 +48,7 @@ export default function ResourceMenu({ resourceType, id, measureArray, label, ur
               </Link>
             </Menu.Item>
           ) : (
-            <Menu.Item> something went wrong </Menu.Item>
+            <Menu.Item> no available options because something went wrong </Menu.Item>
           );
         })}
       </div>
