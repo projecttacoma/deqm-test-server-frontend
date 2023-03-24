@@ -95,22 +95,22 @@ const ResourceCounts = () => {
   };
 
   return (
-    <Stack align="flex-start" spacing="xs" style={{ marginBottom: 30 }}>
+    <Stack align="flex-start" spacing="xs" style={{ marginBottom: 28 }}>
       <Grid>
-        <Grid.Col xs={10} sm={10}>
+        <Grid.Col span={10}>
           <Input
             value={searchValue}
             onChange={(event: { currentTarget: { value: SetStateAction<string> } }) =>
               setSearchValue(event.currentTarget.value)
             }
-            icon={<Search size={18} />}
+            icon={<Search size={16} />}
             placeholder="Search"
             size="sm"
             width="fullWidth"
-            style={{ marginLeft: "1.5vw", width: "16vw" }}
+            style={{ marginLeft: "24px", width: "16vw" }}
           />
         </Grid.Col>
-        <Grid.Col xs={2} sm={2}></Grid.Col>
+        <Grid.Col span={2}></Grid.Col>
       </Grid>
       <ResourceButtonsGroup />
     </Stack>

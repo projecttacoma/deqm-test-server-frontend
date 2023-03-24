@@ -12,8 +12,8 @@ export interface MenuProps {
 
 /**
  * ResourceMenu provides a menu dropdown component of all the measures. When a
- * measure is selected, it redirects to the evaluate measure page prepopulated
- * with data based on the resourceType and ID values passed in to the menu component
+ * measure is selected, it redirects to the evaluate measure page pre-populated
+ * with data based on the resourceType and ID values passed into the menu component
  * @params MenuProps
  * @returns a Menu component populated with measure resource IDs
  */
@@ -42,8 +42,7 @@ export default function ResourceMenu({ resourceType, id, bundleEntry, label, url
                 }/${url}?${resourceType.toLowerCase()}=${resourceType}/${id}`}
               >
                 <div>
-                  {" "}
-                  {el.resource.resourceType}/{el.resource.id}{" "}
+                  {el.resource.resourceType}/{el.resource.id}
                 </div>
               </Link>
             </Menu.Item>

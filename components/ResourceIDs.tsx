@@ -9,13 +9,17 @@ import Link from "next/link";
  * @returns an array of Links of resource IDs, or if none exist, a "No resource found" message, or if an
  * invalid response body is passed through, an error message
  */
-function ResourceIDs(props: { jsonBody: fhirJson.Bundle }) {
-  const entryArray = props.jsonBody.entry;
+function ResourceIDs({ jsonBody }: { jsonBody: fhirJson.Bundle }) {
+  const entryArray = jsonBody.entry;
 
-  if (props.jsonBody.total === 0 || entryArray == null || entryArray.length === 0) {
+  if (jsonBody.total === 0 || entryArray == null || entryArray.length === 0) {
     return <div>No resources found</div>;
-  } else if (props.jsonBody.total && props.jsonBody.total > 0) {
-    return <div>{entryArray != null ? getAllIDs(entryArray) : <div>No resources</div>}</div>;
+  } else if (jsonBody.total && jsonBody.total > 0) {
+    return (
+      <div style={{ width: "100%" }}>
+        {entryArray != null ? getAllIDs(entryArray) : <div>No resources</div>}
+      </div>
+    );
   } else {
     return <div>Invalid JSON Body</div>;
   }
