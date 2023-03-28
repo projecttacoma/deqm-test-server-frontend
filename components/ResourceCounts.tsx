@@ -80,7 +80,6 @@ const ResourceCounts = () => {
           variant="subtle"
           styles={{
             inner: {
-              paddingLeft: "15px",
               justifyContent: "flex-start",
             },
           }}
@@ -91,27 +90,26 @@ const ResourceCounts = () => {
         </Button>
       </Link>
     ));
-    return <div> {buttonArray} </div>;
+    return <div style={{ width: "100%" }}> {buttonArray} </div>;
   };
 
   return (
-    <Stack align="flex-start" spacing="xs" style={{ marginBottom: 28 }}>
-      <Grid>
-        <Grid.Col span={10}>
-          <Input
-            value={searchValue}
-            onChange={(event: { currentTarget: { value: SetStateAction<string> } }) =>
-              setSearchValue(event.currentTarget.value)
-            }
-            icon={<Search size={16} />}
-            placeholder="Search"
-            size="sm"
-            width="fullWidth"
-            style={{ marginLeft: "24px", width: "16vw" }}
-          />
-        </Grid.Col>
-        <Grid.Col span={2}></Grid.Col>
-      </Grid>
+    <Stack
+      align="flex-start"
+      spacing="xs"
+      style={{ paddingLeft: "24px", marginBottom: "28px", width: "20vw" }}
+    >
+      <Input
+        value={searchValue}
+        onChange={(event: { currentTarget: { value: SetStateAction<string> } }) =>
+          setSearchValue(event.currentTarget.value)
+        }
+        icon={<Search size={16} />}
+        placeholder="Search"
+        size="sm"
+        style={{ width: "100%" }}
+      />
+
       <ResourceButtonsGroup />
     </Stack>
   );
