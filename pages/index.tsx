@@ -8,7 +8,9 @@ export default function Home() {
       <title> DEQM Test Server Frontend </title>
       <Stack spacing="xs">
         <Center>
-          <h2 style={{ color: textGray, marginTop: "4px", marginBottom: "0px" }}>Actions:</h2>
+          <h2 style={{ color: textGray, marginTop: "4px", marginBottom: "0px", height: "4vh" }}>
+            Actions:
+          </h2>
         </Center>
         <Divider my="sm" />
         <Center>
