@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext, SetStateAction } from "react";
-import { Badge, Button, Grid, Input, Stack } from "@mantine/core";
+import { Badge, Button, Input, Stack } from "@mantine/core";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
 import Link from "next/link";
 import { CountContext } from "./CountContext";
