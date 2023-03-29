@@ -72,10 +72,10 @@ function ResourceTypeIDs() {
         width: "76vw",
       }}
     >
-      <Grid columns={7}>
+      <Grid columns={7} style={{ paddingTop: "8px", paddingBottom: "12px", height: "66px" }}>
         <Grid.Col offset={3} span={2} style={{ paddingTop: "4px" }}>
           <h2
-            style={{ color: textGray, marginTop: "0px", marginBottom: "8px" }}
+            style={{ color: textGray, marginTop: "0px", marginBottom: "0px" }}
           >{`${resourceType} IDs`}</h2>
         </Grid.Col>
         <Grid.Col
@@ -100,7 +100,7 @@ function ResourceTypeIDs() {
           </Link>
         </Grid.Col>
       </Grid>
-      <Divider my="md" style={{ marginTop: "16px" }} />
+      <Divider my="md" style={{ paddingBottom: "16px" }} />
       {loadingRequest ? (
         //if loading, Loader object is returned
         <Center>

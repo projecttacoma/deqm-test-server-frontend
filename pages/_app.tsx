@@ -44,7 +44,7 @@ export default function App(props: AppProps) {
                         cursor: "pointer",
                       })}
                     >
-                      <Text size="xl" weight={700} color={textGray} style={{ height: "4vh" }}>
+                      <Text size="xl" weight={700} color={textGray} style={{ height: "40px" }}>
                         Resources
                       </Text>
                     </Box>
