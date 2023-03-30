@@ -29,7 +29,7 @@ const ResourceCodeEditor = (props: ResourceCodeEditorProps) => {
       value={props.initialValue}
       minHeight="20vh"
       maxHeight="80vh"
-      maxWidth="77vw"
+      maxWidth="76vw"
       extensions={[json(), linter(jsonLinter)]}
       onUpdate={(v) => {
         if (props.onValidate) {

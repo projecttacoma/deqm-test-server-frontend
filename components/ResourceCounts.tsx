@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext, SetStateAction } from "react";
-import { Badge, Button, Grid, Input, Stack } from "@mantine/core";
+import { Badge, Button, Input, Stack } from "@mantine/core";
 import { cleanNotifications, showNotification } from "@mantine/notifications";
 import Link from "next/link";
 import { CountContext } from "./CountContext";
@@ -80,7 +80,6 @@ const ResourceCounts = () => {
           variant="subtle"
           styles={{
             inner: {
-              paddingLeft: "15px",
               justifyContent: "flex-start",
             },
           }}
@@ -91,27 +90,26 @@ const ResourceCounts = () => {
         </Button>
       </Link>
     ));
-    return <div> {buttonArray} </div>;
+    return <div style={{ width: "100%" }}> {buttonArray} </div>;
   };
 
   return (
-    <Stack align="flex-start" spacing="xs" style={{ marginBottom: 30 }}>
-      <Grid>
-        <Grid.Col xs={10} sm={10}>
-          <Input
-            value={searchValue}
-            onChange={(event: { currentTarget: { value: SetStateAction<string> } }) =>
-              setSearchValue(event.currentTarget.value)
-            }
-            icon={<Search size={18} />}
-            placeholder="Search"
-            size="sm"
-            width="fullWidth"
-            style={{ marginLeft: "1.5vw", width: "16vw" }}
-          />
-        </Grid.Col>
-        <Grid.Col xs={2} sm={2}></Grid.Col>
-      </Grid>
+    <Stack
+      align="flex-start"
+      spacing="xs"
+      style={{ paddingLeft: "24px", marginBottom: "28px", width: "20vw" }}
+    >
+      <Input
+        value={searchValue}
+        onChange={(event: { currentTarget: { value: SetStateAction<string> } }) =>
+          setSearchValue(event.currentTarget.value)
+        }
+        icon={<Search size={16} />}
+        placeholder="Search"
+        size="sm"
+        style={{ width: "100%" }}
+      />
+
       <ResourceButtonsGroup />
     </Stack>
   );

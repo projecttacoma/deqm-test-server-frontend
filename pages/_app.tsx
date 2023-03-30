@@ -14,7 +14,7 @@ import {
 import { NotificationsProvider } from "@mantine/notifications";
 import { ResourceCounts } from "../components/ResourceCounts";
 import Link from "next/link";
-import { textGray } from "../styles/appColors";
+import { appHeader, textGray } from "../styles/appColors";
 import { CountProvider } from "../components/CountContext";
 
 export default function App(props: AppProps) {
@@ -26,20 +26,13 @@ export default function App(props: AppProps) {
         <title>Test server frontend</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
-      <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
-        theme={{
-          /** Put your mantine theme override here */
-          colorScheme: "light",
-        }}
-      >
+      <MantineProvider withGlobalStyles withNormalizeCSS>
         <NotificationsProvider position="top-center">
           <CountProvider>
             <AppShell
               padding="md"
               navbar={
-                <Navbar width={{ base: "18vw" }} height="90vh" p="xs">
+                <Navbar width={{ base: "20vw" }} height="92vh" p="xs">
                   <Navbar.Section>
                     <Box
                       sx={(theme) => ({
@@ -51,19 +44,19 @@ export default function App(props: AppProps) {
                         cursor: "pointer",
                       })}
                     >
-                      <Text size="xl" weight={700} color={textGray}>
+                      <Text size="xl" weight={700} color={textGray} style={{ height: "40px" }}>
                         Resources
                       </Text>
                     </Box>
                   </Navbar.Section>
-                  <Divider my="sm" style={{ paddingBottom: "15px" }} />
+                  <Divider my="sm" style={{ paddingBottom: "16px" }} />
                   <Navbar.Section grow component={ScrollArea} mt="-xs" mb="-xs" ml="-xl" mr="-xs">
                     <ResourceCounts />
                   </Navbar.Section>
                 </Navbar>
               }
               header={
-                <Header height={80} style={{ backgroundColor: "#bdebf0", color: textGray }}>
+                <Header height={80} style={{ backgroundColor: appHeader, color: textGray }}>
                   <Center>
                     <Link href={"/"}>
                       <h1 style={{ marginTop: "12px", cursor: "pointer" }}>

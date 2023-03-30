@@ -54,23 +54,21 @@ function ResourceIDPage() {
           });
         });
       //fetches measure resource list from the server
-      if (resourceType) {
-        setLoadingRequest(true);
-        fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure`)
-          .then((data) => {
-            return data.json() as Promise<fhirJson.Bundle>;
-          })
-          .then((resourcePageBody) => {
-            setBundleArray(resourcePageBody.entry);
-            setFetchingError(false);
-            setLoadingRequest(false);
-          })
-          .catch((error) => {
-            console.log(error.message);
-            setFetchingError(true);
-            setLoadingRequest(false);
-          });
-      }
+      setLoadingRequest(true);
+      fetch(`${process.env.NEXT_PUBLIC_DEQM_SERVER}/Measure`)
+        .then((data) => {
+          return data.json() as Promise<fhirJson.Bundle>;
+        })
+        .then((resourcePageBody) => {
+          setBundleArray(resourcePageBody.entry);
+          setFetchingError(false);
+          setLoadingRequest(false);
+        })
+        .catch((error) => {
+          console.log(error.message);
+          setFetchingError(true);
+          setLoadingRequest(false);
+        });
     }
   }, [resourceType, id]);
 
@@ -109,23 +107,7 @@ function ResourceIDPage() {
 
       {resourceType === "Measure" && (
         <div>
-          <Link href={`/${resourceType}/${id}/care-gaps`} key={`care-gaps-${id}`} passHref>
-            <Button
-              component="a"
-              color="cyan"
-              radius="md"
-              size="sm"
-              variant="filled"
-              style={{
-                float: "right",
-                marginRight: "8px",
-                marginLeft: "8px",
-              }}
-            >
-              <div>Calculate Care Gaps</div>
-            </Button>
-          </Link>
-          <Link href={`/${resourceType}/${id}/evaluate`} key={`evaluate-measure-${id}`} passHref>
+          <Link href={`/Measure/${id}/evaluate`} key={`evaluate-measure-${id}`} passHref>
             <Button
               component="a"
               color="cyan"
@@ -139,6 +121,22 @@ function ResourceIDPage() {
               }}
             >
               <div>Evaluate Measure</div>
+            </Button>
+          </Link>{" "}
+          <Link href={`/Measure/${id}/care-gaps`} key={`care-gaps-${id}`} passHref>
+            <Button
+              component="a"
+              color="cyan"
+              radius="md"
+              size="sm"
+              variant="filled"
+              style={{
+                float: "right",
+                marginRight: "8px",
+                marginLeft: "8px",
+              }}
+            >
+              <div>Care Gaps</div>
             </Button>
           </Link>
         </div>
@@ -188,12 +186,14 @@ function ResourceIDPage() {
     </div>
   );
 
-  return loadingRequest ? ( //if loading, Loader object is returned
+  return loadingRequest ? (
+    //if loading, Loader object is returned
     <Center>
       <div>Loading content...</div>
       <Loader color="cyan"></Loader>
     </Center>
-  ) : !fetchingError && pageBody ? ( //if http get request was successful, a full ResourceIDPage is returned
+  ) : !fetchingError && pageBody ? (
+    //if http get request was successful, a full ResourceIDPage is returned
     <div>
       <Stack spacing="xs">
         <div
@@ -221,7 +221,7 @@ function ResourceIDPage() {
               language="json"
               data-testid="prism-page-content"
               colorScheme="dark"
-              style={{ maxWidth: "78vw", height: "80vh", backgroundColor: "#FFFFFF" }}
+              style={{ maxWidth: "76vw", height: "80vh", backgroundColor: "#FFFFFF" }}
             >
               {pageBody}
             </Prism>

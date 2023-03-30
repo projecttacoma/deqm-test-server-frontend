@@ -69,19 +69,19 @@ function ResourceTypeIDs() {
   return (
     <div
       style={{
-        width: "78vw",
+        width: "76vw",
       }}
     >
-      <Grid columns={7}>
-        <Grid.Col offset={3} span={2} style={{ paddingTop: "5px" }}>
+      <Grid columns={7} style={{ paddingTop: "8px", paddingBottom: "12px", height: "66px" }}>
+        <Grid.Col offset={3} span={2} style={{ paddingTop: "4px" }}>
           <h2
-            style={{ color: textGray, marginTop: "0px", marginBottom: "8px" }}
+            style={{ color: textGray, marginTop: "0px", marginBottom: "0px" }}
           >{`${resourceType} IDs`}</h2>
         </Grid.Col>
         <Grid.Col
           span={2}
           style={{
-            paddingTop: "5px",
+            paddingTop: "4px",
           }}
         >
           <Link href={`${resourceType}/create`} key={`create-${resourceType}`} passHref>
@@ -100,13 +100,15 @@ function ResourceTypeIDs() {
           </Link>
         </Grid.Col>
       </Grid>
-      <Divider my="md" style={{ marginTop: "14px" }} />
-      {loadingRequest ? ( //if loading, Loader object is returned
+      <Divider my="md" style={{ paddingBottom: "16px" }} />
+      {loadingRequest ? (
+        //if loading, Loader object is returned
         <Center>
           <div>Loading content...</div>
           <Loader color="cyan"></Loader>
         </Center>
-      ) : !fetchingError && pageBody ? ( //if http request was successful, ResourceID component is returned
+      ) : !fetchingError && pageBody ? (
+        //if http request was successful, ResourceID component is returned
         <div>
           <Center>
             <div
@@ -114,15 +116,14 @@ function ResourceTypeIDs() {
                 textAlign: "center",
                 overflowWrap: "break-word",
                 height: "500px",
-                padding: "10px",
+                padding: "12px",
                 backgroundColor: "#FFFFFF",
                 border: "1px solid",
                 borderColor: "#DEE2E6",
                 borderRadius: "20px",
-                marginTop: "10px",
-                marginBottom: "20px",
-                marginLeft: "150px",
-                marginRight: "150px",
+                marginTop: "12px",
+                marginBottom: "12px",
+                flex: 1,
               }}
             >
               <ResourceIDs jsonBody={pageBody}></ResourceIDs>
@@ -138,7 +139,7 @@ function ResourceTypeIDs() {
                     onChange={(num) => updatePageRoute(num)}
                     page={activePageNum}
                     color="cyan"
-                    style={{ marginTop: "10px" }}
+                    style={{ marginTop: "12px" }}
                   ></Pagination>
                 </Center>
               )

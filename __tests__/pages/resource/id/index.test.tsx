@@ -35,9 +35,9 @@ describe("measure resource ID render", () => {
       );
     });
 
-    //for Measure resources, "Evaluate Measure" and "Calculate Care Gaps" buttons will be in the document
+    //for Measure resources, "Evaluate Measure" and "Care Gaps" buttons will be in the document
     expect(await screen.findByRole("link", { name: "Evaluate Measure" })).toBeInTheDocument();
-    expect(await screen.findByRole("link", { name: "Calculate Care Gaps" })).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: "Care Gaps" })).toBeInTheDocument();
   });
 });
 
