@@ -60,7 +60,7 @@ describe("resource ID page specific button renders", () => {
       );
     });
 
-    //for Patient resources, "Evaluate" and "Calculate Care Gaps" buttons will be in the document
+    //for Patient resources, "Evaluate" and "Care Gaps" buttons will be in the document
     expect(await screen.findByRole("button", { name: "Evaluate" })).toBeInTheDocument();
     expect(await screen.findByRole("button", { name: "Care Gaps" })).toBeInTheDocument();
   });
@@ -78,7 +78,7 @@ describe("resource ID page specific button renders", () => {
       );
     });
 
-    //for Practitioner resources, "Evaluate" and "Calculate Care Gaps" buttons will be in the document
+    //for Practitioner resources, "Evaluate" and "Care Gaps" buttons will be in the document
     expect(await screen.findByRole("button", { name: "Evaluate" })).toBeInTheDocument();
     expect(await screen.findByRole("button", { name: "Care Gaps" })).toBeInTheDocument();
   });
@@ -96,7 +96,7 @@ describe("resource ID page specific button renders", () => {
       );
     });
 
-    //for Group resources, "Evaluate" and "Calculate Care Gaps" buttons will be in the document
+    //for Group resources, "Evaluate" button will be in the document
     expect(await screen.findByRole("button", { name: "Evaluate" })).toBeInTheDocument();
   });
 
@@ -113,7 +113,7 @@ describe("resource ID page specific button renders", () => {
       );
     });
 
-    //for Organization resources, "Evaluate" and "Calculate Care Gaps" buttons will be in the document
+    //for Organization resources, "Care Gaps" button will be in the document
     expect(await screen.findByRole("button", { name: "Care Gaps" })).toBeInTheDocument();
   });
 });
