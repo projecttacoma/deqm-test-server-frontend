@@ -107,7 +107,7 @@ function ResourceIDPage() {
 
       {resourceType === "Measure" && (
         <div>
-          <Link href={`/Measure/${id}/evaluate`} key={`evaluate-measure-${id}`} passHref>
+          <Link href={`/Measure/${id}/evaluate`} key={`evaluate-${id}`} passHref>
             <Button
               component="a"
               color="cyan"

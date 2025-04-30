@@ -106,7 +106,7 @@ describe("Test evaluate page render for measure", () => {
     //Request preview should include the dates from the Measure's effective period
     expect(
       screen.getByText(
-        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2019-01-01&periodEnd=2019-12-31&reportType=subject",
+        "/Measure/measure-EXM104-8.2.000/$evaluate?periodStart=2019-01-01&periodEnd=2019-12-31&reportType=subject",
       ),
     ).toBeInTheDocument();
   });
@@ -158,7 +158,7 @@ describe("Test evaluate page render for measure", () => {
     //request preview should include the updated dates
     expect(
       screen.getByText(
-        "/Measure/measure-EXM104-8.2.000/$evaluate-measure?periodStart=2018-02-02&periodEnd=2020-11-13&reportType=subject",
+        "/Measure/measure-EXM104-8.2.000/$evaluate?periodStart=2018-02-02&periodEnd=2020-11-13&reportType=subject",
       ),
     ).toBeInTheDocument();
   });
@@ -295,7 +295,7 @@ describe("Select component, Radio button, and request preview render", () => {
     });
     expect(
       screen.getByText(
-        `/Measure/Measure-12/$evaluate-measure?periodStart=${DateTime.now().year}-01-01&periodEnd=${
+        `/Measure/Measure-12/$evaluate?periodStart=${DateTime.now().year}-01-01&periodEnd=${
           DateTime.now().year
         }-12-31&reportType=subject&subject=P&practitioner=P`,
       ),
@@ -332,7 +332,7 @@ describe("Select component, Radio button, and request preview render", () => {
 
     expect(
       screen.getByText(
-        `/Measure/Measure-12/$evaluate-measure?periodStart=${DateTime.now().year}-01-01&periodEnd=${
+        `/Measure/Measure-12/$evaluate?periodStart=${DateTime.now().year}-01-01&periodEnd=${
           DateTime.now().year
         }-12-31&reportType=population&subject=G`,
       ),
