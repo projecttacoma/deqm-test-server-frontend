@@ -22,7 +22,7 @@ describe("measure resource ID render", () => {
     global.fetch = getMockFetchImplementation("");
   });
 
-  it("should display button for evaluate measure and for care gaps", async () => {
+  it("should display button for evaluate and for care gaps", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -35,8 +35,8 @@ describe("measure resource ID render", () => {
       );
     });
 
-    //for Measure resources, "Evaluate Measure" and "Care Gaps" buttons will be in the document
-    expect(await screen.findByRole("link", { name: "Evaluate Measure" })).toBeInTheDocument();
+    //for Measure resources, "Evaluate" and "Care Gaps" buttons will be in the document
+    expect(await screen.findByRole("link", { name: "Evaluate" })).toBeInTheDocument();
     expect(await screen.findByRole("link", { name: "Care Gaps" })).toBeInTheDocument();
   });
 });
@@ -47,7 +47,7 @@ describe("resource ID page specific button renders", () => {
     global.fetch = getMockFetchImplementation("");
   });
 
-  it("should display button for evaluate measure and for care gaps on patient page", async () => {
+  it("should display button for evaluate and for care gaps on patient page", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -60,12 +60,12 @@ describe("resource ID page specific button renders", () => {
       );
     });
 
-    //for Patient resources, "Evaluate Measure" and "Calculate Care Gaps" buttons will be in the document
-    expect(await screen.findByRole("button", { name: "Evaluate Measure" })).toBeInTheDocument();
+    //for Patient resources, "Evaluate" and "Calculate Care Gaps" buttons will be in the document
+    expect(await screen.findByRole("button", { name: "Evaluate" })).toBeInTheDocument();
     expect(await screen.findByRole("button", { name: "Care Gaps" })).toBeInTheDocument();
   });
 
-  it("should display button for evaluate measure and for care gaps on practitioner page", async () => {
+  it("should display button for evaluate and for care gaps on practitioner page", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -78,12 +78,12 @@ describe("resource ID page specific button renders", () => {
       );
     });
 
-    //for Practitioner resources, "Evaluate Measure" and "Calculate Care Gaps" buttons will be in the document
-    expect(await screen.findByRole("button", { name: "Evaluate Measure" })).toBeInTheDocument();
+    //for Practitioner resources, "Evaluate" and "Calculate Care Gaps" buttons will be in the document
+    expect(await screen.findByRole("button", { name: "Evaluate" })).toBeInTheDocument();
     expect(await screen.findByRole("button", { name: "Care Gaps" })).toBeInTheDocument();
   });
 
-  it("should display button for evaluate measure on group page", async () => {
+  it("should display button for evaluate on group page", async () => {
     await act(async () => {
       render(
         <RouterContext.Provider
@@ -96,8 +96,8 @@ describe("resource ID page specific button renders", () => {
       );
     });
 
-    //for Group resources, "Evaluate Measure" and "Calculate Care Gaps" buttons will be in the document
-    expect(await screen.findByRole("button", { name: "Evaluate Measure" })).toBeInTheDocument();
+    //for Group resources, "Evaluate" and "Calculate Care Gaps" buttons will be in the document
+    expect(await screen.findByRole("button", { name: "Evaluate" })).toBeInTheDocument();
   });
 
   it("should display button for care gaps on organization page", async () => {
@@ -113,7 +113,7 @@ describe("resource ID page specific button renders", () => {
       );
     });
 
-    //for Organization resources, "Evaluate Measure" and "Calculate Care Gaps" buttons will be in the document
+    //for Organization resources, "Evaluate" and "Calculate Care Gaps" buttons will be in the document
     expect(await screen.findByRole("button", { name: "Care Gaps" })).toBeInTheDocument();
   });
 });
@@ -141,7 +141,7 @@ describe("resource ID render", () => {
     expect(await screen.findByTestId("back-button")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Update" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Delete" })).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Evaluate Measure" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Evaluate" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Calculate Care Gaps" })).toBeNull();
   });
 
