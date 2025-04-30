@@ -65,7 +65,7 @@ const EvaluateMeasurePage = () => {
    */
   const createRequestPreview = () => {
     //dates are formatted to be in the form "YYYY-MM-DD", with no timezone info
-    let requestPreview = `/Measure/${id}/$evaluate-measure?periodStart=${DateTime.fromISO(
+    let requestPreview = `/Measure/${id}/$evaluate?periodStart=${DateTime.fromISO(
       periodStart.toISOString(),
     ).toISODate()}&periodEnd=${DateTime.fromISO(periodEnd.toISOString()).toISODate()}`;
     if (radioValue) {

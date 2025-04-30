@@ -18,7 +18,7 @@ import { fhirJson } from "@fhir-typescript/r4-core";
 import ResourceMenu from "../../../components/ResourceMenu";
 /**
  * Component which displays the JSON body of an individual resource and a back button.
- * If the resource is a Measure, an evaluate measure button is also displayed.
+ * If the resource is a Measure, an evaluate button is also displayed.
  * @returns JSON content of the individual resource in a Prism component, and a back button
  */
 function ResourceIDPage() {
@@ -107,7 +107,7 @@ function ResourceIDPage() {
 
       {resourceType === "Measure" && (
         <div>
-          <Link href={`/Measure/${id}/evaluate`} key={`evaluate-measure-${id}`} passHref>
+          <Link href={`/Measure/${id}/evaluate`} key={`evaluate-${id}`} passHref>
             <Button
               component="a"
               color="cyan"
@@ -120,7 +120,7 @@ function ResourceIDPage() {
                 marginLeft: "8px",
               }}
             >
-              <div>Evaluate Measure</div>
+              <div>Evaluate</div>
             </Button>
           </Link>{" "}
           <Link href={`/Measure/${id}/care-gaps`} key={`care-gaps-${id}`} passHref>
@@ -141,7 +141,7 @@ function ResourceIDPage() {
           </Link>
         </div>
       )}
-      {/** limits which pages display evaluate measure and care gap buttons */}
+      {/** limits which pages display evaluate and care gap buttons */}
       {/** both buttons display a drop down menu with measure resource options */}
       {(resourceType === "Patient" || resourceType === "Practitioner") && (
         <div>
@@ -150,7 +150,7 @@ function ResourceIDPage() {
             id={id}
             bundleEntry={bundleEntry}
             url="evaluate"
-            label="Evaluate Measure"
+            label="Evaluate"
           />
           <ResourceMenu
             resourceType={resourceType}
@@ -179,7 +179,7 @@ function ResourceIDPage() {
             id={id}
             bundleEntry={bundleEntry}
             url="evaluate"
-            label="Evaluate Measure"
+            label="Evaluate"
           />
         </div>
       )}
